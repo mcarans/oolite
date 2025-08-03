@@ -1,0 +1,27 @@
+target_sources(oolite
+        PRIVATE
+        OOMaterialSpecifier.m
+        OOBasicMaterial.m
+        OODefaultShaderSynthesizer.m
+        OOMaterial.m
+        OONullTexture.m
+        OOPlanetTextureGenerator.m
+        OOStandaloneAtmosphereGenerator.m
+        OOPNGTextureLoader.m
+        OOShaderMaterial.m
+        OOShaderProgram.m
+        OOShaderUniform.m
+        OOShaderUniformMethodType.m
+        OOSingleTextureMaterial.m
+        OOTexture.m
+        OOConcreteTexture.m
+        OOTextureGenerator.m
+        OOTextureLoader.m
+        OOPixMap.m
+        OOTextureScaling.m
+        OOPixMapChannelOperations.m
+        OOMultiTextureMaterial.m
+        OOMaterialConvenienceCreators.m
+        OOCombinedEmissionMapGenerator.m
+        OOPixMapTextureLoader.m
+)

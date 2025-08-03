@@ -1,0 +1,148 @@
+target_include_directories(oolite
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/Tables
+)
+
+set(GRAPHICS_DRAWABLE_FILES =
+        OODrawable.m
+        OOPlanetDrawable.m
+        OOMesh.m
+)
+set(GRAPHICS_MISC_FILES
+        OOCrosshairs.m
+        OODebugGLDrawing.m
+        OOGraphicsResetManager.m
+        OOOpenGL.m
+        OOOpenGLStateManager.m
+        OOOpenGLExtensionManager.m
+        OOOpenGLMatrixManager.m
+        OOProbabilisticTextureManager.m
+        OOSkyDrawable.m
+        OOTextureSprite.m
+        OOPolygonSprite.m
+        OOConvertCubeMapToLatLong.m
+)
+
+set(MATHS_FILES
+        CollisionRegion.m
+        OOMeshToOctreeConverter.m
+        Octree.m
+        OOHPVector.m
+        OOMatrix.m
+        OOQuaternion.m
+        OOVector.m
+        OOVoxel.m
+)
+
+set(RSRC_MGMT_FILES   
+        OldSchoolPropertyListWriting.m    
+        OOCache.m    
+        OOCacheManager.m    
+        OOConvertSystemDescriptions.m    
+        OOOXZManager.m    
+        OOPListParsing.m    
+        OOSystemDescriptionManager.m    
+        ResourceManager.m    
+        TextureStore.m
+)
+
+set(SOUND_FILES
+        OOOpenALController.m    
+        OOMusicController.m    
+        OOSoundSource.m    
+        OOSoundSourcePool.m    
+        OOALMusic.m    
+        OOALSound.m    
+        OOALSoundChannel.m    
+        OOALSoundMixer.m    
+        OOALSoundDecoder.m    
+        OOALBufferedSound.m    
+        OOALStreamedSound.m
+)
+
+set(UI_FILES
+        GuiDisplayGen.m    
+        HeadUpDisplay.m    
+        OOEncodingConverter.m
+)
+
+set(UTILITY_FILES
+        NSDataOOExtensions.m
+        NSDictionaryOOExtensions.m
+        NSFileManagerOOExtensions.m
+        NSMutableDictionaryOOExtensions.m
+        NSNumberOOExtensions.m
+        NSObjectOOExtensions.m
+        NSScannerOOExtensions.m
+        NSStringOOExtensions.m
+        NSThreadOOExtensions.m
+        OOAsyncQueue.m
+        OOAsyncWorkManager.m
+        OOCollectionExtractors.m
+        OOColor.m
+        OOConstToString.m
+        OOCPUInfo.m
+        OODeepCopy.m
+        OOEntityFilterPredicate.m
+        OOExcludeObjectEnumerator.m
+        OOFilteringEnumerator.m
+        OOIsNumberLiteral.m
+        OOLogging.m
+        OOLogHeader.m
+        OOLogOutputHandler.m
+        OOPriorityQueue.m
+        OOProbabilitySet.m
+        OORegExpMatcher.m
+        OOShipGroup.m
+        OOStringExpander.m
+        OOStringParsing.m
+        OOWeakReference.m
+        OOWeakSet.m
+        OOXMLExtensions.m
+)
+
+set(MISC_FILES
+        AI.m
+        AIGraphViz.m
+        GameController.m
+        OOJoystickManager.m
+        OOJoystickProfile.m
+        OOCharacter.m
+        OOCocoa.m
+        OOCommodities.m
+        OOCommodityMarket.m
+        OOEquipmentType.m
+        OOMouseInteractionMode.m
+        OORoleSet.m
+        OOShipLibraryDescriptions.m
+        OOShipRegistry.m
+        OOSpatialReference.m
+        OOTrumble.m
+        Universe.m
+)
+
+set(C_FILES
+        legacy_random.c
+        OOPlanetData.c
+)
+
+target_sources(oolite
+        PRIVATE
+        ${GRAPHICS_DRAWABLE_FILES}
+        ${GRAPHICS_MISC_FILES}
+        ${MATHS_FILES}
+        ${RSRC_MGMT_FILES}
+        ${SOUND_FILES}
+        ${UI_FILES}
+        ${UTILITY_FILES}
+        ${MISC_FILES}
+        ${C_FILES}
+)
+
+add_subdirectory(Debug)
+add_subdirectory(Entities)
+add_subdirectory(Materials)
+add_subdirectory(MiniZip)
+add_subdirectory(OXPVerifier)
+add_subdirectory(Scripting)

@@ -1,0 +1,11 @@
+target_sources(oolite
+        PRIVATE
+        OODebugMonitor.m
+        OODebugStandards.m
+        OODebugSupport.m
+        OODebugTCPConsoleClient.m
+        OOJSConsole.m
+        OOProfilingStopwatch.m
+        OOTCPStreamDecoderAbstractionLayer.m
+        OOTCPStreamDecoder.c
+)
