@@ -1,3 +1,5 @@
+# Taken from https://github.com/dogtagpki/pki/blob/master/cmake/Modules/FindNSPR.cmake
+
 # - Try to find NSPR
 # Once done this will define
 #

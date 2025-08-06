@@ -1,3 +1,8 @@
+target_include_directories(oolite
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 target_sources(oolite
         PRIVATE
         OOMaterialSpecifier.m
@@ -18,7 +23,6 @@ target_sources(oolite
         OOTextureGenerator.m
         OOTextureLoader.m
         OOPixMap.m
-        OOTextureScaling.m
         OOPixMapChannelOperations.m
         OOMultiTextureMaterial.m
         OOMaterialConvenienceCreators.m

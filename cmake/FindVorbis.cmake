@@ -1,3 +1,5 @@
+# Taken from https://github.com/luanti-org/luanti/blob/master/cmake/Modules/FindVorbis.cmake
+
 # - Find vorbis
 # Find the native vorbis includes and libraries
 #

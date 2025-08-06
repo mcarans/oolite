@@ -1,3 +1,6 @@
+# Taken from https://git.dblsaiko.net/nucom/tree/cmake/FindGNUstep.cmake?h=rt
+# Added PATH_SUFFIXES GNUstep
+
 include(CMakeParseArguments)
 include(FindPackageHandleStandardArgs)
 
@@ -85,7 +88,9 @@ if (_gnustep_want_objc)
     find_path(GNUstep_ObjC_INCLUDE_DIR
             NAMES
             objc/objc.h
-            REQUIRED)
+            REQUIRED
+            PATH_SUFFIXES
+            GNUstep)
 
     find_library(GNUstep_ObjC_LIBRARY objc REQUIRED)
 
@@ -106,7 +111,9 @@ if (_gnustep_want_base)
             NAMES
             Foundation/Foundation.h
             GNUstepBase/GNUstep.h
-            REQUIRED)
+            REQUIRED
+            PATH_SUFFIXES
+            GNUstep)
 
     find_library(GNUstep_Base_LIBRARY gnustep-base REQUIRED)
 
@@ -126,7 +133,9 @@ if (_gnustep_want_gui)
     find_path(_gnustep_headers
             NAMES
             GNUstepGUI/GSVersion.h
-            REQUIRED)
+            REQUIRED
+            PATH_SUFFIXES
+            GNUstep)
 
     find_library(GNUstep_Gui_LIBRARY gnustep-gui REQUIRED)
 

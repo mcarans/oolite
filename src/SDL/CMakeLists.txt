@@ -9,7 +9,7 @@ target_sources(oolite
         OOSDLJoystickManager.m
 )
 
+add_subdirectory(EXRSnapshotSupport)
 if (MINGW)
-    add_subdirectory(EXRSnapshotSupport)
     add_subdirectory(OOResourceWin)
 endif ()

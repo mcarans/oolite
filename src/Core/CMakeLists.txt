@@ -4,7 +4,7 @@ target_include_directories(oolite
         ${CMAKE_CURRENT_SOURCE_DIR}/Tables
 )
 
-set(GRAPHICS_DRAWABLE_FILES =
+set(GRAPHICS_DRAWABLE_FILES
         OODrawable.m
         OOPlanetDrawable.m
         OOMesh.m
@@ -19,6 +19,7 @@ set(GRAPHICS_MISC_FILES
         OOOpenGLMatrixManager.m
         OOProbabilisticTextureManager.m
         OOSkyDrawable.m
+        OOTextureScaling.m
         OOTextureSprite.m
         OOPolygonSprite.m
         OOConvertCubeMapToLatLong.m
@@ -120,6 +121,8 @@ set(MISC_FILES
         OOSpatialReference.m
         OOTrumble.m
         Universe.m
+        OOProfilingStopwatch.m  # I think this should be in Debug
+
 )
 
 set(C_FILES

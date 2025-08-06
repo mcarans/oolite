@@ -1,3 +1,8 @@
+target_include_directories(oolite
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 target_sources(oolite
         PRIVATE
         OODebugMonitor.m
@@ -5,7 +10,6 @@ target_sources(oolite
         OODebugSupport.m
         OODebugTCPConsoleClient.m
         OOJSConsole.m
-        OOProfilingStopwatch.m
         OOTCPStreamDecoderAbstractionLayer.m
         OOTCPStreamDecoder.c
 )
