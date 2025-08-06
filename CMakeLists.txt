@@ -11,6 +11,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 add_executable(oolite)
 
+set(OpenGL_GL_PREFERENCE LEGACY)
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
 find_package(OpenAL)
 find_package(SDL)
@@ -55,10 +56,10 @@ target_include_directories(oolite
 
 target_link_libraries(oolite
         PRIVATE
-        GL
-        GLU
         GNUstep::ObjC
         GNUstep::Base
+        OpenGL::GL
+        OpenGL::GLU
         OpenAL::OpenAL
         SDL::SDL
         PNG::PNG
