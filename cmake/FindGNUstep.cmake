@@ -151,10 +151,6 @@ if (_gnustep_want_gui)
     set(GNUstep_Gui_FOUND YES)
 endif ()
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    add_compile_options($<$<COMPILE_LANGUAGE:OBJC,OBJCXX>:-fobjc-runtime=gnustep-1.9>)
-endif ()
-
 find_package_handle_standard_args(GNUstep
         HANDLE_COMPONENTS
         REASON_FAILURE_MESSAGE ${_gnustep_not_found_message})
