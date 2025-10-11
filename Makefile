@@ -127,6 +127,11 @@ deps-release: $(DEPS)
 	$(MAKE) -f GNUmakefile debug=no use_deps=yes strip=yes
 	mkdir -p AddOns && rm -rf AddOns/Basic-debug.oxp && cp -rf DebugOXP/Debug.oxp AddOns/Basic-debug.oxp
 
+.PHONY: release-symbols
+release-symbols: $(DEPS)
+	$(MAKE) -f GNUmakefile debug=no use_deps=yes strip=no symbols=yes
+	mkdir -p AddOns && rm -rf AddOns/Basic-debug.oxp && cp -rf DebugOXP/Debug.oxp AddOns/Basic-debug.oxp
+
 .PHONY: deps-release-deployment
 deps-release-deployment: $(DEPS)
 	cd deps/Linux-deps/x86_64/lib_linker && ./make_so_links.sh && cd ../../../..

@@ -9,6 +9,10 @@ ifeq ($(debug),yes)
     ADDITIONAL_CFLAGS            += -DDEBUG -DOO_DEBUG -DOO_CHECK_GL_HEAVY=1
     ADDITIONAL_OBJCFLAGS         += -DDEBUG -DOO_DEBUG -DOO_CHECK_GL_HEAVY=1
 endif
+ifeq ($(symbols),yes)
+    ADDITIONAL_CFLAGS            += -ggdb3 -O0
+    ADDITIONAL_OBJCFLAGS         += -ggdb3 -O0
+endif
 
 # these are common settings for both test and deployment release configurations
 ifeq ($(NO_SHADERS),yes)
