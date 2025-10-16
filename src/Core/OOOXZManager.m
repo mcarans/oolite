@@ -580,6 +580,7 @@ static OOOXZManager *sSingleton = nil;
 - (BOOL) updateManifests
 {
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[self dataURL]]];
+    [request setHTTPShouldHandleCookies:NO];
 	if (_downloadStatus != OXZ_DOWNLOAD_NONE)
 	{
 		return NO;
@@ -1665,6 +1666,7 @@ static OOOXZManager *sSingleton = nil;
 		return NO;
 	}
 	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [request setHTTPShouldHandleCookies:NO];
 	if (_downloadStatus != OXZ_DOWNLOAD_NONE)
 	{
 		return NO;
