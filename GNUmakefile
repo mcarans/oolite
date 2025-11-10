@@ -58,7 +58,7 @@ else
     endif
 
     ADDITIONAL_INCLUDE_DIRS      = -I$(LIBJS_INC_DIR) -Isrc/SDL -Isrc/Core -Isrc/BSDCompat -Isrc/Core/Scripting -Isrc/Core/Materials -Isrc/Core/Entities -Isrc/Core/OXPVerifier -Isrc/Core/Debug -Isrc/Core/Tables -Isrc/Core/MiniZip -Ideps/Linux-deps/include 
-    ADDITIONAL_OBJC_LIBS         = $(OOLITE_SHARED_LIBS) -lGLU -lGL -lX11 -lSDL -lgnustep-base -L$(LIBJS_DIR) -l$(LIBJS) -lopenal -lz -lvorbisfile -lpng `nspr-config --libs` -lstdc++ 
+    ADDITIONAL_OBJC_LIBS         = $(OOLITE_SHARED_LIBS) -lGLU -lGL -lX11 -lSDL -lgnustep-base -L$(LIBJS_DIR) -l$(LIBJS) -lopenal -lz -lvorbisfile -lpng `nspr-config --libs` -lstdc++
     ADDITIONAL_OBJCFLAGS         = -Wall -std=gnu99 -DLOADSAVEGUI -DLINUX -DXP_UNIX -Wno-import `sdl-config --cflags` `nspr-config --cflags`
     ADDITIONAL_CFLAGS            = -Wall -DLINUX -DNEED_STRLCPY `sdl-config --cflags` `nspr-config --cflags`
 
@@ -77,7 +77,7 @@ endif
 # Add flag if building with GNUStep and Clang
 ifneq '' '$(GNUSTEP_HOST_OS)'
     ifneq '' '$(findstring clang++,$(CXX))'
-        ADDITIONAL_OBJCFLAGS += -fobjc-runtime=gnustep-1.9
+        ADDITIONAL_OBJCFLAGS += -fobjc-runtime=gnustep-2.2
     endif
 endif
 
