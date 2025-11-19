@@ -217,7 +217,7 @@ MA 02110-1301, USA.
 	if (![self changeCurrentDirectoryPath: savedir])
 	{
 	   // it probably doesn't exist.
-		if (![self createDirectoryAtPath: savedir attributes: nil])
+		if (![self oo_createDirectoryAtPath: savedir attributes: nil])
 		{
 			OOLog(@"savedSnapshot.defaultPath.create.failed", @"Unable to create directory %@", savedir);
 			return NO;
