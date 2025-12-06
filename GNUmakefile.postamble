@@ -44,7 +44,7 @@ after-all::
 	$(CP) $(CP_FLAGS) Schemata $(PROGDIR)/Resources
 ifeq ($(ESPEAK),yes)
     ifeq ($(GNUSTEP_HOST_OS),mingw32)
-		$(CP) $(CP_FLAGS) /mingw64/share/espeak-ng-data $(PROGDIR)/Resources
+		$(CP) $(CP_FLAGS) $(MINGW_PREFIX)/share/espeak-ng-data $(PROGDIR)/Resources
 		# replace f2 voice
 		$(RM) $(PROGDIR)/Resources/espeak-ng-data/voices/!v/f2
 		$(CP) $(CP_FLAGS) Resources/espeak-ng-data $(PROGDIR)/Resources
