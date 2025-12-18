@@ -112,9 +112,9 @@ install_package() {
                 arch) PKG_NAME="glu" ;;
             esac ;;
 
-        "sdl12-compat")
+        "sdl12")
             case "$CURRENT_DISTRO" in
-                debian) PKG_NAME="libsdl1.2-compat-dev" ;;
+                debian) PKG_NAME="libsdl1.2-dev" ;;  # uses libsdl1.2-compat-dev on new distros
                 redhat) PKG_NAME="sdl12-compat-devel" ;;
                 arch) PKG_NAME="sdl12-compat" ;;
             esac ;;

@@ -4,6 +4,9 @@
 if [ -f /etc/os-release ]; then
     . /etc/os-release
     OS_FAMILY="${ID} ${ID_LIKE}"
+    CURRENT_VER=$(echo "${VERSION_ID:-0}" | tr -d '"')
+    MAJOR_VER=${CURRENT_VER%%.*}
+    OLD_DISTRO="N"
 else
     echo "❌ /etc/os-release not found. Cannot detect OS." >&2
     exit 1
@@ -26,6 +29,14 @@ if [[ "$OS_FAMILY" == *"debian"* ]]; then
     INSTALL_CMD=($SUDO_CMD apt-get install -y)
     UPDATE_CMD=($SUDO_CMD sudo apt-get update)
 
+    if [[ "$ID" == "ubuntu" ]]; then
+        # Extract the major version (e.g., "20.04" -> "20")
+
+        if [ "$MAJOR_VER" -le 20 ]; then
+            echo "Match: Ubuntu $VERSION_ID detected (20 or lower)."
+            OLD_DISTRO="Y"
+        fi
+    fi
 elif [[ "$OS_FAMILY" == *"fedora"* || "$OS_FAMILY" == *"rhel"* ]]; then
     # Fedora, CentOS, RHEL, AlmaLinux
     CURRENT_DISTRO="redhat"

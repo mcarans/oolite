@@ -29,11 +29,16 @@ run_script() {
     curl -L -O https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
     chmod +x linuxdeploy-x86_64.AppImage
 
-    case "$CURRENT_DISTRO" in
-        debian) SDL2="--library=/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0" ;;
-        redhat) SDL2="--library=/usr/lib64/libSDL2-2.0.so.0 --library=/usr/lib64/libSDL3.so.0" ;;
-        arch) SDL2="--library=/usr/lib/libSDL2-2.0.so.0 --library=/usr/lib/libSDL3.so.0" ;;
-    esac
+    if [[ ${OLD_SISTRO,,} == "Y" ]]; then
+        SDL2=""
+    else
+        case "$CURRENT_DISTRO" in
+            debian) SDL2="--library=/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0" ;;
+            redhat) SDL2="--library=/usr/lib64/libSDL2-2.0.so.0 --library=/usr/lib64/libSDL3.so.0" ;;
+            arch) SDL2="--library=/usr/lib/libSDL2-2.0.so.0 --library=/usr/lib/libSDL3.so.0" ;;
+        esac
+    fi
+
 
     echo "Building AppDir for AppImage..."
     if ! NO_STRIP=1 ./linuxdeploy-x86_64.AppImage \
