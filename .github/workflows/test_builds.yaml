@@ -14,6 +14,8 @@ jobs:
         --security-opt apparmor:unconfined
     steps:
       - name: Update Ubuntu
+        env:
+          DEBIAN_FRONTEND: noninteractive
         run: |
           export DEBIAN_FRONTEND=noninteractive
           apt update
@@ -24,9 +26,13 @@ jobs:
           fetch-depth: 0
           submodules: true
       - name: Checkout dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
         run: |
           DevEnvironments/Linux/checkout_deps.sh
       - name: Install packages and build Oolite
+        env:
+          DEBIAN_FRONTEND: noninteractive
         run: |
           DevEnvironments/Linux/install.sh pkg-appimage
 
