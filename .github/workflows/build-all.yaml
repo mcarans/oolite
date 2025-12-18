@@ -68,7 +68,13 @@ jobs:
            npx eslint . || echo Ignore problems and continue
 
   build-linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:20.04
+      options: >-
+        --cap-add SYS_ADMIN
+        --device /dev/fuse
+        --security-opt apparmor:unconfined
     needs: [common-steps]
     strategy:
       matrix:
