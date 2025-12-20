@@ -249,6 +249,22 @@ static OOOXZManager *sSingleton = nil;
 	return nil;
 }
 
+/* The path where extraction of OXZs occurs (pressing x in UI) for
+ * Oolite. Library/ApplicationSupport seems to be the most appropriate
+ * location. */
+- (NSString *) extractPath
+{
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory,NSUserDomainMask,YES);
+	NSString *appPath = [paths objectAtIndex:0];
+	if (appPath != nil)
+	{
+		appPath = [appPath stringByAppendingPathComponent:@"Oolite"];
+		appPath = [appPath stringByAppendingPathComponent:@"AddOns"];
+		return appPath;
+	}
+	return nil;
+}
+
 
 - (NSString *) extractionBasePathForIdentifier:(NSString *)identifier andVersion:(NSString *)version
 {

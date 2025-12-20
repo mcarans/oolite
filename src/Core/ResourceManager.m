@@ -183,26 +183,19 @@ static NSMutableDictionary *sStringCache;
 		
 		sUserRootPaths = [[NSArray alloc] initWithObjects:
 
-#if OOLITE_MAC_OS_X
-					  [[[[NSHomeDirectory() stringByAppendingPathComponent:@"Library"]
-						 stringByAppendingPathComponent:@"Application Support"]
-						 stringByAppendingPathComponent:@"Oolite"]
-					    stringByAppendingPathComponent:@"AddOns"],
+#if OOLITE_WINDOWS
+					  @"../AddOns",
+#else
+					  @"AddOns",
 					  [[[[NSBundle mainBundle] bundlePath]
 						 stringByDeletingLastPathComponent]
 					    stringByAppendingPathComponent:@"AddOns"],
-
-#elif OOLITE_WINDOWS
-					  @"../AddOns",
-#else	
-					  @"AddOns",
-#endif
-
-#if !OOLITE_WINDOWS
 					  [[NSHomeDirectory()
 						stringByAppendingPathComponent:@".Oolite"]
 					   stringByAppendingPathComponent:@"AddOns"],
+					  [[OOOXZManager sharedManager] extractPath],
 #endif
+
 		
 						nil];
 	}
