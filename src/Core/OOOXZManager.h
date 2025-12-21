@@ -90,6 +90,7 @@ typedef enum {
 
 - (NSString *) installPath;
 - (NSString *) gameDirAddOnsPath;
+- (NSString *) libraryAddOnsPath;
 
 - (BOOL) updateManifests;
 - (BOOL) cancelUpdate;

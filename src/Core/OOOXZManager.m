@@ -271,6 +271,16 @@ static OOOXZManager *sSingleton = nil;
 #endif
 }
 
+- (NSString *) libraryAddOnsPath
+{
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory,NSUserDomainMask,YES);
+	NSString *appPath = [paths objectAtIndex:0];
+	if (appPath != nil)
+	{
+		return [[appPath stringByAppendingPathComponent:@"Oolite"] stringByAppendingPathComponent:@"AddOns"];
+	}
+	return nil;
+}
 
 - (NSString *) extractionBasePathForIdentifier:(NSString *)identifier andVersion:(NSString *)version
 {
