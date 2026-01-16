@@ -23,6 +23,7 @@ plugins:
             GENERATE_LATEX: NO
             GENERATE_HTML: NO
             GENERATE_XML: YES
+            RECURSIVE: YES
             # Crucial for Oolite: Add Obj-C and C++ extensions
             FILE_PATTERNS: "*.c *.cc *.cxx *.cpp *.c++ *.h *.hh *.hxx *.hpp *.m *.mm"
             # Parse Objective-C specific syntax
