@@ -20,26 +20,26 @@ plugins:
           debug: True
           # Custom Doxygen settings injected into the generation
           doxy-cfg:
-            GENERATE_LATEX: NO
-            GENERATE_HTML: NO
-            GENERATE_XML: YES
-            RECURSIVE: YES
+            GENERATE_LATEX: False
+            GENERATE_HTML: False
+            GENERATE_XML: True
+            RECURSIVE: True
             # Crucial for Oolite: Add Obj-C and C++ extensions
             FILE_PATTERNS: "*.c *.cc *.cxx *.cpp *.c++ *.h *.hh *.hxx *.hpp *.m *.mm"
             # Parse Objective-C specific syntax
             EXTENSION_MAPPING: m=Objective-C mm=Objective-C++
             # Graphviz settings (optional)
-            SOURCE_BROWSER: YES
-            INLINE_SOURCES: YES
-            REFERENCED_BY_RELATION: YES
-            REFERENCES_RELATION: YES
-            REFERENCES_LINK_SOURCE: NO
-            SOURCE_TOOLTIPS: YES
-            HAVE_DOT: YES
-            CLASS_GRAPH: YES
-            QUIET: NO
-            WARNINGS: YES
-            WARN_IF_UNDOCUMENTED: YES
+            SOURCE_BROWSER: True
+            INLINE_SOURCES: True
+            REFERENCED_BY_RELATION: True
+            REFERENCES_RELATION: True
+            REFERENCES_LINK_SOURCE: False
+            SOURCE_TOOLTIPS: True
+            HAVE_DOT: True
+            CLASS_GRAPH: True
+            QUIET: False
+            WARNINGS: True
+            WARN_IF_UNDOCUMENTED: True
             # This ensures warnings go to the build log
             WARN_LOGFILE: ""
 
