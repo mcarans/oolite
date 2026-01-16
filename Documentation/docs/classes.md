@@ -1,3 +1,3 @@
 # Classes
 
-:::oolite_core.classes:::
+:::oolite.classes:::

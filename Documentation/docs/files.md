@@ -1,3 +1,3 @@
 # File List
 
-:::oolite_core.files:::
+:::oolite.files:::
