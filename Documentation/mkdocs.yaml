@@ -47,11 +47,20 @@ plugins:
             OPTIMIZE_OUTPUT_JAVA: YES
             HAVE_DOT: YES
             CLASS_GRAPH: YES
+            COLLABORATION_GRAPH: YES
+            GRAPHICAL_HIERARCHY: YES
+            DIRECTORY_GRAPH: YES
+            DOT_PATH: ""
+            DOT_IMAGE_FORMAT: svg
+            INTERACTIVE_SVG: YES
+            DOT_GRAPH_MAX_NODES: 200
+            DOT_MULTI_TARGETS: YES
             QUIET: NO
             WARNINGS: YES
             WARN_IF_UNDOCUMENTED: YES
             # This ensures warnings go to the build log
-            WARN_LOGFILE: "doxygen_warnings.log"
+            WARN_LOGFILE: ""
+#            WARN_LOGFILE: "doxygen_warnings.log"
 
 nav:
   - Home: index.md
