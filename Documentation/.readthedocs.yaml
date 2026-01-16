@@ -11,7 +11,13 @@ build:
   apt_packages:
     - doxygen
     - graphviz
+  jobs:
+    # This replaces the default RTD build step with a verbose one
+    build:
+      html:
+        - python -m mkdocs build -v --clean --site-dir $READTHEDOCS_OUTPUT/html --config-file Documentation/mkdocs.yaml
 
 python:
   install:
     - requirements: Documentation/requirements.txt
+

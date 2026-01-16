@@ -29,8 +29,19 @@ plugins:
             # Parse Objective-C specific syntax
             EXTENSION_MAPPING: m=Objective-C mm=Objective-C++
             # Graphviz settings (optional)
+            SOURCE_BROWSER: YES
+            INLINE_SOURCES: YES
+            REFERENCED_BY_RELATION: YES
+            REFERENCES_RELATION: YES
+            REFERENCES_LINK_SOURCE: NO
+            SOURCE_TOOLTIPS: YES
             HAVE_DOT: YES
             CLASS_GRAPH: YES
+            QUIET: NO
+            WARNINGS: YES
+            WARN_IF_UNDOCUMENTED: YES
+            # This ensures warnings go to the build log
+            WARN_LOGFILE: ""
 
 nav:
   - Home: index.md
