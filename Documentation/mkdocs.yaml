@@ -15,42 +15,43 @@ plugins:
         # You can define multiple projects if you want to separate Obj-C and C++
         oolite:
           # Path to your source code (relative to mkdocs.yaml)
-          src-dirs: ../src
-          full-doc: True
-          debug: True
+          src-dirs: src
+          full-doc: true
+          debug: true
           # Custom Doxygen settings injected into the generation
           doxy-cfg:
-            INPUT: "../src"
-            GENERATE_LATEX: False
-            GENERATE_HTML: False
-            GENERATE_XML: True
-            RECURSIVE: True
+            PROJECT_NAME: "Oolite"
+            GENERATE_LATEX: NO
+            GENERATE_HTML: NO
+            GENERATE_XML: YES
+            RECURSIVE: YES
             # Crucial for Oolite: Add Obj-C and C++ extensions
             FILE_PATTERNS: "*.c *.cc *.cxx *.cpp *.c++ *.h *.hh *.hxx *.hpp *.m *.mm"
             # Parse Objective-C specific syntax
             EXTENSION_MAPPING: m=Objective-C mm=Objective-C++
             # Graphviz settings (optional)
-            SOURCE_BROWSER: True
-            INLINE_SOURCES: True
-            REFERENCED_BY_RELATION: True
-            REFERENCES_RELATION: True
-            REFERENCES_LINK_SOURCE: False
-            SOURCE_TOOLTIPS: True
-            EXTRACT_ALL: True
-            EXTRACT_PRIVATE: True
-            EXTRACT_PRIV_VIRTUAL: True
-            EXTRACT_PACKAGE: True
-            EXTRACT_STATIC: True
-            EXTRACT_LOCAL_CLASSES: True
-            EXTRACT_LOCAL_METHODS: True
-            EXTRACT_ANON_NSPACES: True
-            HAVE_DOT: True
-            CLASS_GRAPH: True
-            QUIET: False
-            WARNINGS: True
-            WARN_IF_UNDOCUMENTED: True
+            SOURCE_BROWSER: YES
+            INLINE_SOURCES: YES
+            REFERENCED_BY_RELATION: YES
+            REFERENCES_RELATION: YES
+            REFERENCES_LINK_SOURCE: NO
+            SOURCE_TOOLTIPS: YES
+            EXTRACT_ALL: YES
+            EXTRACT_PRIVATE: YES
+            EXTRACT_PRIV_VIRTUAL: YES
+            EXTRACT_PACKAGE: YES
+            EXTRACT_STATIC: YES
+            EXTRACT_LOCAL_CLASSES: YES
+            EXTRACT_LOCAL_METHODS: YES
+            EXTRACT_ANON_NSPACES: YES
+            OPTIMIZE_OUTPUT_JAVA: YES
+            HAVE_DOT: YES
+            CLASS_GRAPH: YES
+            QUIET: NO
+            WARNINGS: YES
+            WARN_IF_UNDOCUMENTED: YES
             # This ensures warnings go to the build log
-            WARN_LOGFILE: ""
+            WARN_LOGFILE: "doxygen_warnings.log"
 
 nav:
   - Home: index.md
