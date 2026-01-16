@@ -28,7 +28,7 @@ plugins:
             # Crucial for Oolite: Add Obj-C and C++ extensions
             FILE_PATTERNS: "*.c *.cc *.cxx *.cpp *.c++ *.h *.hh *.hxx *.hpp *.m *.mm"
             # Parse Objective-C specific syntax
-            EXTENSION_MAPPING: m=Objective-C mm=Objective-C++
+            EXTENSION_MAPPING: m=objc mm=objc
             # Graphviz settings (optional)
             SOURCE_BROWSER: YES
             INLINE_SOURCES: YES
@@ -46,21 +46,22 @@ plugins:
             EXTRACT_ANON_NSPACES: YES
             OPTIMIZE_OUTPUT_JAVA: YES
             HAVE_DOT: YES
+            DOT_CLEANUP: NO
+            DOT_IMAGE_FORMAT: svg
+            DOT_GRAPH_MAX_NODES: 200
+            DOT_MULTI_TARGETS: YES
             CLASS_GRAPH: YES
             COLLABORATION_GRAPH: YES
             GRAPHICAL_HIERARCHY: YES
             DIRECTORY_GRAPH: YES
-            DOT_PATH: ""
-            DOT_IMAGE_FORMAT: svg
             INTERACTIVE_SVG: YES
-            DOT_GRAPH_MAX_NODES: 200
-            DOT_MULTI_TARGETS: YES
+            XML_PROGRAMLISTING: YES
+            GENERATE_AUTOGEN_DEF: YES
             QUIET: NO
             WARNINGS: YES
             WARN_IF_UNDOCUMENTED: YES
             # This ensures warnings go to the build log
-            WARN_LOGFILE: ""
-#            WARN_LOGFILE: "doxygen_warnings.log"
+            WARN_LOGFILE: "doxygen_warnings.log"
 
 nav:
   - Home: index.md
