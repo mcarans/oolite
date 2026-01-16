@@ -35,6 +35,14 @@ plugins:
             REFERENCES_RELATION: True
             REFERENCES_LINK_SOURCE: False
             SOURCE_TOOLTIPS: True
+            EXTRACT_ALL: True
+            EXTRACT_PRIVATE: True
+            EXTRACT_PRIV_VIRTUAL: True
+            EXTRACT_PACKAGE: True
+            EXTRACT_STATIC: True
+            EXTRACT_LOCAL_CLASSES: True
+            EXTRACT_LOCAL_METHODS: True
+            EXTRACT_ANON_NSPACES: True
             HAVE_DOT: True
             CLASS_GRAPH: True
             QUIET: False
