@@ -20,6 +20,7 @@ plugins:
           debug: True
           # Custom Doxygen settings injected into the generation
           doxy-cfg:
+            INPUT: "../src"
             GENERATE_LATEX: False
             GENERATE_HTML: False
             GENERATE_XML: True

@@ -1,3 +1,0 @@
-# Classes
-
-:::oolite.classes:::
