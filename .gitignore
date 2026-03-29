@@ -37,3 +37,6 @@ tools-make/
 
 # Debug output
 /core
+
+# Python
+.venv/

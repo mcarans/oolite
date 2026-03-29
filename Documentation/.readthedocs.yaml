@@ -7,9 +7,9 @@ build:
     - doxygen
     - graphviz
     - libreoffice
+    - pandoc
   jobs:
     pre_build:
-      - python3 -m playwright install chromium
       - ./Documentation/build_doxygen.sh
       - ./Documentation/build_referencesheet.sh
       - cp ./LICENSE.md ./build/documentation/docs/license.md

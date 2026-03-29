@@ -34,6 +34,26 @@ run_script() {
     SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
     pushd "$SCRIPT_DIR"
 
+    INSTALL_PANDOC=true
+    INSTALL_SOFFICE=true
+
+    # 1. Parse Command Line Arguments
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            --no-pandoc)   INSTALL_PANDOC=false ;;
+            --no-soffice)  INSTALL_SOFFICE=false ;;
+            -h|--help)
+               echo "Usage: ./script.sh [options]"
+               echo "Options:"
+               echo "  --no-pandoc      Skip Pandoc installation"
+               echo "  --no-soffice     Skip soffice (Libreoffice) installation"
+               exit 0
+               ;;
+            *) echo "Unknown parameter: $1"; exit 1 ;;
+        esac
+        shift
+    done
+
     pacman -S git --noconfirm
     pacman -S dos2unix --noconfirm
     pacman -S pactoys --noconfirm
@@ -86,6 +106,7 @@ run_script() {
         done
     	pacman -Q > installed-packages-gcc.txt
     fi
+    cd ../..
 
     echo "source $MINGW_PREFIX/share/GNUstep/Makefiles/GNUstep.sh" > /etc/profile.d/GNUstep.sh
 
@@ -100,6 +121,15 @@ shopt -s histappend
 PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 EOF
     fi
+
+    if [[ "$INSTALL_PANDOC" == true ]]; then
+        source ShellScripts/Windows/install_pandoc_fn.sh
+
+        if ! install_pandoc; then
+            return 1
+        fi
+    fi
+
     popd
 }
 

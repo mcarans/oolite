@@ -18,11 +18,16 @@ run_script() {
     PROGDIR="../oolite.app"
     cp -rf $PROGDIR/Resources $APPDIR/usr/bin
 
-    if ! curl -o linuxdeploy -L https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage; then
-       echo "❌ linuxdeploy download failed!" >&2
-       return 1
+    local BIN="$HOME/.local/bin"
+    if command -v "linuxdeploy" &> /dev/null; then
+        local LINUXDEPLOY_BIN="linuxdeploy"
+    elif command -v "$BIN/linuxdeploy" &> /dev/null; then
+        local LINUXDEPLOY_BIN="$BIN/linuxdeploy"
+    else
+        echo "❌ linuxdeploy isn't installed! Install with: \"install_deps_root --appimage\" " >&2
+          return 1
+       fi
     fi
-    chmod +x linuxdeploy
 
     case "$CURRENT_DISTRO" in
         debian) SDL2="--library=/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0" ;;
@@ -31,7 +36,7 @@ run_script() {
     esac
 
     echo "Building AppDir for AppImage..."
-    if ! NO_STRIP=1 ./linuxdeploy \
+    if ! NO_STRIP=1 linuxdeploy \
     --appdir $APPDIR \
     --executable $PROGDIR/oolite \
     --custom-apprun $PROGDIR/run_oolite.sh \
@@ -51,15 +56,8 @@ run_script() {
         -exec strip --strip-unneeded '{}' +   # keeps symbols needed for runtime linking
     fi
 
-    if ! curl -o appimagetool -L https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage; then
-       echo "❌ appimagetool download failed!" >&2
-       return 1
-    fi
-
-    chmod +x appimagetool
-
     echo "Creating AppImage..."
-    if ! ./appimagetool $APPDIR; then
+    if ! appimagetool $APPDIR; then
         echo "❌ AppImage creation failed!" >&2
         return 1
     fi

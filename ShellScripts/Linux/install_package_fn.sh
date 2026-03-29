@@ -4,8 +4,8 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 source $SCRIPT_DIR/os_detection.sh
 
 install_package() {
-    GENERIC_NAME=$1
-    PKG_NAME=""
+    local GENERIC_NAME=$1
+    local PKG_NAME=""
 
     # This CASE statement is the dictionary.
     # Add your packages here.
@@ -128,11 +128,54 @@ install_package() {
                 arch) PKG_NAME="libx11" ;;
             esac ;;
 
-        "file") PKG_NAME="file" ;;
-
-        "fuse") PKG_NAME="fuse3" ;;
+        "appimage")
+            case "$CURRENT_DISTRO" in
+                debian) PKG_NAME="file fuse3" ;;
+                redhat) PKG_NAME="file fuse3 which desktop-file-utils perl-File-MimeInfo" ;;
+                arch) PKG_NAME="file fuse3" ;;
+            esac ;;
 
         "flatpak") PKG_NAME="flatpak flatpak-builder" ;;
+
+        "python")
+            case "$CURRENT_DISTRO" in
+                debian)
+                    PKG_NAME="python3-pip"
+                    ;;
+                redhat)
+                    PKG_NAME="python3-pip"
+                    ;;
+                arch)
+                    PKG_NAME="python-pip"
+                    ;;
+            esac ;;
+
+        "weasyprint-deps")
+            case "$CURRENT_DISTRO" in
+                debian)
+                    PKG_NAME="libpango-1.0-0 libharfbuzz0b libpangoft2-1.0-0 shared-mime-info"
+                    ;;
+                redhat)
+                    PKG_NAME="pango harfbuzz shared-mime-info"
+                    ;;
+                arch)
+                    PKG_NAME="pango harfbuzz shared-mime-info"
+                    ;;
+            esac ;;
+
+        "soffice")
+            case "$CURRENT_DISTRO" in
+                debian)
+                    echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections
+                    PKG_NAME="fonts-dejavu-core fonts-dejavu-extra ttf-mscorefonts-installer libreoffice-writer-nogui"
+                    ;;
+                redhat)
+                    PKG_NAME="dejavu-sans-fonts dejavu-serif-fonts msttcore-fonts-installer libreoffice-writer libreoffice-headless"
+                    ;;
+                arch)
+                    PKG_NAME="ttf-dejavu ttf-ms-fonts libreoffice-fresh"
+                    ;;
+            esac ;;
 
         *)
             echo "❌ Could not translate '$GENERIC_NAME' for $CURRENT_DISTRO!" >&2
@@ -150,7 +193,5 @@ install_package() {
             echo "❌ Could not install $GENERIC_NAME ($PKG_NAME)!" >&2
             return 1
         fi
-
-
     fi
 }

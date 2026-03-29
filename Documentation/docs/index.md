@@ -1,4 +1,4 @@
-![](./assets/oolite-logo.png){: width="30%" }
+![](./assets/oolite-logo.png){ width="30%" }
 
 # Installation
 

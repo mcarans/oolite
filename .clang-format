@@ -1,0 +1,22 @@
+---
+# Global settings for C, C++, and Objective-C
+Language: Cpp
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnLimit: 120
+AllowShortFunctionsOnASingleLine: None
+DerivePointerAlignment: false
+PointerAlignment: Right
+
+---
+# Specific overrides for Objective-C logic
+Language: ObjC
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnLimit: 120
+ObjCBlockIndentWidth: 4
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: true
+# Ensures long method calls align by their colons
+AlignAfterOpenBracket: Align
+---
