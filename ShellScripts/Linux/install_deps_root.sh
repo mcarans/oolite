@@ -2,7 +2,6 @@
 
 # This script must be run as root (for example with sudo).
 
-
 run_script() {
     # If current user ID is NOT 0 (root)
     if [[ $EUID -ne 0 ]]; then
@@ -10,17 +9,20 @@ run_script() {
         return 1
     fi
 
-    # Initialize flags with defaults
-    INSTALL_CORE=true
-    INSTALL_APPIMAGE=false
-    INSTALL_FLATPAK=false
+    # Initialize local flags with defaults
+    local INSTALL_CORE=true
+    local INSTALL_APPIMAGE=false
+    local INSTALL_FLATPAK=false
+    local SCRIPT_DIR
+    local pkgs
+    local pkg
+    local LIB_PARAM
+    local BIN
+    local LINTER_BIN
+    local EXCLUDE_LIST
 
     # Parse Command Line Arguments
-    # If any specific flags are passed, we assume the user might NOT want the core
-    # unless they also use --all or don't use any flags at all.
     if [[ "$#" -gt 0 ]]; then
-        # Check if user is ONLY asking for AppImage or Flatpak
-        # This allows us to disable the heavy core build if they just want tools
         INSTALL_CORE=false
     fi
 
@@ -48,38 +50,43 @@ run_script() {
         shift
     done
 
-    # If no arguments were provided at all, default to core
     if [[ "$INSTALL_CORE" == false && "$INSTALL_APPIMAGE" == false && "$INSTALL_FLATPAK" == false ]]; then
         INSTALL_CORE=true
     fi
 
     SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
-    pushd "$SCRIPT_DIR"
+    pushd "$SCRIPT_DIR" > /dev/null
 
-    source ./install_package_fn.sh
+    # Source the package helper
+    if [[ -f "./install_package_fn.sh" ]]; then
+        source ./install_package_fn.sh
+    else
+        echo "❌ install_package_fn.sh not found!" >&2
+        popd > /dev/null
+        return 1
+    fi
 
     # --- SECTION 1: CORE DEPENDENCIES ---
     if [[ "$INSTALL_CORE" == true ]]; then
         echo "📦 Installing Core Build Dependencies..."
 
-        # Array of packages to keep the code clean
-        local pkgs=(
+        pkgs=(
             base-devel clang lldb cmake gnutls-dev icu-dev ffi-dev
             xslt-dev png-dev zlib-dev nspr-dev espeak-ng-dev
             vorbis-dev openal-dev opengl-dev glu-dev sdl12-compat x11-dev
         )
 
         for pkg in "${pkgs[@]}"; do
-            install_package "$pkg" || return 1
+            install_package "$pkg" || { popd > /dev/null; return 1; }
         done
 
-        if [ ! -d /usr/share/espeak-ng-data ]; then
-            if [ ! -d /usr/local/share/espeak-ng-data ]; then
-                if [ ! -d /usr/lib/x86_64-linux-gnu/espeak-ng-data ]; then
-                    echo "❌ espeak-ng-data not in /usr/share, /usr/local/share or /usr/lib/x86_64-linux-gnu!"
-                    return 1
-                fi
-            fi
+        # Validate espeak data presence
+        if [ ! -d /usr/share/espeak-ng-data ] && \
+           [ ! -d /usr/local/share/espeak-ng-data ] && \
+           [ ! -d /usr/lib/x86_64-linux-gnu/espeak-ng-data ]; then
+            echo "❌ espeak-ng-data not found in standard locations!" >&2
+            popd > /dev/null
+            return 1
         fi
 
         export CC=clang
@@ -87,52 +94,42 @@ run_script() {
 
         if ! cd ../../build; then
             echo "❌ build folder doesn't exist!" >&2
+            popd > /dev/null
             return 1
         fi
 
+        # Build libobjc2
         cd libobjc2
-        rm -rf build
-        mkdir build
-        cd build
+        rm -rf build && mkdir build && cd build
         if ! cmake -DTESTS=on -DCMAKE_BUILD_TYPE=Release -DGNUSTEP_INSTALL_TYPE=NONE -DEMBEDDED_BLOCKS_RUNTIME=ON -DOLDABI_COMPAT=OFF ../; then
             echo "❌ libobjc2 cmake configure failed!" >&2
             return 1
         fi
-
-        if ! cmake --build .; then
-            echo "❌ libobjc2 cmake build failed!" >&2
-            return 1
-        fi
-        cmake --install .
+        cmake --build . && cmake --install .
         cd ../..
 
+        # Build GNUstep Make
         cd tools-make
         make clean
-
-        # Bash
-        if [[ ${CURRENT_DISTRO,,} == "redhat" ]]; then
-            LIB_PARAM="--with-libdir=lib64"
-        else
-            LIB_PARAM=""
-        fi
+        LIB_PARAM=""
+        [[ ${CURRENT_DISTRO,,} == "redhat" ]] && LIB_PARAM="--with-libdir=lib64"
 
         if ! ./configure --with-library-combo=ng-gnu-gnu --with-runtime-abi=gnustep-2.2 ${LIB_PARAM:+"$LIB_PARAM"}; then
             echo "❌ tools-make configure failed!" >&2
             return 1
         fi
-        make
-        make install
+        make && make install
         cd ..
 
+        # Build GNUstep Base
         cd libs-base
         make clean
-        source /usr/local/share/GNUstep/Makefiles/GNUstep.sh
-        if ! ./configure; then
-            echo "❌ libs-base configure failed!" >&2
-            return 1
+        if [[ -f "/usr/local/share/GNUstep/Makefiles/GNUstep.sh" ]]; then
+            source /usr/local/share/GNUstep/Makefiles/GNUstep.sh
         fi
-        if ! make -j$(nproc); then
-            echo "❌ libs-base make failed!" >&2
+
+        if ! ./configure || ! make -j$(nproc); then
+            echo "❌ libs-base build failed!" >&2
             return 1
         fi
         make install
@@ -142,9 +139,9 @@ run_script() {
     # --- SECTION 2: APPIMAGE TOOLS ---
     if [[ "$INSTALL_APPIMAGE" == true ]]; then
         echo "📦 Installing AppImage Tools..."
-        install_package appimage || return 1
+        install_package appimage || { popd > /dev/null; return 1; }
 
-        local BIN="$HOME/.local/bin"
+        BIN="$HOME/.local/bin"
         mkdir -p "$BIN"
 
         source ShellScripts/Linux/install_appimage_tool_fn.sh
@@ -152,30 +149,27 @@ run_script() {
 
         LINTER_BIN="$BIN/appdir-lint.sh"
         EXCLUDE_LIST="$BIN/excludelist"
-    
+
         if [ ! -x "$LINTER_BIN" ] || [ ! -f "$EXCLUDE_LIST" ]; then
             echo "📥 Downloading AppDir linter and excludelist..."
-            curl -o "$LINTER_BIN" -L https://raw.githubusercontent.com/AppImage/AppImages/master/appdir-lint.sh || { echo "❌ Linter download failed" >&2; exit 1; }
-            curl -o "$EXCLUDE_LIST" -L https://raw.githubusercontent.com/AppImage/AppImages/master/excludelist || { echo "❌ Excludelist download failed" >&2; exit 1; }
+            curl -o "$LINTER_BIN" -L https://raw.githubusercontent.com/AppImage/AppImages/master/appdir-lint.sh || return 1
+            curl -o "$EXCLUDE_LIST" -L https://raw.githubusercontent.com/AppImage/AppImages/master/excludelist || return 1
             chmod +x "$LINTER_BIN"
         fi
-        
+
         install_appimage_tool "$BIN" "linuxdeploy" "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/" || return 1
     fi
 
     if [[ "$INSTALL_FLATPAK" == true ]]; then
-        install_package flatpak || return 1
+        install_package flatpak || { popd > /dev/null; return 1; }
     fi
 
-	popd
+    popd > /dev/null
 }
 
 run_script "$@"
 status=$?
 
-
-# Exit only if not sourced
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     exit $status
 fi
-

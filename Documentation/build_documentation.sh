@@ -17,32 +17,24 @@ run_script() {
     fi
 
     if python3 --version >/dev/null 2>&1; then
-        PYTHON_CMD="python3"
+        local PYTHON_CMD="python3"
     elif python --version >/dev/null 2>&1; then
-        PYTHON_CMD="python"
+        local PYTHON_CMD="python"
     else
       echo "❌ Python executable not found" >&2
       return 1
     fi
 
-    cd ../build/documentation/
-    cp -r ../../Documentation/* ./
-    cp ../../LICENSE.md ./docs/license.md
-    VENV_DIR=".venv"
-    if [ ! -d "$VENV_DIR" ]; then
-        echo "Creating virtual environment..."
-        "$PYTHON_CMD" -m venv "$VENV_DIR"
-    fi
+    local VENV_DIR="../.venv"
     if [ -d "$VENV_DIR/Scripts" ]; then
         source "$VENV_DIR/Scripts/activate"
     else
         source "$VENV_DIR/bin/activate"
     fi
 
-    if ! pip install -r requirements.txt; then
-        echo "❌ Could not install MKDocs requirements!" >&2
-        return 1
-    fi
+    cd ../build/documentation/
+    cp -r ../../Documentation/* ./
+    cp ../../LICENSE.md ./docs/license.md
 
     if ! mkdocs build --clean; then
         echo "❌ MKDocs build failed!" >&2

@@ -4,9 +4,8 @@ build_doxygen() {
     SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
     pushd "$SCRIPT_DIR"
 
-    PKG_OK=$(command -v doxygen)
-    if [ "" = "$PKG_OK" ]; then
-      echo "❌ Doxygen executable not found!" >&2
+    if ! command -v doxygen >/dev/null 2>&1; then
+      echo "❌ Doxygen not found!" >&2
       return 1
     fi
 

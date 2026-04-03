@@ -1,13 +1,14 @@
 #!/bin/bash
 
 run_script() {
-    SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
-    pushd "$SCRIPT_DIR"
+    # Initialize local variables
+    local SCRIPT_DIR
+    local INSTALL_PYTHON=false
+    local INSTALL_SOFFICE=false
+    local INSTALL_WEASYPRINT=false
 
-    # Initialize flags as false (not installed by default)
-    INSTALL_PYTHON=false
-    INSTALL_SOFFICE=false
-    INSTALL_WEASYPRINT=false
+    SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+    pushd "$SCRIPT_DIR" > /dev/null
 
     # Parse Command Line Arguments
     while [[ "$#" -gt 0 ]]; do
@@ -27,9 +28,14 @@ run_script() {
                echo "  --soffice      Install soffice (Libreoffice)"
                echo "  --weasyprint   Install WeasyPrint dependencies"
                echo "  --all          Install Python, soffice and WeasyPrint dependencies"
+               popd > /dev/null
                exit 0
                ;;
-            *) echo "Unknown parameter: $1"; exit 1 ;;
+            *)
+               echo "❌ Unknown parameter: $1" >&2
+               popd > /dev/null
+               exit 1
+               ;;
         esac
         shift
     done
@@ -38,7 +44,8 @@ run_script() {
         if ! command -v python >/dev/null 2>&1; then
             echo "📥 Python not found. Installing system package..."
             if ! pacboy -S python-pip --noconfirm; then
-                echo "❌ Could not install Python!">&2
+                echo "❌ Could not install Python!" >&2
+                popd > /dev/null
                 return 1
             fi
         fi
@@ -47,36 +54,29 @@ run_script() {
     if [[ "$INSTALL_SOFFICE" == true ]]; then
         if ! command -v soffice >/dev/null 2>&1; then
             echo "📥 LibreOffice soffice not found. Installing system package..."
+            # Note: winget may require an interactive shell or admin rights
             if ! winget install LibreOffice.LibreOffice; then
-                echo "❌ Could not install LibreOffice with winget!">&2
+                echo "❌ Could not install LibreOffice with winget!" >&2
+                popd > /dev/null
                 return 1
             fi
         fi
     fi
 
     if [[ "$INSTALL_WEASYPRINT" == true ]]; then
-        if ! pacboy -S pango --noconfirm; then
-            echo "❌ Could not install pango!">&2
-            return 1
-        fi
-        if ! pacboy -S libffi --noconfirm; then
-            echo "❌ Could not install libffi!">&2
-            return 1
-        fi
-        if ! pacboy -S shared-mime-info --noconfirm; then
-            echo "❌ Could not install shared-mime-info!">&2
+        echo "📦 Installing WeasyPrint dependencies..."
+        if ! pacboy -S pango libffi shared-mime-info --noconfirm; then
+            echo "❌ Could not install WeasyPrint dependencies!" >&2
+            popd > /dev/null
             return 1
         fi
     fi
 
-
-    popd
+    popd > /dev/null
 }
-
 
 run_script "$@"
 status=$?
-
 
 # Exit only if not sourced
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then

@@ -150,6 +150,8 @@ install_package() {
                     ;;
             esac ;;
 
+        "doxygen") PKG_NAME="doxygen graphviz" ;;
+
         "weasyprint-deps")
             case "$CURRENT_DISTRO" in
                 debian)

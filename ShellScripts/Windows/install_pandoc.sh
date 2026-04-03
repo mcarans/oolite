@@ -1,54 +1,51 @@
 #!/bin/bash
 
 run_script() {
-    # Configuration
-    PANDOC_VER="3.1.11" # Ensure this matches your desired version
-    TARGET_BIN="/usr/bin/pandoc.exe"
-    TEMP_DIR="/tmp/pandoc_install"
+    local PANDOC_VER="3.1.11"
+    local PANDOC_FILE="pandoc-${PANDOC_VER}-windows-x86_64.zip"
+    local TEMP_DIR=$(mktemp -d)
+    local BIN="/usr/bin"
 
-    # 1. Check if already installed in MSYS2 path
+    if [ ! -d "$BIN" ]; then
+        echo "Creating $BIN directory"
+        mkdir -p "$BIN"
+    fi
+
+    # Check if Pandoc is already in the system PATH
     if command -v pandoc &> /dev/null; then
         echo "✔️ Pandoc is already installed at $(command -v pandoc)"
     else
-        echo "📥 Pandoc not found. Starting MSYS2-specific installation..."
+        echo "📥 Pandoc not found. Installing to $BIN..."
 
-        # Ensure unzip is available
+        # Ensure unzip is available for MSYS2
         if ! command -v unzip &> /dev/null; then
             echo "Missing 'unzip'. Installing via pacman..."
             pacman -S --noconfirm unzip
         fi
 
-        # Prepare environment
-        mkdir -p "$TEMP_DIR"
-        PANDOC_FILE="pandoc-${PANDOC_VER}-windows-x86_64.zip"
-        PANDOC_URL="https://github.com/jgm/pandoc/releases/download/${PANDOC_VER}/${PANDOC_FILE}"
+        local PANDOC_URL="https://github.com/jgm/pandoc/releases/download/${PANDOC_VER}/${PANDOC_FILE}"
 
-        echo "Downloading: $PANDOC_URL"
+        # Download to temporary directory
         if ! curl -L -o "$TEMP_DIR/$PANDOC_FILE" "$PANDOC_URL"; then
             echo "❌ Pandoc download failed!" >&2
             rm -rf "$TEMP_DIR"
             exit 1
         fi
 
-        # Extract
-        echo "📦 Extracting..."
+        # Extract directly to get the binary
         if ! unzip -o "$TEMP_DIR/$PANDOC_FILE" -d "$TEMP_DIR" > /dev/null; then
             echo "❌ Extraction failed!" >&2
             rm -rf "$TEMP_DIR"
             exit 1
         fi
 
-        # MSYS2/Windows zip contains a folder: pandoc-<version>/bin/pandoc.exe
-        # (or sometimes just pandoc-<version>/pandoc.exe depending on the release)
-        EXTRACTED_PATH=$(find "$TEMP_DIR" -name "pandoc.exe" -type f)
-
-        if [[ -f "$EXTRACTED_PATH" ]]; then
-            echo "🚀 Installing to $TARGET_BIN..."
-            mv "$EXTRACTED_PATH" "$TARGET_BIN"
-            chmod +x "$TARGET_BIN"
-            echo "✅ Pandoc installed successfully."
+        # Move to $BIN and set permissions
+        # Note: Windows zip structure usually places pandoc.exe in the root of the archive folder
+        if mv "$TEMP_DIR/pandoc-${PANDOC_VER}/pandoc.exe" "$BIN/pandoc.exe"; then
+            chmod +x "$BIN/pandoc.exe"
+            echo "✅ Pandoc installed successfully to $BIN/pandoc.exe"
         else
-            echo "❌ Could not locate pandoc.exe in the extracted files." >&2
+            echo "❌ Failed to move binary to $BIN" >&2
             rm -rf "$TEMP_DIR"
             exit 1
         fi
@@ -61,9 +58,7 @@ run_script() {
 run_script "$@"
 status=$?
 
-
 # Exit only if not sourced
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     exit $status
 fi
-

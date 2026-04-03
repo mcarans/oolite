@@ -6,8 +6,8 @@ create_venv() {
         return 1
     fi
 
-    SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
-    VENV_DIR="$SCRIPT_DIR/../../.venv"
+    local SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+    local VENV_DIR="$SCRIPT_DIR/../../.venv"
 
     if [ ! -d "$VENV_DIR" ]; then
         echo "Creating virtual environment..."

@@ -1,13 +1,16 @@
 #!/bin/bash
 
 launch_guarded() {
+    # Execute the command passed as arguments
     "$@"
+    # Capture exit code immediately into a local variable
     local EXIT_CODE=$?
 
     if [ $EXIT_CODE -eq 0 ]; then
         exit 0
     fi
 
+    # Use local for strings and metadata
     local APP_NAME="${ARGV0:-Application}"
     local MSG="<b>$APP_NAME failed to start.</b>\n\nExit Code: $EXIT_CODE\n\nRun from terminal to see details."
 
@@ -29,6 +32,9 @@ launch_guarded() {
 }
 
 find_exe_launch() {
+    # Use local for path discovery variables
+    local HERE
+
     if [[ -z "$OO_EXECUTABLE" ]]; then
         HERE="$(dirname "$(readlink -f "$0")")"
         OO_EXECUTABLE="$HERE/oolite"
@@ -39,6 +45,10 @@ find_exe_launch() {
     launch_guarded "$OO_EXECUTABLE" "$@"
 }
 
+# --- GLOBAL SCOPE BEGINS ---
+# Variables below remain global as they are needed for the environment setup
+# and are used across multiple logic branches.
+
 # Check if we are running inside a Flatpak
 if [[ -n "$FLATPAK_ID" ]]; then
     GAME_DATA="$HOME/.var/app/$FLATPAK_ID"
@@ -46,7 +56,7 @@ if [[ -n "$FLATPAK_ID" ]]; then
 
 # Check if we are running inside an AppImage
 elif [[ -n "$APPIMAGE" ]]; then
-    # Get the folder where AppRun is in the AppImage
+    # Use global HERE here because it's not inside a function
     HERE="$(dirname "$(readlink -f "${0}")")"
     export LD_LIBRARY_PATH="$HERE/usr/lib:$LD_LIBRARY_PATH"
     export PATH="$HERE/usr/bin:$PATH"
@@ -59,7 +69,6 @@ elif [[ -n "$APPIMAGE" ]]; then
             launch_guarded "$OO_EXECUTABLE" "$@"
         fi
     else
-        # Get the folder containing the AppImage file
         HERE="$(dirname "$APPIMAGE")"
         GAME_DATA="$HERE/GameData"
     fi
@@ -79,6 +88,7 @@ fi
 
 mkdir -p "$GAME_DATA"
 
+# Standard Environment Exporting
 export OO_SAVEDIR="${OO_SAVEDIR:-$GAME_DATA/SavedGames}"
 mkdir -p "$OO_SAVEDIR"
 export OO_SNAPSHOTSDIR="${OO_SNAPSHOTSDIR:-$GAME_DATA/Snapshots}"
@@ -105,13 +115,9 @@ mkdir -p "$OO_GNUSTEPDIR"
 OO_GNUSTEPDEFAULTSDIR="${OO_GNUSTEPDEFAULTSDIR:-${GAME_DATA}}"
 mkdir -p "$OO_GNUSTEPDEFAULTSDIR"
 
-# OO_ADDITIONALADDONSDIRS can be used to pass a comma separated list of additional OXP folders
-
-
-# Find the current system configuration file
+# GNUstep Config Logic
 ORIGINAL_CONF=$(gnustep-config --variable=GNUSTEP_CONFIG_FILE)
 
-# Fallback: If gnustep-config returns nothing, assume standard location
 if [ -z "$ORIGINAL_CONF" ]; then
     ORIGINAL_CONF="/etc/GNUstep/GNUstep.conf"
 fi
@@ -122,7 +128,6 @@ fi
 
 TEMP_CONF=$(mktemp -t oolite_gnustep_XXXX --suffix=.conf)
 
-# Copy the original config to the temp file (if it exists)
 if [ -f "$ORIGINAL_CONF" ]; then
     cp "$ORIGINAL_CONF" "$TEMP_CONF"
 else
@@ -130,20 +135,22 @@ else
     touch "$TEMP_CONF"
 fi
 
-echo "" >> "$TEMP_CONF"
-echo "# --- Overrides added by launcher script ---" >> "$TEMP_CONF"
-echo "GNUSTEP_USER_DIR_APPS=$OO_GNUSTEPDIR/Applications" >> "$TEMP_CONF"
-echo "GNUSTEP_USER_DIR_ADMIN_APPS=$OO_GNUSTEPDIR/Applications/Admin" >> "$TEMP_CONF"
-echo "GNUSTEP_USER_DIR_WEB_APPS=$OO_GNUSTEPDIR/WebApplications" >> "$TEMP_CONF"
-echo "GNUSTEP_USER_DIR_TOOLS=$OO_GNUSTEPDIR/Tools" >> "$TEMP_CONF"
-echo "GNUSTEP_USER_DIR_ADMIN_TOOLS=$OO_GNUSTEPDIR/Tools/Admin" >> "$TEMP_CONF"
-echo "GNUSTEP_USER_DIR_LIBRARY=$OO_GNUSTEPDIR/Library" >> "$TEMP_CONF"
-echo "GNUSTEP_USER_DIR_HEADERS=$OO_GNUSTEPDIR/Library/Headers" >> "$TEMP_CONF"
-echo "GNUSTEP_USER_DIR_LIBRARIES=$OO_GNUSTEPDIR/Library/Libraries" >> "$TEMP_CONF"
-echo "GNUSTEP_USER_DIR_DOC=$OO_GNUSTEPDIR/Library/Documentation" >> "$TEMP_CONF"
-echo "GNUSTEP_USER_DIR_DOC_MAN=$OO_GNUSTEPDIR/Library/Documentation/man" >> "$TEMP_CONF"
-echo "GNUSTEP_USER_DIR_DOC_INFO=$OO_GNUSTEPDIR/Library/Documentation/info" >> "$TEMP_CONF"
-echo "GNUSTEP_USER_DEFAULTS_DIR=$OO_GNUSTEPDEFAULTSDIR" >> "$TEMP_CONF"
+{
+    echo ""
+    echo "# --- Overrides added by launcher script ---"
+    echo "GNUSTEP_USER_DIR_APPS=$OO_GNUSTEPDIR/Applications"
+    echo "GNUSTEP_USER_DIR_ADMIN_APPS=$OO_GNUSTEPDIR/Applications/Admin"
+    echo "GNUSTEP_USER_DIR_WEB_APPS=$OO_GNUSTEPDIR/WebApplications"
+    echo "GNUSTEP_USER_DIR_TOOLS=$OO_GNUSTEPDIR/Tools"
+    echo "GNUSTEP_USER_DIR_ADMIN_TOOLS=$OO_GNUSTEPDIR/Tools/Admin"
+    echo "GNUSTEP_USER_DIR_LIBRARY=$OO_GNUSTEPDIR/Library"
+    echo "GNUSTEP_USER_DIR_HEADERS=$OO_GNUSTEPDIR/Library/Headers"
+    echo "GNUSTEP_USER_DIR_LIBRARIES=$OO_GNUSTEPDIR/Library/Libraries"
+    echo "GNUSTEP_USER_DIR_DOC=$OO_GNUSTEPDIR/Library/Documentation"
+    echo "GNUSTEP_USER_DIR_DOC_MAN=$OO_GNUSTEPDIR/Library/Documentation/man"
+    echo "GNUSTEP_USER_DIR_DOC_INFO=$OO_GNUSTEPDIR/Library/Documentation/info"
+    echo "GNUSTEP_USER_DEFAULTS_DIR=$OO_GNUSTEPDEFAULTSDIR"
+} >> "$TEMP_CONF"
 
 export GNUSTEP_CONFIG_FILE="$TEMP_CONF"
 

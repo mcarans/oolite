@@ -12,7 +12,9 @@ run_script() {
     fi
 
     # Check if Pandoc is already in the system PATH
-    if ! command -v pandoc >/dev/null 2>&1; then
+    if command -v pandoc &> /dev/null; then
+        echo "✔️ Pandoc is already installed at $(command -v pandoc)"
+    else
         echo "📥 Pandoc not found. Installing to $BIN..."
 
         local PANDOC_URL="https://github.com/jgm/pandoc/releases/download/${PANDOC_VER}/${PANDOC_FILE}"

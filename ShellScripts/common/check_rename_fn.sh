@@ -1,25 +1,43 @@
 #!/bin/bash
 
 check_rename() {
-    # Checks file exists and optionally renames it
-    # First parameter is package name
-    # Second parameter is file pattern
-    # Third optional parameter is substring to replace in the filename
-    if [ -z "$3" ]; then
-        fullname=$1
+    # Initialize local variables
+    local package_name="$1"
+    local pattern="$2"
+    local search_term="$3"
+    local fullname
+    local filename
+    local newname
+    local files
+
+    # 1. Determine the logical full name
+    if [ -z "$search_term" ]; then
+        fullname="$package_name"
     else
-        fullname="${1}_${3}"
+        fullname="${package_name}_${search_term}"
     fi
-    filename=$(ls $2 2>/dev/null)
-    if [ -z "$filename" ]; then
-        echo "❌ No file matching $2 found!" >&2
+
+    # 2. Find the file safely using an array (handles spaces better than ls)
+    files=($pattern)
+    filename="${files[0]}"
+
+    if [ ! -e "$filename" ]; then
+        echo "❌ No file matching $pattern found!" >&2
         return 1
     fi
-    if [ "$3" ]; then
-        newname="${filename/$1/$fullname}"
-        mv $filename $newname
-        filename=$newname
-	fi
 
-	echo "${filename}" "${fullname}"
+    # 3. Handle the optional rename
+    if [ -n "$search_term" ]; then
+        # Replace the package name part with the fullname part
+        newname="${filename/$package_name/$fullname}"
+
+        # Only move if the name actually needs to change
+        if [ "$filename" != "$newname" ]; then
+            mv "$filename" "$newname"
+            filename="$newname"
+        fi
+    fi
+
+    # Output the result for the caller to capture
+    echo "${filename}" "${fullname}"
 }
