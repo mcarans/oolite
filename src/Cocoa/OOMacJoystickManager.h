@@ -23,26 +23,18 @@ MA 02110-1301, USA.
 
 */
 
-
 #import <IOKit/hid/IOHIDManager.h>
 #import "OOJoystickManager.h"
 
-
 #define STICK_GAMMA 2.0
 
+enum { kJoystickGammaTableSize = 256 };
 
-enum
-{
-	kJoystickGammaTableSize = 256
-};
-
-
-@interface OOMacJoystickManager: OOJoystickManager
-{
-@private
-	IOHIDManagerRef			hidManager;
-	CFMutableArrayRef		devices;
-	int						gammaTable[kJoystickGammaTableSize];
+@interface OOMacJoystickManager : OOJoystickManager {
+   @private
+    IOHIDManagerRef hidManager;
+    CFMutableArrayRef devices;
+    int gammaTable[kJoystickGammaTableSize];
 }
 
 @end

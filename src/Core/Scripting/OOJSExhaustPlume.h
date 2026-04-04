@@ -28,13 +28,12 @@ MA 02110-1301, USA.
 #include <jsapi.h>
 #import "OOExhaustPlumeEntity.h"
 
-
 void InitOOJSExhaustPlume(JSContext *context, JSObject *global);
 
 @interface OOExhaustPlumeEntity (OOJavaScriptExtensions)
 
 - (void)getJSClass:(JSClass **)outClass andPrototype:(JSObject **)outPrototype;
-- (NSString *) oo_jsClassName;
-- (BOOL) isVisibleToScripts;
+- (NSString *)oo_jsClassName;
+- (BOOL)isVisibleToScripts;
 
 @end

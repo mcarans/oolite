@@ -30,17 +30,13 @@ SOFTWARE.
 
 #import "OOLogging.h"
 
-
 void OOLogSetDisplayMessagesInClass(NSString *inClass, BOOL inFlag);
 NSString *OOLogGetParentMessageClass(NSString *inClass);
-
 
 void OOLoggingInit(void);
 void OOLoggingTerminate(void);
 
-
 void OOLogInsertMarker(void);
-
 
 // Get/set display settings. These are stored in user defaults.
 BOOL OOLogShowFunction(void);

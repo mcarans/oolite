@@ -28,59 +28,49 @@ MA 02110-1301, USA.
 #if OO_OXP_VERIFIER_ENABLED
 
 #import "OOFileScannerVerifierStage.h"
-#import "OOStringParsing.h"
-#import "OOScript.h"
 #import "OOJSScript.h"
 #import "OOJavaScriptEngine.h"
+#import "OOScript.h"
+#import "OOStringParsing.h"
 
-static NSString * const kStageName	= @"Checking JS Script file syntax";
-
+static NSString *const kStageName = @ "Checking JS Script file syntax";
 
 @implementation OOCheckJSSyntaxVerifierStage
 
-- (NSString *)name
-{
-	return kStageName;
+- (NSString *)name {
+    return kStageName;
 }
 
+- (BOOL)shouldRun {
+    OOFileScannerVerifierStage *fileScanner = nil;
 
-- (BOOL)shouldRun
-{
-	OOFileScannerVerifierStage	*fileScanner = nil;
-	
-	fileScanner = [[self verifier] fileScannerStage];
-	return ([[fileScanner filesInFolder:@"Scripts"] count] > 0);
+    fileScanner = [[self verifier] fileScannerStage];
+    return ([[fileScanner filesInFolder:@ "Scripts"] count] > 0);
 }
 
+- (void)run {
+    OOFileScannerVerifierStage *fileScanner = nil;
+    NSArray *scriptFiles = nil;
+    NSString *scriptFile = nil;
+    NSString *fileExt = nil;
+    NSString *filePath = nil;
 
-- (void)run
-{
-	OOFileScannerVerifierStage	*fileScanner = nil;
-	NSArray						*scriptFiles = nil;
-	NSString					*scriptFile = nil;
-	NSString					*fileExt = nil;
-	NSString					*filePath = nil;
+    fileScanner = [[self verifier] fileScannerStage];
+    scriptFiles = [fileScanner filesInFolder:@ "Scripts"];
 
-	fileScanner = [[self verifier] fileScannerStage];
-	scriptFiles = [fileScanner filesInFolder:@"Scripts"];
-	
-	if (scriptFiles == nil)  return;
+    if (scriptFiles == nil) return;
 
-	[[OOJavaScriptEngine sharedEngine] setShowErrorLocations:YES];
+    [[OOJavaScriptEngine sharedEngine] setShowErrorLocations:YES];
 
-	foreach (scriptFile, scriptFiles)
-	{
-		fileExt = [[scriptFile pathExtension] lowercaseString];
-		if ([fileExt isEqualToString:@"js"] || [fileExt isEqualToString:@"es"])
-		{
-			filePath = [fileScanner pathForFile:scriptFile inFolder:@"Scripts" referencedFrom:nil checkBuiltIn:NO];
+    foreach (scriptFile, scriptFiles) {
+        fileExt = [[scriptFile pathExtension] lowercaseString];
+        if ([fileExt isEqualToString:@ "js"] || [fileExt isEqualToString:@ "es"]) {
+            filePath = [fileScanner pathForFile:scriptFile inFolder:@ "Scripts" referencedFrom:nil checkBuiltIn:NO];
 
-			OOScript	*script = [OOJSScript scriptWithPath:filePath properties:nil];
-			(void)script;
-		}
-	}
-	
-	
+            OOScript *script = [OOJSScript scriptWithPath:filePath properties:nil];
+            (void)script;
+        }
+    }
 }
 
 @end

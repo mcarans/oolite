@@ -23,16 +23,15 @@ MA 02110-1301, USA.
 
 */
 
-#import "OOJSScript.h"
 #include <jsapi.h>
+#import "OOJSScript.h"
 #import "OOMaths.h"
 
-@interface OOJSPopulatorDefinition: OOWeakRefObject
-{
-@private
-	jsval				_callback;
-	JSObject			*_callbackThis;
-	OOJSScript			*_owningScript;
+@interface OOJSPopulatorDefinition : OOWeakRefObject {
+   @private
+    jsval _callback;
+    JSObject *_callbackThis;
+    OOJSScript *_owningScript;
 }
 
 - (jsval)callback;
@@ -43,4 +42,3 @@ MA 02110-1301, USA.
 - (void)runCallback:(HPVector)location;
 
 @end
-

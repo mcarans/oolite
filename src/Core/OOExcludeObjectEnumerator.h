@@ -27,22 +27,18 @@ MA 02110-1301, USA.
 
 #import "OOCocoa.h"
 
-
-@interface OOExcludeObjectEnumerator: NSEnumerator
-{
-@private
-	NSEnumerator			*_enumerator;
-	id						_excludeObject;
+@interface OOExcludeObjectEnumerator : NSEnumerator {
+   @private
+    NSEnumerator *_enumerator;
+    id _excludeObject;
 }
 
-+ (id) enumeratorWithEnumerator:(NSEnumerator *)enumerator
-				excludingObject:(id)object;
++ (id)enumeratorWithEnumerator:(NSEnumerator *)enumerator excludingObject:(id)object;
 
 @end
 
-
 @interface NSEnumerator (OOExcludingObject)
 
-- (id) ooExcludingObject:(id)object;
+- (id)ooExcludingObject:(id)object;
 
 @end

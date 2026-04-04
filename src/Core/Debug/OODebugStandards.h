@@ -40,5 +40,3 @@ void OOStandardsError(NSString *message);
 BOOL OOEnforceStandards(void);
 
 void OOSetStandardsForOXPVerifierMode(void);
-
-

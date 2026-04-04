@@ -25,14 +25,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
- 
+
 */
 
 #import "OOCocoa.h"
 
-#if OOLITE_64_BIT	// Not used in 32-bit builds.
+#if OOLITE_64_BIT  // Not used in 32-bit builds.
 
-@interface OOFullScreenWindow: NSWindow
+@interface OOFullScreenWindow : NSWindow
 
 @property (readwrite) BOOL canBecomeKeyWindow;
 @property (readwrite) BOOL canBecomeMainWindow;

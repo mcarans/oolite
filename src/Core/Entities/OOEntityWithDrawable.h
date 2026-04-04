@@ -31,20 +31,17 @@ MA 02110-1301, USA.
 // Methods that must be supported by subentities, regardless of type.
 @protocol OOSubEntity
 
-- (void) rescaleBy:(GLfloat)factor;
-- (void) rescaleBy:(GLfloat)factor writeToCache:(BOOL)writeToCache;
+- (void)rescaleBy:(GLfloat)factor;
+- (void)rescaleBy:(GLfloat)factor writeToCache:(BOOL)writeToCache;
 
 // Separate drawing path for subentities of ships.
-- (void) drawSubEntityImmediate:(bool)immediate translucent:(bool)translucent;
+- (void)drawSubEntityImmediate:(bool)immediate translucent:(bool)translucent;
 
 @end
 
-
-
-@interface OOEntityWithDrawable: Entity
-{
-@private
-	OODrawable				*drawable;
+@interface OOEntityWithDrawable : Entity {
+   @private
+    OODrawable *drawable;
 }
 
 - (OODrawable *)drawable;

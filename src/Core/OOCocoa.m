@@ -30,68 +30,48 @@ SOFTWARE.
 #import "OOCocoa.h"
 #import "OOFunctionAttributes.h"
 
-
 @implementation NSObject (OODescriptionComponents)
 
-- (NSString *)descriptionComponents
-{
-	return nil;
+- (NSString *)descriptionComponents {
+    return nil;
 }
 
+- (NSString *)description {
+    NSString *components = nil;
 
-- (NSString *)description
-{
-	NSString				*components = nil;
-	
-	components = [self descriptionComponents];
-	if (components != nil)
-	{
-		return [NSString stringWithFormat:@"<%@ %p>{%@}", [self class], self, components];
-	}
-	else
-	{
-		return [NSString stringWithFormat:@"<%@ %p>", [self class], self];
-	}
+    components = [self descriptionComponents];
+    if (components != nil) {
+        return [NSString stringWithFormat:@ "<%@ %p>{%@}", [self class], self, components];
+    } else {
+        return [NSString stringWithFormat:@ "<%@ %p>", [self class], self];
+    }
 }
 
+- (NSString *)shortDescription {
+    NSString *components = nil;
 
-- (NSString *) shortDescription
-{
-	NSString				*components = nil;
-	
-	components = [self shortDescriptionComponents];
-	if (components != nil)
-	{
-		return [NSString stringWithFormat:@"<%@ %p>{%@}", [self class], self, components];
-	}
-	else
-	{
-		return [NSString stringWithFormat:@"<%@ %p>", [self class], self];
-	}
+    components = [self shortDescriptionComponents];
+    if (components != nil) {
+        return [NSString stringWithFormat:@ "<%@ %p>{%@}", [self class], self, components];
+    } else {
+        return [NSString stringWithFormat:@ "<%@ %p>", [self class], self];
+    }
 }
 
-
-- (NSString *) shortDescriptionComponents
-{
-	return nil;
+- (NSString *)shortDescriptionComponents {
+    return nil;
 }
 
 @end
-
 
 @implementation NSEnumerator (OOForEachSupport)
 
-- (NSEnumerator *) objectEnumerator
-{
-	return self;
+- (NSEnumerator *)objectEnumerator {
+    return self;
 }
 
 @end
 
-
 #ifndef NDEBUG
-id OOConsumeReference(id OO_NS_CONSUMED value)
-{
-	return value;
-}
+id OOConsumeReference(id OO_NS_CONSUMED value) { return value; }
 #endif

@@ -39,7 +39,6 @@ SOFTWARE.
 
 #import <Foundation/Foundation.h>
 
-
 void OOLogOutputHandlerInit(void);
 void OOLogOutputHandlerClose(void);
 void OOLogOutputHandlerPrint(NSString *string);

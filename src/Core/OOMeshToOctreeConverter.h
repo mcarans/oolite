@@ -28,34 +28,26 @@ MA 02110-1301, USA.
 #import "OOCocoa.h"
 #import "OOMaths.h"
 
-
 @class ShipEntity, Octree;
 
+enum { kOOMeshToOctreeConverterSmallDataCapacity = 16 };
 
-enum
-{
-	kOOMeshToOctreeConverterSmallDataCapacity = 16
-};
-
-
-@interface OOMeshToOctreeConverter: NSObject
-{
-@private
-	struct OOMeshToOctreeConverterInternalData
-	{
-		Triangle			*triangles;
-		uint_fast32_t		count;
-		uint_fast32_t		capacity;
-		uint_fast32_t		pendingCapacity;
-		Triangle			smallData[kOOMeshToOctreeConverterSmallDataCapacity];
-	}					_data;
+@interface OOMeshToOctreeConverter : NSObject {
+   @private
+    struct OOMeshToOctreeConverterInternalData {
+        Triangle *triangles;
+        uint_fast32_t count;
+        uint_fast32_t capacity;
+        uint_fast32_t pendingCapacity;
+        Triangle smallData[kOOMeshToOctreeConverterSmallDataCapacity];
+    } _data;
 }
 
-- (id) initWithCapacity:(NSUInteger)capacity;
-+ (instancetype) converterWithCapacity:(NSUInteger)capacity;
+- (id)initWithCapacity:(NSUInteger)capacity;
++ (instancetype)converterWithCapacity:(NSUInteger)capacity;
 
-- (void) addTriangle:(Triangle)tri;
+- (void)addTriangle:(Triangle)tri;
 
-- (Octree *) findOctreeToDepth:(NSUInteger)depth;
+- (Octree *)findOctreeToDepth:(NSUInteger)depth;
 
 @end

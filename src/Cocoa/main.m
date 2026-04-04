@@ -1,7 +1,6 @@
 #import "OOCocoa.h"
-#import "OOLoggingExtended.h"
 #import "OODebugFlags.h"
-
+#import "OOLoggingExtended.h"
 
 #ifndef NDEBUG
 NSUInteger gDebugFlags = 0;
@@ -15,9 +14,7 @@ NSUInteger gDebugFlags = 0;
  * @param argv the string array values of the command line arguments
  * @return whatever NSApplicationMain returns
  */
-int main(int argc, const char *argv[])
-{
-	OOLoggingInit();
-	return NSApplicationMain(argc, argv);
+int main(int argc, const char *argv[]) {
+    OOLoggingInit();
+    return NSApplicationMain(argc, argv);
 }
-

@@ -29,13 +29,12 @@ MA 02110-1301, USA.
 
 @class WormholeEntity;
 
-
 void InitOOJSWormhole(JSContext *context, JSObject *global);
 
 @interface WormholeEntity (OOJavaScriptExtensions)
 
 - (void)getJSClass:(JSClass **)outClass andPrototype:(JSObject **)outPrototype;
-- (NSString *) oo_jsClassName;
-- (BOOL) isVisibleToScripts;
+- (NSString *)oo_jsClassName;
+- (BOOL)isVisibleToScripts;
 
 @end

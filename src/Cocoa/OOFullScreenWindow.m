@@ -21,7 +21,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
- 
+
 */
 
 #import "OOFullScreenWindow.h"
@@ -33,17 +33,17 @@ SOFTWARE.
 @synthesize canBecomeKeyWindow = _canBecomeKeyWindow;
 @synthesize canBecomeMainWindow = _canBecomeMainWindow;
 
+- (id)initWithContentRect:(NSRect)contentRect
+                styleMask:(NSWindowStyleMask)aStyle
+                  backing:(NSBackingStoreType)bufferingType
+                    defer:(BOOL)flag {
+    self = [super initWithContentRect:contentRect styleMask:aStyle backing:bufferingType defer:flag];
+    if (self != nil) {
+        _canBecomeKeyWindow = [super canBecomeKeyWindow];
+        _canBecomeMainWindow = [super canBecomeMainWindow];
+    }
 
-- (id) initWithContentRect:(NSRect)contentRect styleMask:(NSWindowStyleMask)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag
-{
-	self = [super initWithContentRect:contentRect styleMask:aStyle backing:bufferingType defer:flag];
-	if (self != nil)
-	{
-		_canBecomeKeyWindow = [super canBecomeKeyWindow];
-		_canBecomeMainWindow = [super canBecomeMainWindow];
-	}
-	
-	return self;
+    return self;
 }
 
 @end

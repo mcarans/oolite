@@ -30,29 +30,27 @@ MA 02110-1301, USA.
 
 #if OO_OXP_VERIFIER_ENABLED
 
-@interface OOModelVerifierStage: OOTextureHandlingStage
-{
-@private
-	NSMutableSet					*_modelsToCheck;
+@interface OOModelVerifierStage : OOTextureHandlingStage {
+   @private
+    NSMutableSet *_modelsToCheck;
 }
 
 // Returns name to be used in -dependents by other stages; also registers stage.
 + (NSString *)nameForReverseDependencyForVerifier:(OOOXPVerifier *)verifier;
 
 /*	This can be called by other stages *before* the model stage runs.
-	returns YES if the model is found, NO if it is not. Caller is responsible
-	for complaining if it is not.
+        returns YES if the model is found, NO if it is not. Caller is responsible
+        for complaining if it is not.
 */
 - (BOOL)modelNamed:(NSString *)name
-	  usedForEntry:(NSString *)entryName
-			inFile:(NSString *)fileName
-	 withMaterials:(NSDictionary *)materials
-		andShaders:(NSDictionary *)shaders;
+      usedForEntry:(NSString *)entryName
+            inFile:(NSString *)fileName
+     withMaterials:(NSDictionary *)materials
+        andShaders:(NSDictionary *)shaders;
 
 @end
 
-
-@interface OOOXPVerifier(OOModelVerifierStage)
+@interface OOOXPVerifier (OOModelVerifierStage)
 
 - (OOModelVerifierStage *)modelVerifierStage;
 

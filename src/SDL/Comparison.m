@@ -20,7 +20,7 @@
  * Copyright (c) 1997
  * Moscow Center for SPARC Technology
  *
- * Copyright (c) 1999 
+ * Copyright (c) 1999
  * Boris Fomitchev
  *
  * This library is free software; you can redistribute it and/or
@@ -47,40 +47,28 @@
 
 @implementation NSObject (OLComparison)
 
-- (BOOL) isEqualTo: (id)object
-{
-    return (object != nil && [self compare: object] == NSOrderedSame) ?
-        YES : NO;
+- (BOOL)isEqualTo:(id)object {
+    return (object != nil && [self compare:object] == NSOrderedSame) ? YES : NO;
 }
 
-- (BOOL) isGreaterThan: (id)object
-{
-    return (object != nil && [self compare: object] == NSOrderedDescending) ?
-        YES : NO;
+- (BOOL)isGreaterThan:(id)object {
+    return (object != nil && [self compare:object] == NSOrderedDescending) ? YES : NO;
 }
 
-- (BOOL) isGreaterThanOrEqualTo: (id)object
-{
-    return (object != nil && [self compare: object] != NSOrderedAscending) ?
-        YES : NO;
+- (BOOL)isGreaterThanOrEqualTo:(id)object {
+    return (object != nil && [self compare:object] != NSOrderedAscending) ? YES : NO;
 }
 
-- (BOOL) isLessThan: (id)object
-{
-    return (object != nil && [self compare: object] == NSOrderedAscending) ?
-        YES : NO;
+- (BOOL)isLessThan:(id)object {
+    return (object != nil && [self compare:object] == NSOrderedAscending) ? YES : NO;
 }
 
-- (BOOL) isLessThanOrEqualTo: (id)object
-{
-    return (object != nil && [self compare: object] != NSOrderedDescending) ?
-        YES : NO;
+- (BOOL)isLessThanOrEqualTo:(id)object {
+    return (object != nil && [self compare:object] != NSOrderedDescending) ? YES : NO;
 }
 
-- (BOOL) isNotEqualTo: (id)object
-{
-    return (object != nil && [self compare: object] != NSOrderedSame) ?
-        YES : NO;
+- (BOOL)isNotEqualTo:(id)object {
+    return (object != nil && [self compare:object] != NSOrderedSame) ? YES : NO;
 }
 
 @end

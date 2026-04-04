@@ -29,9 +29,8 @@ SOFTWARE.
 
 #import "OOCocoa.h"
 
-
 @interface NSData (OOExtensions)
 
-+ (instancetype) oo_dataWithOXZFile:(NSString *)path;
++ (instancetype)oo_dataWithOXZFile:(NSString *)path;
 
 @end

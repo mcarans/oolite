@@ -27,19 +27,17 @@ SOFTWARE.
 
 #import "OOPDFView.h"
 
-
 @implementation OOPDFView
 
-- (void) drawPage:(PDFPage *)page
-{
-	// Force PDF view to render scaled images nicely (just like Preview).
-	
-	[NSGraphicsContext saveGraphicsState];
-	[[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
-	
-	[super drawPage:page];
-	
-	[NSGraphicsContext restoreGraphicsState];
+- (void)drawPage:(PDFPage *)page {
+    // Force PDF view to render scaled images nicely (just like Preview).
+
+    [NSGraphicsContext saveGraphicsState];
+    [[NSGraphicsContext currentContext] setImageInterpolation:NSImageInterpolationHigh];
+
+    [super drawPage:page];
+
+    [NSGraphicsContext restoreGraphicsState];
 }
 
 @end

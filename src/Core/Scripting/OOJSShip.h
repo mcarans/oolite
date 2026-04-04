@@ -29,7 +29,6 @@ MA 02110-1301, USA.
 
 @class ShipEntity;
 
-
 void InitOOJSShip(JSContext *context, JSObject *global);
 
 JSClass *JSShipClass(void);

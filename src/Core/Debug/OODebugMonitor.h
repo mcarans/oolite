@@ -3,7 +3,7 @@
 OODebugMonitor.h
 
 Debugging services object for Oolite.
- 
+
 The debug controller implements Oolite's part of debugging support. It can
 connect to one debugger object, which conforms to the OODebuggerInterface
 formal protocol. This can either be (part of) a debugger loaded into Oolite
@@ -36,18 +36,16 @@ SOFTWARE.
 */
 
 #import "OOCocoa.h"
-#import "OOWeakReference.h"
 #import "OODebuggerInterface.h"
+#import "OOWeakReference.h"
 
 @class OOJSScript;
 
-
 @protocol OODebugMonitorInterface
 
-// Note: disconnectDebugger:message: will cause a disconnectDebugMonitor:message: message to be sent to the debugger. The debugger should not send disconnectDebugger:message: in response to disconnectDebugMonitor:message:.
-- (void)disconnectDebugger:(in id<OODebuggerInterface>)debugger
-				   message:(in NSString *)message;
-
+// Note: disconnectDebugger:message: will cause a disconnectDebugMonitor:message: message to be sent to the debugger.
+// The debugger should not send disconnectDebugger:message: in response to disconnectDebugMonitor:message:.
+- (void)disconnectDebugger:(in id<OODebuggerInterface>)debugger message:(in NSString *)message;
 
 // *** JavaScript console support.
 
@@ -61,38 +59,31 @@ SOFTWARE.
 
 @end
 
+@interface OODebugMonitor : OOWeakRefObject <OODebugMonitorInterface> {
+   @private
+    id<OODebuggerInterface> _debugger;
 
-@interface OODebugMonitor: OOWeakRefObject <OODebugMonitorInterface>
-{
-@private
-	id<OODebuggerInterface>				_debugger;
-	
-	// JavaScript console support.
-	OOJSScript							*_script;
-	struct JSObject						*_jsSelf;
-	
-	NSDictionary						*_configFromOXPs;	// Settings from debugConfig.plist
-	NSMutableDictionary					*_configOverrides;	// Settings from preferences, modifiable through JS.
-	
-	// Caches
-	NSMutableDictionary					*_fgColors,
-										*_bgColors,
-										*_sourceFiles;
-	// TCP options
-	BOOL								_TCPIgnoresDroppedPackets;
-	BOOL								_usingPlugInController;
+    // JavaScript console support.
+    OOJSScript *_script;
+    struct JSObject *_jsSelf;
+
+    NSDictionary *_configFromOXPs;          // Settings from debugConfig.plist
+    NSMutableDictionary *_configOverrides;  // Settings from preferences, modifiable through JS.
+
+    // Caches
+    NSMutableDictionary *_fgColors, *_bgColors, *_sourceFiles;
+    // TCP options
+    BOOL _TCPIgnoresDroppedPackets;
+    BOOL _usingPlugInController;
 }
 
-+ (OODebugMonitor *) sharedDebugMonitor;
++ (OODebugMonitor *)sharedDebugMonitor;
 - (BOOL)setDebugger:(id<OODebuggerInterface>)debugger;
 
-	// *** JavaScript console support.
-- (void)appendJSConsoleLine:(id)string
-				   colorKey:(NSString *)colorKey
-			  emphasisRange:(NSRange)emphasisRange;
+// *** JavaScript console support.
+- (void)appendJSConsoleLine:(id)string colorKey:(NSString *)colorKey emphasisRange:(NSRange)emphasisRange;
 
-- (void)appendJSConsoleLine:(id)string
-				   colorKey:(NSString *)colorKey;
+- (void)appendJSConsoleLine:(id)string colorKey:(NSString *)colorKey;
 
 - (void)clearJSConsole;
 - (void)showJSConsole;
@@ -102,20 +93,19 @@ SOFTWARE.
 
 - (NSArray *)configurationKeys;
 
-- (BOOL) debuggerConnected;
+- (BOOL)debuggerConnected;
 
-- (void) dumpMemoryStatistics;
-- (size_t) dumpJSMemoryStatistics;
+- (void)dumpMemoryStatistics;
+- (size_t)dumpJSMemoryStatistics;
 
-- (void) setTCPIgnoresDroppedPackets:(BOOL)flag;
-- (BOOL) TCPIgnoresDroppedPackets;
+- (void)setTCPIgnoresDroppedPackets:(BOOL)flag;
+- (BOOL)TCPIgnoresDroppedPackets;
 
-- (void) setUsingPlugInController:(BOOL)flag;
-- (BOOL) usingPlugInController;
+- (void)setUsingPlugInController:(BOOL)flag;
+- (BOOL)usingPlugInController;
 
 #if OOLITE_GNUSTEP
-- (void) applicationWillTerminate;
+- (void)applicationWillTerminate;
 #endif
 
 @end
-

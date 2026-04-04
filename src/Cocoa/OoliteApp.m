@@ -26,47 +26,39 @@ MA 02110-1301, USA.
 #import "GameController.h"
 #import "MyOpenGLView.h"
 
-
 @implementation OoliteApp
 
-- (void)sendEvent:(NSEvent *)theEvent
-{
-	NSEventType		etype = [theEvent type];
-	MyOpenGLView*	gameView = [_gameController gameView];
-	
-	if ([NSApp keyWindow] == _gameWindow)
-	{
-		// Ensure key events are handled at least once when game window is key
-		switch (etype)
-		{
-			case NSKeyDown:
-				[gameView keyDown:theEvent];
-				break;
-			
-			case NSKeyUp:
-				[gameView keyUp:theEvent];
-				break;
-			
-			default:
-				break;
-		}
-	}
-	[super sendEvent:theEvent];				// perform the default event behaviour
+- (void)sendEvent:(NSEvent *)theEvent {
+    NSEventType etype = [theEvent type];
+    MyOpenGLView *gameView = [_gameController gameView];
+
+    if ([NSApp keyWindow] == _gameWindow) {
+        // Ensure key events are handled at least once when game window is key
+        switch (etype) {
+            case NSKeyDown:
+                [gameView keyDown:theEvent];
+                break;
+
+            case NSKeyUp:
+                [gameView keyUp:theEvent];
+                break;
+
+            default:
+                break;
+        }
+    }
+    [super sendEvent:theEvent];  // perform the default event behaviour
 }
 
-
-- (void) setExitContext:(NSString *)exitContext
-{
-	[_exitContext release];
-	_exitContext = [exitContext copy];
+- (void)setExitContext:(NSString *)exitContext {
+    [_exitContext release];
+    _exitContext = [exitContext copy];
 }
 
-
-- (void) terminate:(id)sender
-{
-	if (_exitContext == nil)  [self setExitContext:@"Cocoa terminate event"];
-	OOLog(@"exit.context", @"Exiting: %@.", _exitContext);
-	[super terminate:sender];
+- (void)terminate:(id)sender {
+    if (_exitContext == nil) [self setExitContext:@ "Cocoa terminate event"];
+    OOLog(@ "exit.context", @ "Exiting: %@.", _exitContext);
+    [super terminate:sender];
 }
 
 @end

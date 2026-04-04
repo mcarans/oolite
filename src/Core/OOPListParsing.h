@@ -28,7 +28,6 @@ MA 02110-1301, USA.
 
 #import <Foundation/Foundation.h>
 
-
 // whereFrom is an optional description of the data source, for error reporting.
 id OOPropertyListFromData(NSData *data, NSString *whereFrom);
 id OOPropertyListFromFile(NSString *path);

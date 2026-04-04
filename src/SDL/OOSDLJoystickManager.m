@@ -26,88 +26,73 @@ MA 02110-1301, USA.
 #import "OOSDLJoystickManager.h"
 #import "OOLogging.h"
 
-#define kOOLogUnconvertedNSLog @"unclassified.OOSDLJoystickManager"
-
+#define kOOLogUnconvertedNSLog @ "unclassified.OOSDLJoystickManager"
 
 @implementation OOSDLJoystickManager
 
-- (id) init
-{
-	int i;
+- (id)init {
+    int i;
 
-	// Find and open the sticks. Make sure that we don't fail if more joysticks than MAX_STICKS are detected.
-	stickCount = SDL_NumJoysticks();
-	OOLog(@"joystick.init", @"Number of joysticks detected: %ld", (long)stickCount);
-	if (stickCount > MAX_STICKS)
-	{
-		stickCount = MAX_STICKS;
-		OOLog(@"joystick.init", @"Number of joysticks detected exceeds maximum number of joysticks allowed. Setting number of active joysticks to %d.", MAX_STICKS);
-	}
-	if(stickCount)
-	{
-		for(i = 0; i < stickCount; i++)
-		{
-			// it's doubtful MAX_STICKS will ever get exceeded, but
-			// we need to be defensive.
-			if(i > MAX_STICKS)
-				break;
+    // Find and open the sticks. Make sure that we don't fail if more joysticks than MAX_STICKS are detected.
+    stickCount = SDL_NumJoysticks();
+    OOLog(@ "joystick.init", @ "Number of joysticks detected: %ld", (long)stickCount);
+    if (stickCount > MAX_STICKS) {
+        stickCount = MAX_STICKS;
+        OOLog(
+            @ "joystick.init",
+            @ "Number of joysticks detected exceeds maximum number of joysticks allowed. Setting number of active joysticks to %d.",
+            MAX_STICKS);
+    }
+    if (stickCount) {
+        for (i = 0; i < stickCount; i++) {
+            // it's doubtful MAX_STICKS will ever get exceeded, but
+            // we need to be defensive.
+            if (i > MAX_STICKS) break;
 
-			stick[i]=SDL_JoystickOpen(i);
-			if(!stick[i])
-			{
-				OOLog(@"joystick.init", @"Failed to open joystick #%d", i);
-			}
-		}
-		SDL_JoystickEventState(SDL_ENABLE);
-	}
-	return [super init];
+            stick[i] = SDL_JoystickOpen(i);
+            if (!stick[i]) {
+                OOLog(@ "joystick.init", @ "Failed to open joystick #%d", i);
+            }
+        }
+        SDL_JoystickEventState(SDL_ENABLE);
+    }
+    return [super init];
 }
 
-
-- (BOOL) handleSDLEvent: (SDL_Event *)evt
-{
-	BOOL rc=NO;
-	switch(evt->type)
-	{
-		case SDL_JOYAXISMOTION:
-			[self decodeAxisEvent: (JoyAxisEvent *)evt];
-			rc=YES;
-			break;
-		case SDL_JOYBUTTONDOWN:
-		case SDL_JOYBUTTONUP:
-			[self decodeButtonEvent: (JoyButtonEvent *)evt];
-			rc=YES;
-			break;
-		case SDL_JOYHATMOTION:
-			[self decodeHatEvent: (JoyHatEvent *)evt];
-			rc=YES;
-			break;
-		default:
-			OOLog(@"handleSDLEvent.unknownEvent", @"%@", @"JoystickHandler was sent an event it doesn't know");
-	}
-	return rc;
+- (BOOL)handleSDLEvent:(SDL_Event *)evt {
+    BOOL rc = NO;
+    switch (evt->type) {
+        case SDL_JOYAXISMOTION:
+            [self decodeAxisEvent:(JoyAxisEvent *)evt];
+            rc = YES;
+            break;
+        case SDL_JOYBUTTONDOWN:
+        case SDL_JOYBUTTONUP:
+            [self decodeButtonEvent:(JoyButtonEvent *)evt];
+            rc = YES;
+            break;
+        case SDL_JOYHATMOTION:
+            [self decodeHatEvent:(JoyHatEvent *)evt];
+            rc = YES;
+            break;
+        default:
+            OOLog(@ "handleSDLEvent.unknownEvent", @ "%@", @ "JoystickHandler was sent an event it doesn't know");
+    }
+    return rc;
 }
-
 
 // Overrides
 
-- (NSUInteger) joystickCount
-{
-	return stickCount;
+- (NSUInteger)joystickCount {
+    return stickCount;
 }
 
-
-- (NSString *) nameOfJoystick:(NSUInteger)stickNumber
-{
-	return [NSString stringWithUTF8String:SDL_JoystickName((int)stickNumber)];
+- (NSString *)nameOfJoystick:(NSUInteger)stickNumber {
+    return [NSString stringWithUTF8String:SDL_JoystickName((int)stickNumber)];
 }
 
-
-- (int16_t) getAxisWithStick:(NSUInteger) stickNum axis:(NSUInteger) axisNum 
-{
-	return SDL_JoystickGetAxis(stick[stickNum], axisNum);
+- (int16_t)getAxisWithStick:(NSUInteger)stickNum axis:(NSUInteger)axisNum {
+    return SDL_JoystickGetAxis(stick[stickNum], axisNum);
 }
-
-
 
 @end

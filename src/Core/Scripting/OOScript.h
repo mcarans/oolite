@@ -9,9 +9,9 @@ scripts, was supported until 1.69.1, but never used. OOScript unifies the
 interfaces to the script types and abstracts loading. Additionally, it falls
 back to a more "primitive" script if loading of one type fails; specifically,
 the order of precedence is:
-	script.js		(JavaScript)
+        script.js		(JavaScript)
 //	script.oos		(OOS)
-	script.plist	(property list)
+        script.plist	(property list)
 
 Oolite
 Copyright (C) 2004-2013 Giles C Williams and contributors
@@ -37,11 +37,10 @@ MA 02110-1301, USA.
 
 @class Entity;
 
-
-@interface OOScript: NSObject
+@interface OOScript : NSObject
 
 /*	Looks for path/world-scripts.plist, path/script.js, then path/script.plist.
-	May return zero or more scripts.
+        May return zero or more scripts.
 */
 + (NSArray *)worldScriptsAtPath:(NSString *)path;
 
@@ -59,9 +58,9 @@ MA 02110-1301, USA.
 - (NSString *)name;
 - (NSString *)scriptDescription;
 - (NSString *)version;
-- (NSString *)displayName;	// "name version" if version is defined, otherwise just "name".
+- (NSString *)displayName;  // "name version" if version is defined, otherwise just "name".
 
-- (BOOL) requiresTickle;
+- (BOOL)requiresTickle;
 - (void)runWithTarget:(Entity *)target;
 
 @end

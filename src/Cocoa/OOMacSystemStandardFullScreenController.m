@@ -27,103 +27,82 @@ MA 02110-1301, USA.
 
 #if OO_MAC_SUPPORT_SYSTEM_STANDARD_FULL_SCREEN
 
-
 #import "MyOpenGLView.h"
+#import "OOCollectionExtractors.h"
 #import "OOLogging.h"
 #import "OOPrimaryWindow.h"
-#import "OOCollectionExtractors.h"
-
 
 #ifndef NSAppKitVersionNumber10_7
 #define NSAppKitVersionNumber10_7 1138
 #endif
 
-
 @implementation OOMacSystemStandardFullScreenController
 
-+ (BOOL) shouldUseSystemStandardFullScreenController
-{
-	if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_6)
-	{
-		// Never on 10.6 or earlier; the necessary API doesn't exist.
-		return NO;
-	}
-	
-	// If safe to use, allow override for debugging.
-	NSString *override = [[NSUserDefaults standardUserDefaults] stringForKey:@"full-screen-mode-override"];
-	if (override != nil)
-	{
-		if ([override isEqualToString:@"lion"])  return YES;
-		if ([override isEqualToString:@"snow-leopard"])  return NO;
-	}
-	
-	if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_7)
-	{
-		// Always use on 10.8 or later.
-		return YES;
-	}
-	
-	return NSScreen.screens.count == 1;	// Use if there's a single screen on 10.7.
++ (BOOL)shouldUseSystemStandardFullScreenController {
+    if (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_6) {
+        // Never on 10.6 or earlier; the necessary API doesn't exist.
+        return NO;
+    }
+
+    // If safe to use, allow override for debugging.
+    NSString *override = [[NSUserDefaults standardUserDefaults] stringForKey:@ "full-screen-mode-override"];
+    if (override != nil) {
+        if ([override isEqualToString:@ "lion"]) return YES;
+        if ([override isEqualToString:@ "snow-leopard"]) return NO;
+    }
+
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_7) {
+        // Always use on 10.8 or later.
+        return YES;
+    }
+
+    return NSScreen.screens.count == 1;  // Use if there's a single screen on 10.7.
 }
 
-
-- (BOOL) inFullScreenMode
-{
-	return ([NSApp presentationOptions] & NSApplicationPresentationFullScreen) != 0;
+- (BOOL)inFullScreenMode {
+    return ([NSApp presentationOptions] & NSApplicationPresentationFullScreen) != 0;
 }
 
+- (void)setFullScreenMode:(BOOL)value {
+    if (value != self.fullScreenMode) {
+        OOPrimaryWindow *window = (OOPrimaryWindow *)self.gameView.window;
+        NSAssert([window isKindOfClass:OOPrimaryWindow.class],
+                 @ "Incorrect UI setup; main game window should be OOPrimaryWindow.");
 
-- (void) setFullScreenMode:(BOOL)value
-{
-	if (value != self.fullScreenMode)
-	{
-		OOPrimaryWindow *window = (OOPrimaryWindow *)self.gameView.window;
-		NSAssert([window isKindOfClass:OOPrimaryWindow.class], @"Incorrect UI setup; main game window should be OOPrimaryWindow.");
-		
-		[window makeKeyAndOrderFront:nil];
-		[window standardToggleFullScreen:nil];
-	}
+        [window makeKeyAndOrderFront:nil];
+        [window standardToggleFullScreen:nil];
+    }
 }
 
-
-- (NSArray *) displayModes
-{
-	NSSize size = self.gameView.window.frame.size;
-	NSDictionary *fakeMode = [NSDictionary dictionaryWithObjectsAndKeys:
-							  [NSNumber numberWithUnsignedInt:size.width], kOODisplayWidth,
-							  [NSNumber numberWithUnsignedInt:size.height], kOODisplayHeight,
-							  nil];
-	return [NSArray arrayWithObject:fakeMode];
+- (NSArray *)displayModes {
+    NSSize size = self.gameView.window.frame.size;
+    NSDictionary *fakeMode = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInt:size.width],
+                                                                        kOODisplayWidth,
+                                                                        [NSNumber numberWithUnsignedInt:size.height],
+                                                                        kOODisplayHeight,
+                                                                        nil];
+    return [NSArray arrayWithObject:fakeMode];
 }
 
-
-- (NSUInteger) indexOfCurrentDisplayMode
-{
-	return 0;
+- (NSUInteger)indexOfCurrentDisplayMode {
+    return 0;
 }
 
-
-- (BOOL) setDisplayWidth:(NSUInteger)width height:(NSUInteger)height refreshRate:(NSUInteger)refresh
-{
-	return NO;
+- (BOOL)setDisplayWidth:(NSUInteger)width height:(NSUInteger)height refreshRate:(NSUInteger)refresh {
+    return NO;
 }
 
-
-- (NSDictionary *) findDisplayModeForWidth:(NSUInteger)width height:(NSUInteger)height refreshRate:(NSUInteger)refresh
-{
-	NSDictionary *fakeMode = [self.displayModes objectAtIndex:0];
-	if (width == [fakeMode oo_unsignedIntegerForKey:kOODisplayWidth] &&
-		height == [fakeMode oo_unsignedIntegerForKey:kOODisplayHeight])
-	{
-		return fakeMode;
-	}
-	return nil;
+- (NSDictionary *)findDisplayModeForWidth:(NSUInteger)width height:(NSUInteger)height refreshRate:(NSUInteger)refresh {
+    NSDictionary *fakeMode = [self.displayModes objectAtIndex:0];
+    if (width == [fakeMode oo_unsignedIntegerForKey:kOODisplayWidth] &&
+        height == [fakeMode oo_unsignedIntegerForKey:kOODisplayHeight]) {
+        return fakeMode;
+    }
+    return nil;
 }
 
-
-- (void) noteMouseInteractionModeChangedFrom:(OOMouseInteractionMode)oldMode to:(OOMouseInteractionMode)newMode
-{
-	[self.gameView noteMouseInteractionModeChangedFrom:oldMode to:newMode];
+- (void)noteMouseInteractionModeChangedFrom:(OOMouseInteractionMode)oldMode to:(OOMouseInteractionMode)newMode {
+    [self.gameView noteMouseInteractionModeChangedFrom:oldMode to:newMode];
 }
 
 @end

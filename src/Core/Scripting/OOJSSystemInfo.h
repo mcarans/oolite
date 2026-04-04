@@ -27,8 +27,8 @@ MA 02110-1301, USA.
 
 #import <Foundation/Foundation.h>
 #include <jsapi.h>
-#import "OOTypes.h"
 
+#import "OOTypes.h"
 
 void InitOOJSSystemInfo(JSContext *context, JSObject *global);
 

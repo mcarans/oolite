@@ -29,5 +29,4 @@ MA 02110-1301, USA.
 
 @class StationEntity;
 
-
 void InitOOJSStation(JSContext *context, JSObject *global);

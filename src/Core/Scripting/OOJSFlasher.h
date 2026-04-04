@@ -28,13 +28,12 @@ MA 02110-1301, USA.
 #include <jsapi.h>
 #import "OOFlasherEntity.h"
 
-
 void InitOOJSFlasher(JSContext *context, JSObject *global);
 
 @interface OOFlasherEntity (OOJavaScriptExtensions)
 
 - (void)getJSClass:(JSClass **)outClass andPrototype:(JSObject **)outPrototype;
-- (NSString *) oo_jsClassName;
-- (BOOL) isVisibleToScripts;
+- (NSString *)oo_jsClassName;
+- (BOOL)isVisibleToScripts;
 
 @end

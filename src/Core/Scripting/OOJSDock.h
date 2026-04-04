@@ -29,5 +29,4 @@ MA 02110-1301, USA.
 
 @class DockEntity;
 
-
 void InitOOJSDock(JSContext *context, JSObject *global);

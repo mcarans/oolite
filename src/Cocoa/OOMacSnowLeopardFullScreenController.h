@@ -29,8 +29,7 @@ MA 02110-1301, USA.
 
 #if OOLITE_MAC_OS_X && OOLITE_64_BIT
 
-
-@interface OOMacSnowLeopardFullScreenController: OOFullScreenController
+@interface OOMacSnowLeopardFullScreenController : OOFullScreenController
 
 @end
 

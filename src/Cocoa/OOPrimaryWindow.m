@@ -22,40 +22,33 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
- 
+
 */
 
 #import "OOPrimaryWindow.h"
 
-
 #if !OOLITE_MAC_OS_X_10_7
 @interface NSWindow (Lion)
 
-- (void) toggleFullScreen:(id)sender;
+- (void)toggleFullScreen:(id)sender;
 
 @end
 #endif
-
 
 @implementation OOPrimaryWindow
 
 @synthesize fullScreenDelegate = _fullScreenDelegate;
 
-
-- (void) standardToggleFullScreen:(id)sender
-{
-	[super toggleFullScreen:sender];
+- (void)standardToggleFullScreen:(id)sender {
+    [super toggleFullScreen:sender];
 }
 
+- (void)toggleFullScreen:(id)sender {
+    id<OOPrimaryWindowDelegate> delegate = self.fullScreenDelegate;
 
-- (void) toggleFullScreen:(id)sender
-{
-	id<OOPrimaryWindowDelegate> delegate = self.fullScreenDelegate;
-	
-	if ([delegate respondsToSelector:@selector(toggleFullScreenCalledForWindow:withSender:)])
-	{
-		[delegate toggleFullScreenCalledForWindow:self withSender:sender];
-	}
+    if ([delegate respondsToSelector:@selector(toggleFullScreenCalledForWindow:withSender:)]) {
+        [delegate toggleFullScreenCalledForWindow:self withSender:sender];
+    }
 }
 
 @end

@@ -1,0 +1,30 @@
+---
+# Main configuration for C++ and Objective-C
+Language: Cpp
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnLimit: 120
+# 'None' prevents the tool from squashing small functions into one line
+AllowShortFunctionsOnASingleLine: None
+# Standardizing pointer alignment to the right (e.g., int *ptr)
+DerivePointerAlignment: false
+PointerAlignment: Right
+
+---
+Language: ObjC
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnLimit: 120
+
+# Objective-C Specific Styling
+ObjCBlockIndentWidth: 4
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: true
+
+# Alignment settings for those long method calls
+AlignAfterOpenBracket: Align
+AlignOperands: Align
+
+# If arguments don't fit on one line, put each on its own line
+BinPackArguments: false
+BinPackParameters: false

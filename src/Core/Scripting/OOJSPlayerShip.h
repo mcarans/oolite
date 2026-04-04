@@ -36,7 +36,6 @@ MA 02110-1301, USA.
 
 @class PlayerEntity;
 
-
 void InitOOJSPlayerShip(JSContext *context, JSObject *global);
 
 JSClass *JSPlayerShipClass(void);

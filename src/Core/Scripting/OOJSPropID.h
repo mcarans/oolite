@@ -24,18 +24,32 @@ MA 02110-1301, USA.
 */
 
 #include <jsapi.h>
+
 #import "OOFunctionAttributes.h"
 
 /*
-	OOJSID(const char * [literal])
-	Macro to create a string-based jsid. The string is interned and converted
-	into a string by a helper the first time the macro is hit, then cached.
+        OOJSID(const char * [literal])
+        Macro to create a string-based jsid. The string is interned and converted
+        into a string by a helper the first time the macro is hit, then cached.
 */
 
 #ifdef JS_USE_JSVAL_JSID_STRUCT_TYPES
-#define OOJSID(str) ({ static jsid idCache; static JSBool inited; if (EXPECT_NOT(!inited)) { OOJSInitJSIDCachePRIVATE(""str, &idCache); inited = JS_TRUE; } idCache; })
+#define OOJSID(str)                                     \
+    ({                                                  \
+        static jsid idCache;                            \
+        static JSBool inited;                           \
+        if (EXPECT_NOT(!inited)) {                      \
+            OOJSInitJSIDCachePRIVATE("" str, &idCache); \
+            inited = JS_TRUE;                           \
+        }                                               \
+        idCache;                                        \
+    })
 #else
-#define OOJSID(str) ({ static jsid idCache = JSID_VOID; if (EXPECT_NOT(idCache == JSID_VOID)) OOJSInitJSIDCachePRIVATE(""str, &idCache); idCache; })
+#define OOJSID(str)                                                                       \
+    ({                                                                                    \
+        static jsid idCache = JSID_VOID;                                                  \
+        if (EXPECT_NOT(idCache == JSID_VOID)) OOJSInitJSIDCachePRIVATE("" str, &idCache); \
+        idCache;                                                                          \
+    })
 #endif
 void OOJSInitJSIDCachePRIVATE(const char *name, jsid *idCache);
-

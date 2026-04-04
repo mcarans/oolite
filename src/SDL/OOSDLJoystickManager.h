@@ -33,25 +33,19 @@ MA 02110-1301, USA.
 
 */
 
-
-
 #import <Foundation/Foundation.h>
 #import <SDL.h>
 #import "OOJoystickManager.h"
 
-
-
-
-@interface OOSDLJoystickManager: OOJoystickManager
-{
-@private
-	SDL_Joystick		*stick[MAX_STICKS];
-	NSUInteger			stickCount;
+@interface OOSDLJoystickManager : OOJoystickManager {
+   @private
+    SDL_Joystick *stick[MAX_STICKS];
+    NSUInteger stickCount;
 }
 
-- (id) init;
-- (BOOL) handleSDLEvent: (SDL_Event *)evt;
-- (NSString *) nameOfJoystick:(NSUInteger)stickNumber;
-- (int16_t) getAxisWithStick:(NSUInteger) stickNum axis:(NSUInteger) axisNum ;
+- (id)init;
+- (BOOL)handleSDLEvent:(SDL_Event *)evt;
+- (NSString *)nameOfJoystick:(NSUInteger)stickNumber;
+- (int16_t)getAxisWithStick:(NSUInteger)stickNum axis:(NSUInteger)axisNum;
 
 @end

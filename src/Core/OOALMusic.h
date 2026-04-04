@@ -33,18 +33,16 @@ SOFTWARE.
 #import "OOALSound.h"
 #import "OOSoundSource.h"
 
-
-@interface OOMusic: OOSound
-{
-@private
-	OOSound				*sound;
+@interface OOMusic : OOSound {
+   @private
+    OOSound *sound;
 }
 
-- (void) playLooped:(BOOL)looped;
-- (void) stop;
-- (BOOL) isPlaying;
-- (void) setMusicGain:(float)newValue;
-- (float) musicGain;
+- (void)playLooped:(BOOL)looped;
+- (void)stop;
+- (BOOL)isPlaying;
+- (void)setMusicGain:(float)newValue;
+- (float)musicGain;
 - (OOSoundSource *)musicSoundSource;
 
 @end

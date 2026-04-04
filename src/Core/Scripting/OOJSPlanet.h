@@ -30,5 +30,4 @@ MA 02110-1301, USA.
 
 @class OOPlanetEntity;
 
-
 void InitOOJSPlanet(JSContext *context, JSObject *global);

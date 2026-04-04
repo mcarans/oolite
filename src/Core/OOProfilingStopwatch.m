@@ -1,4 +1,4 @@
-/*	
+/*
 
 OOProfilingStopwatch.m
 Oolite
@@ -30,115 +30,92 @@ SOFTWARE.
 
 #import "OOProfilingStopwatch.h"
 
-
 @implementation OOProfilingStopwatch
 
-- (id) init
-{
-	if ((self = [super init]))
-	{
-		_start = OOGetHighResTime();
-		_end = OOCopyHighResTime(_start);
-		_running = YES;
-	}
-	return self;
+- (id)init {
+    if ((self = [super init])) {
+        _start = OOGetHighResTime();
+        _end = OOCopyHighResTime(_start);
+        _running = YES;
+    }
+    return self;
 }
 
-
-+ (instancetype) stopwatch
-{
-	return [[[self alloc] init] autorelease];
++ (instancetype)stopwatch {
+    return [[[self alloc] init] autorelease];
 }
 
+- (void)dealloc {
+    OODisposeHighResTime(_start);
+    OODisposeHighResTime(_end);
 
-- (void) dealloc
-{
-	OODisposeHighResTime(_start);
-	OODisposeHighResTime(_end);
-	
-	[super dealloc];
+    [super dealloc];
 }
 
-
-- (void) start
-{
-	OOHighResTimeValue temp = _start;
-	_start = OOGetHighResTime();
-	OODisposeHighResTime(temp);
-	_running = YES;
+- (void)start {
+    OOHighResTimeValue temp = _start;
+    _start = OOGetHighResTime();
+    OODisposeHighResTime(temp);
+    _running = YES;
 }
 
-
-- (void) stop
-{
-	OOHighResTimeValue temp = _start;
-	_end = OOGetHighResTime();
-	OODisposeHighResTime(temp);
-	_running = NO;
+- (void)stop {
+    OOHighResTimeValue temp = _start;
+    _end = OOGetHighResTime();
+    OODisposeHighResTime(temp);
+    _running = NO;
 }
 
-
-- (OOTimeDelta) currentTime
-{
-	if (_running)
-	{
-		OOHighResTimeValue temp = _end;
-		_end = OOGetHighResTime();
-		OODisposeHighResTime(temp);
-	}
-	return OOHighResTimeDeltaInSeconds(_start, _end);
+- (OOTimeDelta)currentTime {
+    if (_running) {
+        OOHighResTimeValue temp = _end;
+        _end = OOGetHighResTime();
+        OODisposeHighResTime(temp);
+    }
+    return OOHighResTimeDeltaInSeconds(_start, _end);
 }
 
-
-- (OOTimeDelta) reset
-{
-	OOTimeDelta result;
-	if (_running)
-	{
-		OOHighResTimeValue now = OOGetHighResTime();
-		result = OOHighResTimeDeltaInSeconds(_start, now);
-		OODisposeHighResTime(_start);
-		_start = now;
-	}
-	else
-	{
-		result = OOHighResTimeDeltaInSeconds(_start, _end);
-		OODisposeHighResTime(_end);
-		_end = OOCopyHighResTime(_start);
-	}
-	return result;
+- (OOTimeDelta)reset {
+    OOTimeDelta result;
+    if (_running) {
+        OOHighResTimeValue now = OOGetHighResTime();
+        result = OOHighResTimeDeltaInSeconds(_start, now);
+        OODisposeHighResTime(_start);
+        _start = now;
+    } else {
+        result = OOHighResTimeDeltaInSeconds(_start, _end);
+        OODisposeHighResTime(_end);
+        _end = OOCopyHighResTime(_start);
+    }
+    return result;
 }
 
 @end
 
-
-OOTimeDelta OOHighResTimeDeltaInSeconds(OOHighResTimeValue startTime, OOHighResTimeValue endTime)
-{
+OOTimeDelta OOHighResTimeDeltaInSeconds(OOHighResTimeValue startTime, OOHighResTimeValue endTime) {
 #if OO_PROFILING_STOPWATCH_MACH_ABSOLUTE_TIME
-	uint64_t diff = endTime - startTime;
-	static double conversion = 0.0;
-	
-	if (EXPECT_NOT(conversion == 0.0))
-	{
-		mach_timebase_info_data_t info;
-		kern_return_t err = mach_timebase_info(&info);
-		
-		if (err == 0)
-		{
-			conversion = 1e-9 * (double)info.numer / (double)info.denom;
-		}
-	}
-	
-	return conversion * (double)diff;
+    uint64_t diff = endTime - startTime;
+    static double conversion = 0.0;
+
+    if (EXPECT_NOT(conversion == 0.0)) {
+        mach_timebase_info_data_t info;
+        kern_return_t err = mach_timebase_info(&info);
+
+        if (err == 0) {
+            conversion = 1e-9 * (double)info.numer / (double)info.denom;
+        }
+    }
+
+    return conversion * (double)diff;
 #elif OO_PROFILING_STOPWATCH_WINDOWS
-	return 1e-3 * (double)(endTime - startTime);
+    return 1e-3 * (double)(endTime - startTime);
 #elif OO_PROFILING_STOPWATCH_GETTIMEOFDAY
-	int_fast32_t deltaS = (int_fast32_t)endTime.tv_sec - (int_fast32_t)startTime.tv_sec;
-	int_fast32_t deltaU = (int_fast32_t)endTime.tv_usec - (int_fast32_t)startTime.tv_usec;
-	double result = deltaU;
-	result = (result * 1e-6) + deltaS;
-	return result;
+    int_fast32_t deltaS = (int_fast32_t)endTime.tv_sec - (int_fast32_t)startTime.tv_sec;
+    int_fast32_t deltaU = (int_fast32_t)endTime.tv_usec - (int_fast32_t)startTime.tv_usec;
+    double result = deltaU;
+    result = (result * 1e-6) + deltaS;
+    return result;
 #elif OO_PROFILING_STOPWATCH_JS_NOW
-	return 1e-6 * (double)(endTime - startTime);
+    return 1e-6 * (double)(endTime - startTime);
 #endif
 }

@@ -30,25 +30,23 @@ MA 02110-1301, USA.
 #import "OOFullScreenController.h"
 
 /*
-	OOMacSystemStandardFullScreenController requires the Mac OS X 10.7 SDK.
+        OOMacSystemStandardFullScreenController requires the Mac OS X 10.7 SDK.
 */
 #if OOLITE_MAC_OS_X
 #if OOLITE_64_BIT && defined(MAC_OS_X_VERSION_10_7) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
-#define OO_MAC_SUPPORT_SYSTEM_STANDARD_FULL_SCREEN	1
+#define OO_MAC_SUPPORT_SYSTEM_STANDARD_FULL_SCREEN 1
 #endif
 #endif
 
 #ifndef OO_MAC_SUPPORT_SYSTEM_STANDARD_FULL_SCREEN
-#define OO_MAC_SUPPORT_SYSTEM_STANDARD_FULL_SCREEN	0
+#define OO_MAC_SUPPORT_SYSTEM_STANDARD_FULL_SCREEN 0
 #endif
-
 
 #if OO_MAC_SUPPORT_SYSTEM_STANDARD_FULL_SCREEN
 
+@interface OOMacSystemStandardFullScreenController : OOFullScreenController
 
-@interface OOMacSystemStandardFullScreenController: OOFullScreenController
-
-+ (BOOL) shouldUseSystemStandardFullScreenController;
++ (BOOL)shouldUseSystemStandardFullScreenController;
 
 @end
 

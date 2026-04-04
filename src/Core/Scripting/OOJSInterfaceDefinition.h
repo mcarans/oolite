@@ -23,19 +23,18 @@ MA 02110-1301, USA.
 
 */
 
-#import "OOJSScript.h"
 #include <jsapi.h>
+#import "OOJSScript.h"
 
-@interface OOJSInterfaceDefinition: OOWeakRefObject
-{
-@private
-	jsval				_callback;
-	JSObject			*_callbackThis;
-	OOJSScript			*_owningScript;
+@interface OOJSInterfaceDefinition : OOWeakRefObject {
+   @private
+    jsval _callback;
+    JSObject *_callbackThis;
+    OOJSScript *_owningScript;
 
-	NSString			*_title;
-	NSString			*_summary;
-	NSString			*_category;
+    NSString *_title;
+    NSString *_summary;
+    NSString *_category;
 }
 
 - (NSString *)title;
@@ -54,4 +53,3 @@ MA 02110-1301, USA.
 - (NSComparisonResult)interfaceCompare:(OOJSInterfaceDefinition *)other;
 
 @end
-

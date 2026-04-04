@@ -28,65 +28,54 @@ SOFTWARE.
 #import "OOPixMapTextureLoader.h"
 #import "OOTextureScaling.h"
 
-
 @implementation OOPixMapTextureLoader
 
-- (id) initWithPixMap:(OOPixMap)pixMap textureOptions:(uint32_t)options freeWhenDone:(BOOL)freeWhenDone
-{
-	if ((self = [super initWithPath:[NSString stringWithFormat:@"OOPixMap@%p", self] options:options]))
-	{
-		if (freeWhenDone)  _pixMap = pixMap;
-		else  _pixMap = OODuplicatePixMap(_pixMap, 0);
-		
-		_texOptions = OOApplyTextureOptionDefaults(options);
-		
-		if (!OOIsValidPixMap(_pixMap))  DESTROY(self);
-	}
-	
-	return self;
+- (id)initWithPixMap:(OOPixMap)pixMap textureOptions:(uint32_t)options freeWhenDone:(BOOL)freeWhenDone {
+    if ((self = [super initWithPath:[NSString stringWithFormat:@ "OOPixMap@%p", self] options:options])) {
+        if (freeWhenDone)
+            _pixMap = pixMap;
+        else
+            _pixMap = OODuplicatePixMap(_pixMap, 0);
+
+        _texOptions = OOApplyTextureOptionDefaults(options);
+
+        if (!OOIsValidPixMap(_pixMap)) DESTROY(self);
+    }
+
+    return self;
 }
 
+- (void)dealloc {
+    OOFreePixMap(&_pixMap);
 
-- (void) dealloc
-{
-	OOFreePixMap(&_pixMap);
-	
-	[super dealloc];
+    [super dealloc];
 }
 
+- (void)loadTexture {
+    // Generate mip maps if needed.
+    if ((_texOptions & kOOTextureMinFilterMask) == kOOTextureMinFilterMipMap) {
+        size_t size = OOMinimumPixMapBufferSize(_pixMap) * 4 / 3;
+        BOOL generateMipMaps = OOExpandPixMap(&_pixMap, size);
+        if (generateMipMaps) {
+            OOGenerateMipMaps(_pixMap.pixels, _pixMap.width, _pixMap.height, _pixMap.format);
+        } else {
+            _texOptions = (_texOptions & ~kOOTextureMinFilterMask) | kOOTextureMinFilterMipMap;
+        }
+    }
 
-- (void) loadTexture
-{
-	// Generate mip maps if needed.
-	if ((_texOptions & kOOTextureMinFilterMask) == kOOTextureMinFilterMipMap)
-	{
-		size_t size = OOMinimumPixMapBufferSize(_pixMap) * 4 / 3;
-		BOOL generateMipMaps = OOExpandPixMap(&_pixMap, size);
-		if (generateMipMaps)
-		{
-			OOGenerateMipMaps(_pixMap.pixels,_pixMap.width, _pixMap.height, _pixMap.format);
-		}
-		else
-		{
-			_texOptions = (_texOptions & ~kOOTextureMinFilterMask) | kOOTextureMinFilterMipMap;
-		}
-	}
-	
-	// Set up output ivars as per OOTextureLoader contract.
-	_data = _pixMap.pixels;
-	_width = _pixMap.width;
-	_height = _pixMap.height;
-	_rowBytes = _pixMap.rowBytes;
-	_format = _pixMap.format;
-	
-	//	Explicitly do not free pixels - ownership passes to texture.
-	_pixMap.pixels = NULL;
+    // Set up output ivars as per OOTextureLoader contract.
+    _data = _pixMap.pixels;
+    _width = _pixMap.width;
+    _height = _pixMap.height;
+    _rowBytes = _pixMap.rowBytes;
+    _format = _pixMap.format;
+
+    //	Explicitly do not free pixels - ownership passes to texture.
+    _pixMap.pixels = NULL;
 }
 
-
-- (uint32_t) textureOptions
-{
-	return _texOptions;
+- (uint32_t)textureOptions {
+    return _texOptions;
 }
 
 @end

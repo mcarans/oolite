@@ -28,56 +28,54 @@ MA 02110-1301, USA.
 #import "OOCocoa.h"
 #import "OOMaths.h"
 
-
-#define	COLLISION_REGION_BORDER_RADIUS	32000.0f
-#define	COLLISION_MAX_ENTITIES			128
+#define COLLISION_REGION_BORDER_RADIUS 32000.0f
+#define COLLISION_MAX_ENTITIES 128
 #define MINIMUM_SHADOWING_ENTITY_RADIUS 75.0
 
 @class Entity, OOSunEntity;
 
+@interface CollisionRegion : NSObject {
+   @private
+    BOOL isUniverse;  // if YES location is origin and radius is 0.0f
 
-@interface CollisionRegion: NSObject
-{
-@private
-	BOOL				isUniverse;			// if YES location is origin and radius is 0.0f
-	
-	int					crid;				// identifier
-	HPVector				location;			// center of the region
-	GLfloat				radius;				// inner radius of the region
-	GLfloat				border_radius;		// additiønal, border radius of the region (typically 32km or some value > the scanner range)
+    int crid;           // identifier
+    HPVector location;  // center of the region
+    GLfloat radius;     // inner radius of the region
+    GLfloat
+        border_radius;  // additiønal, border radius of the region (typically 32km or some value > the scanner range)
 
-	unsigned			checks_this_tick;
-	unsigned			checks_within_range;
+    unsigned checks_this_tick;
+    unsigned checks_within_range;
 
-	NSMutableArray		*subregions;
-	
-	BOOL				isPlayerInRegion;
-	
-	Entity				**entity_array;	// entities within the region
-	unsigned			n_entities;		// number of entities
-	unsigned			max_entities;	// so storage can be expanded
-	
-	CollisionRegion		*parentRegion;
+    NSMutableArray *subregions;
+
+    BOOL isPlayerInRegion;
+
+    Entity **entity_array;  // entities within the region
+    unsigned n_entities;    // number of entities
+    unsigned max_entities;  // so storage can be expanded
+
+    CollisionRegion *parentRegion;
 }
 
-- (id) initAsUniverse;
-- (id) initAtLocation:(HPVector) locn withRadius:(GLfloat) rad withinRegion:(CollisionRegion*) otherRegion;
+- (id)initAsUniverse;
+- (id)initAtLocation:(HPVector)locn withRadius:(GLfloat)rad withinRegion:(CollisionRegion *)otherRegion;
 
-- (void) clearSubregions;
-- (void) addSubregionAtPosition:(HPVector) pos withRadius:(GLfloat) rad;
+- (void)clearSubregions;
+- (void)addSubregionAtPosition:(HPVector)pos withRadius:(GLfloat)rad;
 
 // collision checking
-- (void) clearEntityList;
-- (void) addEntity:(Entity *)ent;
-- (BOOL) checkEntity:(Entity *)ent;
+- (void)clearEntityList;
+- (void)addEntity:(Entity *)ent;
+- (BOOL)checkEntity:(Entity *)ent;
 
-- (void) findCollisions;
-- (void) findShadowedEntities;
+- (void)findCollisions;
+- (void)findShadowedEntities;
 
 // Description for FPS HUD
-- (NSString *) collisionDescription;
+- (NSString *)collisionDescription;
 
-- (NSString *) debugOut;
+- (NSString *)debugOut;
 
 @end
 

@@ -1,0 +1,34 @@
+name: Global Format Check
+
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'src/**/*.c'
+      - 'src/**/*.m'
+      - 'src/**/*.h'
+      - 'src/**/*.cpp'
+      - 'src/**/*.hpp'
+  pull_request:
+    branches:
+      - '**'
+    paths:
+      - 'src/**/*.c'
+      - 'src/**/*.m'
+      - 'src/**/*.h'
+      - 'src/**/*.cpp'
+      - 'src/**/*.hpp'
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Run clang-format style check
+        uses: jidicula/clang-format-action@v4.18.0
+        with:
+          clang-format-version: '22'
+          check-path: 'src'

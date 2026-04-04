@@ -31,97 +31,76 @@ SOFTWARE.
 
 @implementation OOALStreamedSound
 
-- (void)dealloc
-{
-	free(_buffer);
-	_buffer = NULL;
-	[decoder release];
+- (void)dealloc {
+    free(_buffer);
+    _buffer = NULL;
+    [decoder release];
 
-	[super dealloc];
+    [super dealloc];
 }
 
-- (NSString *)name
-{
-	return _name;
+- (NSString *)name {
+    return _name;
 }
 
+- (id)initWithDecoder:(OOALSoundDecoder *)inDecoder {
+    BOOL OK = YES;
 
+    [OOSound setUp];
+    if (![OOSound isSoundOK] || nil == inDecoder) OK = NO;
 
-- (id)initWithDecoder:(OOALSoundDecoder *)inDecoder
-{
-	BOOL					OK = YES;
-	
-	[OOSound setUp];
-	if (![OOSound isSoundOK] || nil == inDecoder) OK = NO;
-	
-	if (OK)
-	{
-		self = [super init];
-		if (nil == self) OK = NO;
-	}
-	
-	if (OK)
-	{
-		_name = [[inDecoder name] copy];
-		_sampleRate = [inDecoder sampleRate];
-		_stereo = [inDecoder isStereo];
-		_reachedEnd = NO;
-		_buffer = malloc(OOAL_STREAM_CHUNK_SIZE);
-		decoder = [inDecoder retain];
-		[self rewind];
-	}
-	
-	if (!OK)
-	{
-		[self release];
-		self = nil;
-	}
-	return self;
+    if (OK) {
+        self = [super init];
+        if (nil == self) OK = NO;
+    }
+
+    if (OK) {
+        _name = [[inDecoder name] copy];
+        _sampleRate = [inDecoder sampleRate];
+        _stereo = [inDecoder isStereo];
+        _reachedEnd = NO;
+        _buffer = malloc(OOAL_STREAM_CHUNK_SIZE);
+        decoder = [inDecoder retain];
+        [self rewind];
+    }
+
+    if (!OK) {
+        [self release];
+        self = nil;
+    }
+    return self;
 }
 
-
-- (void) rewind
-{
-	[decoder reset];
-	_reachedEnd = NO;
+- (void)rewind {
+    [decoder reset];
+    _reachedEnd = NO;
 }
 
-
-- (BOOL) soundIncomplete
-{
-	return !_reachedEnd;
+- (BOOL)soundIncomplete {
+    return !_reachedEnd;
 }
 
+- (ALuint)soundBuffer {
+    size_t transferred = [decoder streamToBuffer:_buffer];
+    if (transferred < OOAL_STREAM_CHUNK_SIZE) {
+        // otherwise keep going
+        _reachedEnd = YES;
+    }
 
-- (ALuint) soundBuffer
-{
-	size_t transferred = [decoder streamToBuffer:_buffer];
-	if (transferred < OOAL_STREAM_CHUNK_SIZE)
-	{
-		// otherwise keep going
-		_reachedEnd = YES;
-	}
-
-	ALuint buffer;
-	ALint error;
-	OOAL(alGenBuffers(1,&buffer));
-	if ((error = alGetError()) != AL_NO_ERROR)
-	{
-		OOLog(kOOLogSoundLoadingError, @"%@", @"Could not create OpenAL buffer");
-		return 0;
-	}
-	else
-	{
-		if (!_stereo)
-		{
-			alBufferData(buffer, AL_FORMAT_MONO16, _buffer, (ALsizei)transferred, _sampleRate);
-		}
-		else
-		{
-			alBufferData(buffer, AL_FORMAT_STEREO16, _buffer, (ALsizei)transferred, _sampleRate);
-		}
-		return buffer;
-	}
+    ALuint buffer;
+    ALint error;
+    OOAL(alGenBuffers(1, &buffer));
+    if ((error = alGetError()) != AL_NO_ERROR) {
+        OOLog(kOOLogSoundLoadingError, @ "%@", @ "Could not create OpenAL buffer");
+        return 0;
+    } else {
+        if (!_stereo) {
+            alBufferData(buffer, AL_FORMAT_MONO16, _buffer, (ALsizei)transferred, _sampleRate);
+        } else {
+            alBufferData(buffer, AL_FORMAT_STEREO16, _buffer, (ALsizei)transferred, _sampleRate);
+        }
+        return buffer;
+    }
 }
 
 @end

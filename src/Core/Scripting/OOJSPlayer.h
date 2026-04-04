@@ -29,18 +29,16 @@ MA 02110-1301, USA.
 
 @class PlayerEntity;
 
-
 void InitOOJSPlayer(JSContext *context, JSObject *global);
 
 JSClass *JSPlayerClass(void);
 JSObject *JSPlayerPrototype(void);
 JSObject *JSPlayerObject(void);
 
-
 /*	All JS functions which talk to the player entity should call
-	OOOPlayerForScripting() to ensure that the script target (for the legacy
-	system) is set correctly. Additionally, all such functions should _always_
-	call OOPlayerForScripting(), even if they end up not using it, to ensure
-	consistent state.
+        OOOPlayerForScripting() to ensure that the script target (for the legacy
+        system) is set correctly. Additionally, all such functions should _always_
+        call OOPlayerForScripting(), even if they end up not using it, to ensure
+        consistent state.
 */
 PlayerEntity *OOPlayerForScripting(void);

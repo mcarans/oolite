@@ -33,15 +33,13 @@ MA 02110-1301, USA.
 
 @class GameController;
 
-
-@interface OoliteApp: NSApplication
-{
-@private
-	IBOutlet NSWindow			*_gameWindow;
-	IBOutlet GameController		*_gameController;
-	NSString					*_exitContext;
+@interface OoliteApp : NSApplication {
+   @private
+    IBOutlet NSWindow *_gameWindow;
+    IBOutlet GameController *_gameController;
+    NSString *_exitContext;
 }
 
-- (void) setExitContext:(NSString *)exitContext;
+- (void)setExitContext:(NSString *)exitContext;
 
 @end

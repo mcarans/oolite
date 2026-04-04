@@ -23,18 +23,17 @@ MA 02110-1301, USA.
 
 */
 
-#import "OOJSScript.h"
 #include <jsapi.h>
+#import "OOJSScript.h"
 
-@interface OOJSGuiScreenKeyDefinition: OOWeakRefObject
-{
-@private
-	jsval				_callback;
-	JSObject			*_callbackThis;
-	OOJSScript			*_owningScript;
+@interface OOJSGuiScreenKeyDefinition : OOWeakRefObject {
+   @private
+    jsval _callback;
+    JSObject *_callbackThis;
+    OOJSScript *_owningScript;
 
-	NSString			*_name;
-	NSDictionary		*_registerKeys;
+    NSString *_name;
+    NSDictionary *_registerKeys;
 }
 
 - (NSString *)name;
@@ -51,4 +50,3 @@ MA 02110-1301, USA.
 - (NSComparisonResult)interfaceCompare:(OOJSGuiScreenKeyDefinition *)other;
 
 @end
-

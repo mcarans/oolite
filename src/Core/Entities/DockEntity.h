@@ -25,39 +25,37 @@ MA 02110-1301, USA.
 */
 
 #import "ShipEntity.h"
-#import "StationEntity.h"	// For MAX_DOCKING_STAGES
+#import "StationEntity.h"  // For MAX_DOCKING_STAGES
 
+@interface DockEntity : ShipEntity {
+   @private
+    NSMutableDictionary *shipsOnApproach;
+    NSMutableArray *launchQueue;
+    double last_launch_time;
+    //	double					approach_spacing; // not needed now holding pattern changed
 
-@interface DockEntity: ShipEntity
-{
-@private
-	NSMutableDictionary		*shipsOnApproach;
-	NSMutableArray			*launchQueue;
-	double					last_launch_time;
-//	double					approach_spacing; // not needed now holding pattern changed
-	
-	ShipEntity				*id_lock[MAX_DOCKING_STAGES];	// OOWeakReferences to a ShipEntity
-	
-	Vector  				port_dimensions;
-	double					port_corridor;				// corridor length inside station.
-	
-	BOOL					no_docking_while_launching;
-	BOOL					allow_launching;
-	BOOL					allow_docking;
-	BOOL					disallowed_docking_collides; 
-	BOOL					virtual_dock;
+    ShipEntity *id_lock[MAX_DOCKING_STAGES];  // OOWeakReferences to a ShipEntity
+
+    Vector port_dimensions;
+    double port_corridor;  // corridor length inside station.
+
+    BOOL no_docking_while_launching;
+    BOOL allow_launching;
+    BOOL allow_docking;
+    BOOL disallowed_docking_collides;
+    BOOL virtual_dock;
 }
 
-- (void) clear;
+- (void)clear;
 
 // Docking
-- (BOOL) allowsDocking;
-- (void) setAllowsDocking:(BOOL)allow;
-- (BOOL) disallowedDockingCollides; 
-- (void) setDisallowedDockingCollides:(BOOL)ddc;
-- (NSUInteger) countOfShipsInDockingQueue;
+- (BOOL)allowsDocking;
+- (void)setAllowsDocking:(BOOL)allow;
+- (BOOL)disallowedDockingCollides;
+- (void)setDisallowedDockingCollides:(BOOL)ddc;
+- (NSUInteger)countOfShipsInDockingQueue;
 /**
- * Guides a ship into the dock. 
+ * Guides a ship into the dock.
  * <h3>Possible results:</h3>
  * <ul>
  * <li>null<br/>
@@ -81,8 +79,8 @@ MA 02110-1301, USA.
  * <li>If ship is not on approach list and beyond scanner range (25 km?), approach the station
  * <li>Add ship to approach list
  * <li>If ship is within distance of 1000 km between station's and ship's collision radius, move away from station
- * <li>If ship is approaching from behind, move to the side of the station (perpendicular on direction to station and launch vector)
- * <li>If ship is further away than 12000 km, approach the station
+ * <li>If ship is approaching from behind, move to the side of the station (perpendicular on direction to station and
+ * launch vector) <li>If ship is further away than 12000 km, approach the station
  * </ol>
  * <p>Now the ship is in the vicinity of the station in the correct hemispere. Let's guide them in.</p>
  * <ol>
@@ -92,35 +90,35 @@ MA 02110-1301, USA.
  * <li>If next 3 stages of approach are clear, move to next position
  * <li>otherwise hold position
  * </ol>
- * 
+ *
  * <p>TODO: Where is the detection that the ship has docked?</p>
  * <p>TODO: What are the magic number's units? Is it km (kilometers)?</p>
  */
-- (NSDictionary *) dockingInstructionsForShip:(ShipEntity *)ship;
-- (NSString *) canAcceptShipForDocking:(ShipEntity *)ship;
-- (BOOL) shipIsInDockingCorridor:(ShipEntity *)ship;
-- (BOOL) shipIsInDockingQueue:(ShipEntity *)ship;
-- (void) abortDockingForShip:(ShipEntity *)ship;
-- (void) abortAllDockings;
-- (BOOL) dockingCorridorIsEmpty;
-- (void) clearDockingCorridor;
-- (void) autoDockShipsOnApproach;
-- (NSUInteger) pruneAndCountShipsOnApproach;
-- (void) noteDockingForShip:(ShipEntity *)ship;
+- (NSDictionary *)dockingInstructionsForShip:(ShipEntity *)ship;
+- (NSString *)canAcceptShipForDocking:(ShipEntity *)ship;
+- (BOOL)shipIsInDockingCorridor:(ShipEntity *)ship;
+- (BOOL)shipIsInDockingQueue:(ShipEntity *)ship;
+- (void)abortDockingForShip:(ShipEntity *)ship;
+- (void)abortAllDockings;
+- (BOOL)dockingCorridorIsEmpty;
+- (void)clearDockingCorridor;
+- (void)autoDockShipsOnApproach;
+- (NSUInteger)pruneAndCountShipsOnApproach;
+- (void)noteDockingForShip:(ShipEntity *)ship;
 
 // Launching
-- (BOOL) allowsLaunching;
-- (void) setAllowsLaunching:(BOOL)allow;
-- (NSUInteger) countOfShipsInLaunchQueue;
-- (NSUInteger) countOfShipsInLaunchQueueWithPrimaryRole:(NSString *)role;
-- (BOOL) allowsLaunchingOf:(ShipEntity *)ship;
-- (void) launchShip:(ShipEntity *)ship;
-- (void) addShipToLaunchQueue:(ShipEntity *)ship withPriority:(BOOL)priority;
+- (BOOL)allowsLaunching;
+- (void)setAllowsLaunching:(BOOL)allow;
+- (NSUInteger)countOfShipsInLaunchQueue;
+- (NSUInteger)countOfShipsInLaunchQueueWithPrimaryRole:(NSString *)role;
+- (BOOL)allowsLaunchingOf:(ShipEntity *)ship;
+- (void)launchShip:(ShipEntity *)ship;
+- (void)addShipToLaunchQueue:(ShipEntity *)ship withPriority:(BOOL)priority;
 
 // Geometry
-- (void) setDimensionsAndCorridor:(BOOL)docking :(BOOL)ddc :(BOOL)launching;
-- (Vector) portUpVectorForShipsBoundingBox:(BoundingBox)bb;
-- (BOOL) isOffCentre;
-- (void) setVirtual;
+- (void)setDimensionsAndCorridor:(BOOL)docking:(BOOL)ddc:(BOOL)launching;
+- (Vector)portUpVectorForShipsBoundingBox:(BoundingBox)bb;
+- (BOOL)isOffCentre;
+- (void)setVirtual;
 
 @end

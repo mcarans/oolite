@@ -25,60 +25,46 @@ MA 02110-1301, USA.
 
 #import "OOExcludeObjectEnumerator.h"
 
-
 @implementation OOExcludeObjectEnumerator
 
-- (id) initWithEnumerator:(NSEnumerator *)enumerator
-		  excludingObject:(id)object
-{
-	if ((self = [super init]))
-	{
-		_enumerator = [enumerator retain];
-		_excludeObject = [object retain];
-	}
-	
-	return self;
+- (id)initWithEnumerator:(NSEnumerator *)enumerator excludingObject:(id)object {
+    if ((self = [super init])) {
+        _enumerator = [enumerator retain];
+        _excludeObject = [object retain];
+    }
+
+    return self;
 }
 
+- (void)dealloc {
+    [_enumerator release];
+    [_excludeObject release];
 
-- (void) dealloc
-{
-	[_enumerator release];
-	[_excludeObject release];
-	
-	[super dealloc];
+    [super dealloc];
 }
 
++ (id)enumeratorWithEnumerator:(NSEnumerator *)enumerator excludingObject:(id)object {
+    if (object == nil) return enumerator;
+    if (enumerator == nil) return nil;
 
-+ (id) enumeratorWithEnumerator:(NSEnumerator *)enumerator
-				excludingObject:(id)object
-{
-	if (object == nil)  return enumerator;
-	if (enumerator == nil)  return nil;
-	
-	return [[[self alloc] initWithEnumerator:enumerator excludingObject:object] autorelease];
+    return [[[self alloc] initWithEnumerator:enumerator excludingObject:object] autorelease];
 }
 
+- (id)nextObject {
+    id result = nil;
+    do {
+        result = [_enumerator nextObject];
+    } while (result == _excludeObject && result != nil);
 
-- (id) nextObject
-{
-	id result = nil;
-	do
-	{
-		result = [_enumerator nextObject];
-	} while (result == _excludeObject && result != nil);
-	
-	return result;
+    return result;
 }
 
 @end
 
-
 @implementation NSEnumerator (OOExcludingObject)
 
-- (id) ooExcludingObject:(id)object
-{
-	return [OOExcludeObjectEnumerator enumeratorWithEnumerator:self excludingObject:object];
+- (id)ooExcludingObject:(id)object {
+    return [OOExcludeObjectEnumerator enumeratorWithEnumerator:self excludingObject:object];
 }
 
 @end

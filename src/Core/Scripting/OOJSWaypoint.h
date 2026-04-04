@@ -27,16 +27,14 @@ MA 02110-1301, USA.
 #import <Foundation/Foundation.h>
 #include <jsapi.h>
 
-
 @class OOWaypointEntity;
-
 
 void InitOOJSWaypoint(JSContext *context, JSObject *global);
 
 @interface OOWaypointEntity (OOJavaScriptExtensions)
 
 - (void)getJSClass:(JSClass **)outClass andPrototype:(JSObject **)outPrototype;
-- (NSString *) oo_jsClassName;
-- (BOOL) isVisibleToScripts;
+- (NSString *)oo_jsClassName;
+- (BOOL)isVisibleToScripts;
 
 @end

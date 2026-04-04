@@ -25,34 +25,32 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
- 
+
 */
 
 #import "OOCocoa.h"
 
 @protocol OOPrimaryWindowDelegate;
 
-
-@interface OOPrimaryWindow: NSWindow
+@interface OOPrimaryWindow : NSWindow
 #if !__OBJC2__
 {
-@private
-	id<OOPrimaryWindowDelegate>		_fullScreenDelegate;
+   @private
+    id<OOPrimaryWindowDelegate> _fullScreenDelegate;
 }
 #endif
 
 @property (nonatomic, assign) IBOutlet id<OOPrimaryWindowDelegate> fullScreenDelegate;
 
 // Call through to standard toggleFullScreen: implementation.
-- (void) standardToggleFullScreen:(id)sender;
+- (void)standardToggleFullScreen:(id)sender;
 
 @end
-
 
 @protocol OOPrimaryWindowDelegate <NSObject>
 @optional
 
 // Sent in response to toggleFullScreen:.
-- (void) toggleFullScreenCalledForWindow:(OOPrimaryWindow *)window withSender:(id)sender;
+- (void)toggleFullScreenCalledForWindow:(OOPrimaryWindow *)window withSender:(id)sender;
 
 @end

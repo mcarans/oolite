@@ -29,6 +29,5 @@ SOFTWARE.
 
 #import <Quartz/Quartz.h>
 
-
-@interface OOPDFView: PDFView
+@interface OOPDFView : PDFView
 @end

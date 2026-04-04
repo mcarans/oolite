@@ -27,151 +27,118 @@ SOFTWARE.
 
 #include <assert.h>
 
-#import "OOALSoundMixer.h"
-#import "OOCocoa.h"
 #import "OOALSound.h"
 #import "OOALSoundChannel.h"
+#import "OOALSoundMixer.h"
+#import "OOCocoa.h"
 
 static OOSoundMixer *sSingleton = nil;
 
-
 @implementation OOSoundMixer
 
-+ (id) sharedMixer
-{
-	if (nil == sSingleton)
-	{
-		[[self alloc] init];
-	}
-	return sSingleton;
++ (id)sharedMixer {
+    if (nil == sSingleton) {
+        [[self alloc] init];
+    }
+    return sSingleton;
 }
 
+- (id)init {
+    BOOL OK = YES;
+    uint32_t idx = 0, count = kMixerGeneralChannels;
+    OOSoundChannel *channel;
 
-- (id) init
-{
-	BOOL						OK = YES;
-	uint32_t					idx = 0, count = kMixerGeneralChannels;
-	OOSoundChannel				*channel;
-	
-	if (!(self = [super init]))  return nil;
-	if (![OOSound setUp])  OK = NO;
-	
-	if (OK)
-	{
-		// Allocate channels
-		do
-		{
-			channel = [[OOSoundChannel alloc] init];
-			if (nil != channel)
-			{
-				_channels[idx++] = channel;
-				[self pushChannel:channel];
-			}
-		}  while (--count);
-	}
-	
-	if (!OK)
-	{
-		[super release];
-// static analyser complains about this next line; probably nothing - CIM
-		self = nil;
-	}
-	else
-	{
-		sSingleton = self;
-	}
-	
-	return sSingleton;
+    if (!(self = [super init])) return nil;
+    if (![OOSound setUp]) OK = NO;
+
+    if (OK) {
+        // Allocate channels
+        do {
+            channel = [[OOSoundChannel alloc] init];
+            if (nil != channel) {
+                _channels[idx++] = channel;
+                [self pushChannel:channel];
+            }
+        } while (--count);
+    }
+
+    if (!OK) {
+        [super release];
+        // static analyser complains about this next line; probably nothing - CIM
+        self = nil;
+    } else {
+        sSingleton = self;
+    }
+
+    return sSingleton;
 }
-
 
 // only to be called at app shutdown by OOOpenALController::shutdown
-- (void) shutdown
-{
-	uint32_t i;
-	for (i = 0; i < kMixerGeneralChannels; ++i)
-	{
-		DESTROY(_channels[i]);
-	}
+- (void)shutdown {
+    uint32_t i;
+    for (i = 0; i < kMixerGeneralChannels; ++i) {
+        DESTROY(_channels[i]);
+    }
 }
 
-
-- (void) update
-{
-	uint32_t i;
-	for (i = 0; i < kMixerGeneralChannels; ++i)
-	{
-		[_channels[i] update];
-	}
+- (void)update {
+    uint32_t i;
+    for (i = 0; i < kMixerGeneralChannels; ++i) {
+        [_channels[i] update];
+    }
 }
 
+- (OOSoundChannel *)popChannel {
+    OOSoundChannel *channel = _freeList;
+    _freeList = [channel next];
+    [channel setNext:nil];
 
-- (OOSoundChannel *) popChannel
-{
-	OOSoundChannel *channel = _freeList;
-	_freeList = [channel next];
-	[channel setNext:nil];
-	
-	return channel;
+    return channel;
 }
 
+- (void)pushChannel:(OOSoundChannel *)channel {
+    assert(channel != nil);
 
-- (void) pushChannel:(OOSoundChannel *)channel
-{
-	assert(channel != nil);
-	
-	[channel setNext:_freeList];
-	_freeList = channel;
+    [channel setNext:_freeList];
+    _freeList = channel;
 }
 
 @end
 
-
 @implementation OOSoundMixer (Singleton)
 
 /*	Canonical singleton boilerplate.
-	See Cocoa Fundamentals Guide: Creating a Singleton Instance.
-	See also +sharedMixer above.
-	
-	NOTE: assumes single-threaded access.
+        See Cocoa Fundamentals Guide: Creating a Singleton Instance.
+        See also +sharedMixer above.
+
+        NOTE: assumes single-threaded access.
 */
 
-+ (id)allocWithZone:(NSZone *)inZone
-{
-	if (sSingleton == nil)
-	{
-		sSingleton = [super allocWithZone:inZone];
-		return sSingleton;
-	}
-	return nil;
++ (id)allocWithZone:(NSZone *)inZone {
+    if (sSingleton == nil) {
+        sSingleton = [super allocWithZone:inZone];
+        return sSingleton;
+    }
+    return nil;
 }
 
-
-- (id)copyWithZone:(NSZone *)inZone
-{
-	return self;
+- (id)copyWithZone:(NSZone *)inZone {
+    return self;
 }
 
-
-- (id)retain
-{
-	return self;
+- (id)retain {
+    return self;
 }
 
-
-- (NSUInteger)retainCount
-{
-	return UINT_MAX;
+- (NSUInteger)retainCount {
+    return UINT_MAX;
 }
 
+- (void)release {
+}
 
-- (void)release
-{}
-
-
-- (id)autorelease
-{
-	return self;
+- (id)autorelease {
+    return self;
 }
 
 @end

@@ -31,10 +31,11 @@ MA 02110-1301, USA.
 
 @class Entity;
 
-
 NSMutableArray *ScanTokensFromString(NSString *values);
 
-// Note: these functions will leave their out values untouched if they fail (and return NO). They will not log an error if passed a NULL string (but will return NO). This means they can be used to, say, read dictionary entries which might not exist. They also ignore any extra components in the string.
+// Note: these functions will leave their out values untouched if they fail (and return NO). They will not log an error
+// if passed a NULL string (but will return NO). This means they can be used to, say, read dictionary entries which
+// might not exist. They also ignore any extra components in the string.
 BOOL ScanVectorFromString(NSString *xyzString, Vector *outVector);
 BOOL ScanHPVectorFromString(NSString *xyzString, HPVector *outVector);
 BOOL ScanQuaternionFromString(NSString *wxyzString, Quaternion *outQuaternion);
@@ -49,23 +50,19 @@ NSPoint PointFromString(NSString *xyString);
 Random_Seed RandomSeedFromString(NSString *abcdefString);
 NSString *StringFromRandomSeed(Random_Seed seed);
 
-
 NSString *OOStringFromDeciCredits(OOCreditsQuantity tenthsOfCredits, BOOL includeDecimal, BOOL includeSymbol);
-OOINLINE NSString *OOStringFromIntCredits(OOCreditsQuantity integerCredits, BOOL includeSymbol)
-{
-	return OOStringFromDeciCredits(integerCredits * 10, NO, includeSymbol);
+OOINLINE NSString *OOStringFromIntCredits(OOCreditsQuantity integerCredits, BOOL includeSymbol) {
+    return OOStringFromDeciCredits(integerCredits * 10, NO, includeSymbol);
 }
 
-OOINLINE NSString *OOCredits(OOCreditsQuantity tenthsOfCredits)
-{
-	return OOStringFromDeciCredits(tenthsOfCredits, YES, YES);
+OOINLINE NSString *OOCredits(OOCreditsQuantity tenthsOfCredits) {
+    return OOStringFromDeciCredits(tenthsOfCredits, YES, YES);
 }
-OOINLINE NSString *OOIntCredits(OOCreditsQuantity integerCredits)
-{
-	return OOStringFromIntCredits(integerCredits, YES);
+OOINLINE NSString *OOIntCredits(OOCreditsQuantity integerCredits) {
+    return OOStringFromIntCredits(integerCredits, YES);
 }
 
-NSString *OOPadStringToEms(NSString * string, float numEms);
+NSString *OOPadStringToEms(NSString *string, float numEms);
 
 @interface NSString (OOUtilities)
 
@@ -75,33 +72,30 @@ NSString *OOPadStringToEms(NSString * string, float numEms);
 
 @end
 
-
 // Given a string of the form 1.2.3.4 (with arbitrarily many components), return an array of unsigned ints.
 NSArray *ComponentsFromVersionString(NSString *string);
 
 /*	Compare two arrays of unsigned int NSNumbers, as returned by
-	ComponentsFromVersionString().
-	
-	Components are ordered from most to least significant, and a missing
-	component is treated as 0. Thus "1.7" < "1.60", and "1.2.3.0" == "1.2.3".
+        ComponentsFromVersionString().
+
+        Components are ordered from most to least significant, and a missing
+        component is treated as 0. Thus "1.7" < "1.60", and "1.2.3.0" == "1.2.3".
 */
 NSComparisonResult CompareVersions(NSArray *version1, NSArray *version2);
 
-
 NSString *ClockToString(double clock, BOOL adjusting);
-
 
 #if DEBUG_GRAPHVIZ
 NSString *EscapedGraphVizString(NSString *string);
 
 /*	GraphVizTokenString()
-	Generate a C-style identifier. Sequences of invalid characters and
-	underscores are replaced with single underscores. If uniqueSet is not nil,
-	uniqueness is achieved by appending numbers if necessary.
-	
-	This can be used for any C-based langauge, but note that it excludes the
-	case-insensitive GraphViz keywords node, edge, graph, digraph, subgraph
-	and strict.
+        Generate a C-style identifier. Sequences of invalid characters and
+        underscores are replaced with single underscores. If uniqueSet is not nil,
+        uniqueness is achieved by appending numbers if necessary.
+
+        This can be used for any C-based langauge, but note that it excludes the
+        case-insensitive GraphViz keywords node, edge, graph, digraph, subgraph
+        and strict.
 */
 NSString *GraphVizTokenString(NSString *string, NSMutableSet *uniqueSet);
 

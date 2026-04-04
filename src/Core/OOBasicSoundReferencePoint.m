@@ -24,24 +24,15 @@ MA 02110-1301, USA.
 
 #import "OOBasicSoundReferencePoint.h"
 
-
 @implementation OOSoundReferencePoint
 
-- (void)setPosition:(Vector)inPosition
-{
-
+- (void)setPosition:(Vector)inPosition {
 }
 
-
-- (void)setVelocity:(Vector)inVelocity
-{
-	
+- (void)setVelocity:(Vector)inVelocity {
 }
 
-
-- (void)setOrientation:(Vector)inOrientation
-{
-	
+- (void)setOrientation:(Vector)inOrientation {
 }
 
 @end

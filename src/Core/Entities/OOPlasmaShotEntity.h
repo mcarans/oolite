@@ -25,17 +25,15 @@ MA 02110-1301, USA.
 
 #import "OOLightParticleEntity.h"
 
-
-@interface OOPlasmaShotEntity: OOLightParticleEntity
-{
-@private
-	OOTimeDelta					_duration;
+@interface OOPlasmaShotEntity : OOLightParticleEntity {
+   @private
+    OOTimeDelta _duration;
 }
 
-- (id) initWithPosition:(HPVector)position
-			   velocity:(Vector)velocity
-				 energy:(float)energy
-			   duration:(OOTimeDelta)duration
-				  color:(OOColor *)color;
+- (id)initWithPosition:(HPVector)position
+              velocity:(Vector)velocity
+                energy:(float)energy
+              duration:(OOTimeDelta)duration
+                 color:(OOColor *)color;
 
 @end
