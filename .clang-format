@@ -16,17 +16,18 @@ AlignOperands: Align
 BinPackArguments: false
 BinPackParameters: false
 
+# Objective-C Specific Styling
+ObjCBlockIndentWidth: 4
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: true
+SpaceBeforeInheritanceColon: true
+
 ---
 # Specific overrides for Objective-C (.m files)
 Language: ObjC
 BasedOnStyle: Google
 IndentWidth: 4
 ColumnLimit: 120
-
-# Objective-C Specific Styling
-ObjCBlockIndentWidth: 4
-ObjCSpaceAfterProperty: true
-ObjCSpaceBeforeProtocolList: true
 
 # Alignment settings for long method calls
 AlignAfterOpenBracket: Align
@@ -35,3 +36,9 @@ AlignOperands: Align
 # Match the Cpp behavior for consistency
 BinPackArguments: false
 BinPackParameters: false
+
+# Objective-C Specific Styling
+ObjCBlockIndentWidth: 4
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: true
+SpaceBeforeInheritanceColon: true
