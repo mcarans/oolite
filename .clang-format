@@ -1,16 +1,19 @@
 ---
-# Main configuration for C++ and Objective-C
+# Main configuration for C++, C, and Header files
 Language: Cpp
 BasedOnStyle: Google
 IndentWidth: 4
 ColumnLimit: 120
-# 'None' prevents the tool from squashing small functions into one line
 AllowShortFunctionsOnASingleLine: None
-# Standardizing pointer alignment to the right (e.g., int *ptr)
 DerivePointerAlignment: false
 PointerAlignment: Right
 
+# Ensure long method/function calls are broken into one-per-line
+BinPackArguments: false
+BinPackParameters: false
+
 ---
+# Specific overrides for Objective-C (.m files)
 Language: ObjC
 BasedOnStyle: Google
 IndentWidth: 4
@@ -21,10 +24,10 @@ ObjCBlockIndentWidth: 4
 ObjCSpaceAfterProperty: true
 ObjCSpaceBeforeProtocolList: true
 
-# Alignment settings for those long method calls
+# Alignment settings for long method calls
 AlignAfterOpenBracket: Align
 AlignOperands: Align
 
-# If arguments don't fit on one line, put each on its own line
+# Match the Cpp behavior for consistency
 BinPackArguments: false
 BinPackParameters: false
