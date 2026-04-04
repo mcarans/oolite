@@ -21,13 +21,13 @@ MA 02110-1301, USA.
 
  */
 
-#import "WormholeEntity.h"  // sort-threshold
 #import "OOJSWormhole.h"
 #import "EntityOOJavaScriptExtensions.h"
 #import "OOCollectionExtractors.h"
 #import "OOJSEntity.h"
 #import "OOJSVector.h"
 #import "OOJavaScriptEngine.h"
+#import "WormholeEntity.h"  // sort-threshold
 
 static JSObject *sWormholePrototype;
 

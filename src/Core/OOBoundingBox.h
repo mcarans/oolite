@@ -92,6 +92,8 @@ OOINLINE void bounding_box_get_dimensions(BoundingBox bb, GLfloat *xSize, GLfloa
     if (zSize != NULL) *zSize = bb.max.z - bb.min.z;
 }
 
-OOINLINE Vector OOBoundingBoxCenter(BoundingBox bb) { return vector_multiply_scalar(vector_add(bb.min, bb.max), 0.5f); }
+OOINLINE Vector OOBoundingBoxCenter(BoundingBox bb) {
+    return vector_multiply_scalar(vector_add(bb.min, bb.max), 0.5f);
+}
 
 #endif

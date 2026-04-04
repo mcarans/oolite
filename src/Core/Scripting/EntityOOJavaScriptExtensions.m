@@ -22,7 +22,6 @@ MA 02110-1301, USA.
 
 */
 
-#import "OOVisualEffectEntity.h"  // sort-threshold
 #import "EntityOOJavaScriptExtensions.h"
 #import "DockEntity.h"
 #import "OOJSDock.h"
@@ -32,6 +31,7 @@ MA 02110-1301, USA.
 #import "OOJSVisualEffect.h"
 #import "OOJSWormhole.h"
 #import "OOPlanetEntity.h"
+#import "OOVisualEffectEntity.h"  // sort-threshold
 #import "StationEntity.h"
 #import "WormholeEntity.h"
 

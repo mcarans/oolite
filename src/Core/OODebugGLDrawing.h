@@ -78,7 +78,9 @@ OOINLINE void OODebugDrawBoundingBoxBetween(Vector min, Vector max) {
     OODebugDrawColoredBoundingBoxBetween(min, max, [OOColor blueColor]);
 }
 
-OOINLINE void OODebugDrawBoundingBox(BoundingBox box) { OODebugDrawBoundingBoxBetween(box.min, box.max); }
+OOINLINE void OODebugDrawBoundingBox(BoundingBox box) {
+    OODebugDrawBoundingBoxBetween(box.min, box.max);
+}
 
 OOINLINE void OODebugDrawColoredBoundingBox(BoundingBox box, OOColor *color) {
     OODebugDrawColoredBoundingBoxBetween(box.min, box.max, color);
@@ -89,7 +91,9 @@ OOINLINE void OODebugDrawNormal(Vector position, Vector normal, GLfloat scale) {
         position, vector_add(position, vector_multiply_scalar(normal, scale)), [OOColor cyanColor]);
 }
 
-OOINLINE void OODebugDrawNormalAtOrigin(Vector normal, GLfloat scale) { OODebugDrawNormal(kZeroVector, normal, scale); }
+OOINLINE void OODebugDrawNormalAtOrigin(Vector normal, GLfloat scale) {
+    OODebugDrawNormal(kZeroVector, normal, scale);
+}
 
 OOINLINE void OODebugDrawColoredVector(Vector position, Vector v, OOColor *color) {
     OODebugDrawColoredLine(position, vector_add(position, v), color);
@@ -99,15 +103,21 @@ OOINLINE void OODebugDrawVector(Vector position, Vector v) {
     OODebugDrawColoredVector(position, v, [OOColor magentaColor]);
 }
 
-OOINLINE void OODebugDrawVectorAtOrigin(Vector v) { OODebugDrawVector(kZeroVector, v); }
+OOINLINE void OODebugDrawVectorAtOrigin(Vector v) {
+    OODebugDrawVector(kZeroVector, v);
+}
 
 OOINLINE void OODebugDrawColoredVectorAtOrigin(Vector v, OOColor *color) {
     OODebugDrawColoredVector(kZeroVector, v, color);
 }
 
-OOINLINE void OODebugDrawLine(Vector start, Vector end) { OODebugDrawColoredLine(start, end, [OOColor whiteColor]); }
+OOINLINE void OODebugDrawLine(Vector start, Vector end) {
+    OODebugDrawColoredLine(start, end, [OOColor whiteColor]);
+}
 
-OOINLINE void OODebugDrawBasisAtOrigin(GLfloat scale) { OODebugDrawBasis(kZeroVector, scale); }
+OOINLINE void OODebugDrawBasisAtOrigin(GLfloat scale) {
+    OODebugDrawBasis(kZeroVector, scale);
+}
 
 #else  // OODEBUGLDRAWING_DISABLE
 

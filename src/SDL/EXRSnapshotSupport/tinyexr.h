@@ -2107,9 +2107,13 @@ struct HufDec {  // short code    long code
     unsigned int *p;        // 0      lits
 };
 
-inline long long hufLength(long long code) { return code & 63; }
+inline long long hufLength(long long code) {
+    return code & 63;
+}
 
-inline long long hufCode(long long code) { return code >> 6; }
+inline long long hufCode(long long code) {
+    return code >> 6;
+}
 
 inline void outputBits(int nBits, long long bits, long long &c, int &lc, char *&out) {
     c <<= nBits;
@@ -2201,7 +2205,9 @@ static void hufCanonicalCodeTable(long long hcode[HUF_ENCSIZE]) {
 //
 
 struct FHeapCompare {
-    bool operator()(long long *a, long long *b) { return *a > *b; }
+    bool operator()(long long *a, long long *b) {
+        return *a > *b;
+    }
 };
 
 static bool hufBuildEncTable(long long *frq,  // io: input frequencies [HUF_ENCSIZE], output table
@@ -4781,7 +4787,8 @@ static bool ConvertHeader(EXRHeader *exr_header, const HeaderInfo &info, std::st
 }
 
 struct OffsetData {
-    OffsetData() : num_x_levels(0), num_y_levels(0) {}
+    OffsetData() : num_x_levels(0), num_y_levels(0) {
+    }
     std::vector<std::vector<std::vector<tinyexr::tinyexr_uint64> > > offsets;
     int num_x_levels;
     int num_y_levels;
@@ -6020,7 +6027,8 @@ static void GetLayers(const EXRHeader &exr_header, std::vector<std::string> &lay
 }
 
 struct LayerChannel {
-    explicit LayerChannel(size_t i, std::string n) : index(i), name(n) {}
+    explicit LayerChannel(size_t i, std::string n) : index(i), name(n) {
+    }
     size_t index;
     std::string name;
 };
@@ -6766,7 +6774,9 @@ struct MemoryMappedFile {
 #endif
 
     // Returns whether this was successfully opened.
-    bool valid() const { return data; }
+    bool valid() const {
+        return data;
+    }
 };
 
 int LoadEXRImageFromFile(EXRImage *exr_image, const EXRHeader *exr_header, const char *filename, const char **err) {

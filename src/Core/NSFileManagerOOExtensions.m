@@ -26,10 +26,10 @@ MA 02110-1301, USA.
 
 */
 
-#import "GameController.h"  // sort-threshold
 #import "NSFileManagerOOExtensions.h"
 #include <SDL.h>
 #include <stdlib.h>
+#import "GameController.h"  // sort-threshold
 #import "OOPListParsing.h"
 #import "ResourceManager.h"
 #import "unzip.h"

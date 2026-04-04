@@ -197,8 +197,7 @@ JSObject *JSQuaternionWithQuaternion(JSContext *context, Quaternion quaternion) 
     JSObject *result = NULL;
     Quaternion *private = NULL;
 
-   private
-    = malloc(sizeof *private);
+    private = malloc(sizeof *private);
     if (EXPECT_NOT(private == NULL)) return NULL;
 
     *private = quaternion;
@@ -318,8 +317,7 @@ BOOL JSObjectGetQuaternion(JSContext *context, JSObject *quaternionObj, Quaterni
     }
 
     // If this is a (JS) Quaternion...
-   private
-    = JS_GetInstancePrivate(context, quaternionObj, &sQuaternionClass, NULL);
+    private = JS_GetInstancePrivate(context, quaternionObj, &sQuaternionClass, NULL);
     if (EXPECT(private != NULL)) {
         COUNT(quatCount);
         *outQuaternion = *private;
@@ -395,8 +393,7 @@ BOOL JSQuaternionSetQuaternion(JSContext *context, JSObject *quaternionObj, Quat
 
     assert(quaternionObj != NULL);
 
-   private
-    = JS_GetInstancePrivate(context, quaternionObj, &sQuaternionClass, NULL);
+    private = JS_GetInstancePrivate(context, quaternionObj, &sQuaternionClass, NULL);
     if (private != NULL)  // If this is a (JS) Quaternion...
     {
         *private = quaternion;
@@ -563,8 +560,7 @@ static JSBool QuaternionSetProperty(JSContext *context, JSObject *this, jsid pro
 static void QuaternionFinalize(JSContext *context, JSObject *this) {
     Quaternion *private = NULL;
 
-   private
-    = JS_GetInstancePrivate(context, this, &sQuaternionClass, NULL);
+    private = JS_GetInstancePrivate(context, this, &sQuaternionClass, NULL);
     if (private != NULL) {
         free(private);
     }
@@ -577,8 +573,7 @@ static JSBool QuaternionConstruct(JSContext *context, uintN argc, jsval *vp) {
     Quaternion *private = NULL;
     JSObject *this = NULL;
 
-   private
-    = malloc(sizeof *private);
+    private = malloc(sizeof *private);
     if (EXPECT_NOT(private == NULL)) return NO;
 
     this = JS_NewObject(context, &sQuaternionClass, NULL, NULL);

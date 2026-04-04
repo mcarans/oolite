@@ -22,8 +22,8 @@ MA 02110-1301, USA.
 
 */
 
-#import "OOJoystickManager.h"  // sort-threshold
 #import "OOJoystickProfile.h"
+#import "OOJoystickManager.h"  // sort-threshold
 #import "OOLoggingExtended.h"
 #import "OOMaths.h"
 #import "Universe.h"

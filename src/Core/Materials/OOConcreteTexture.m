@@ -24,8 +24,8 @@
 
 */
 
-#import "OOTextureInternal.h"  // sort-threshold
 #import "OOConcreteTexture.h"
+#import "OOTextureInternal.h"  // sort-threshold
 
 #import "OOTextureLoader.h"
 

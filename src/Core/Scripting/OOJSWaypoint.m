@@ -21,7 +21,6 @@ MA 02110-1301, USA.
 
  */
 
-#import "OOWaypointEntity.h"  // sort-threshold
 #import "OOJSWaypoint.h"
 #import "EntityOOJavaScriptExtensions.h"
 #import "OOCollectionExtractors.h"
@@ -29,6 +28,7 @@ MA 02110-1301, USA.
 #import "OOJSQuaternion.h"
 #import "OOJSVector.h"
 #import "OOJavaScriptEngine.h"
+#import "OOWaypointEntity.h"  // sort-threshold
 
 static JSObject *sWaypointPrototype;
 

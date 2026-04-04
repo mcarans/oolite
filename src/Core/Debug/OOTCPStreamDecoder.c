@@ -61,7 +61,8 @@ static void PacketReady(OOTCPStreamDecoderRef decoder);
 
 OOTCPStreamDecoderRef OOTCPStreamDecoderCreate(OOTCPStreamDecoderPacketCallback packetCB,
                                                OOTCPStreamDecoderErrorCallback errorCB,
-                                               OOTCPStreamDecoderFinalizeCallback finalizeCB, void *cbInfo) {
+                                               OOTCPStreamDecoderFinalizeCallback finalizeCB,
+                                               void *cbInfo) {
     OOTCPStreamDecoderRef decoder = NULL;
 
     if (packetCB == NULL) return NULL;
@@ -156,7 +157,9 @@ void OOTCPStreamDecoderReceiveBytes(OOTCPStreamDecoderRef decoder, const void *i
             Error(decoder,
                   OOALSTR("OOTCPStreamDecoder internal error: reached unreachable state. nextSize = %lu, bufferUsed = "
                           "%lu, nextPacketData = %@."),
-                  (unsigned long)decoder->nextSize, (unsigned long)decoder->headerSpaceUsed, decoder->nextPacketData);
+                  (unsigned long)decoder->nextSize,
+                  (unsigned long)decoder->headerSpaceUsed,
+                  decoder->nextPacketData);
         }
     }
 }

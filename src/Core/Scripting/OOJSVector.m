@@ -242,8 +242,7 @@ JSObject *JSVectorWithVector(JSContext *context, Vector vector) {
     JSObject *result = NULL;
     HPVector *private = NULL;
 
-   private
-    = malloc(sizeof *private);
+    private = malloc(sizeof *private);
     if (EXPECT_NOT(private == NULL)) return NULL;
 
     *private = vectorToHPVector(vector);
@@ -282,8 +281,7 @@ JSObject *JSVectorWithHPVector(JSContext *context, HPVector vector) {
     JSObject *result = NULL;
     HPVector *private = NULL;
 
-   private
-    = malloc(sizeof *private);
+    private = malloc(sizeof *private);
     if (EXPECT_NOT(private == NULL)) return NULL;
 
     *private = vector;
@@ -416,8 +414,7 @@ BOOL JSObjectGetVector(JSContext *context, JSObject *vectorObj, HPVector *outVec
     }
 
     // If this is a (JS) Vector...
-   private
-    = JS_GetInstancePrivate(context, vectorObj, &sVectorClass, NULL);
+    private = JS_GetInstancePrivate(context, vectorObj, &sVectorClass, NULL);
     if (EXPECT(private != NULL)) {
         COUNT(vectorCount);
         *outVector = *private;
@@ -487,8 +484,7 @@ BOOL JSVectorSetHPVector(JSContext *context, JSObject *vectorObj, HPVector vecto
 
     if (EXPECT_NOT(vectorObj == NULL)) return NO;
 
-   private
-    = JS_GetInstancePrivate(context, vectorObj, &sVectorClass, NULL);
+    private = JS_GetInstancePrivate(context, vectorObj, &sVectorClass, NULL);
     if (private != NULL)  // If this is a (JS) Vector...
     {
         *private = vector;
@@ -648,8 +644,7 @@ static void VectorFinalize(JSContext *context, JSObject *this) {
 
     Vector *private = NULL;
 
-   private
-    = JS_GetInstancePrivate(context, this, &sVectorClass, NULL);
+    private = JS_GetInstancePrivate(context, this, &sVectorClass, NULL);
     if (private != NULL) {
         free(private);
     }
@@ -664,8 +659,7 @@ static JSBool VectorConstruct(JSContext *context, uintN argc, jsval *vp) {
     HPVector *private = NULL;
     JSObject *this = NULL;
 
-   private
-    = malloc(sizeof *private);
+    private = malloc(sizeof *private);
     if (EXPECT_NOT(private == NULL)) return NO;
 
     this = JS_NewObject(context, &sVectorClass, NULL, NULL);

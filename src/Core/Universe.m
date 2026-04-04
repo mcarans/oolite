@@ -824,7 +824,8 @@ static GLfloat docked_light_specular[4] = {
     espeak_SetParameter(espeakPUNCTUATION, espeakPUNCT_NONE, 0);
     espeak_SetParameter(espeakVOLUME, volume, 0);
     espeak_voices = espeak_ListVoices(NULL);
-    for (espeak_voice_count = 0; espeak_voices[espeak_voice_count]; ++espeak_voice_count) /**/;
+    for (espeak_voice_count = 0; espeak_voices[espeak_voice_count]; ++espeak_voice_count) /**/
+        ;
 #endif
 #endif
 
@@ -1691,7 +1692,7 @@ static GLfloat docked_light_specular[4] = {
 
     OO_DEBUG_PUSH_PROGRESS(@ "%@", @ "setUpSpace - populate from hyperpoint");
     //	[self populateSpaceFromHyperPoint:witchPos toPlanetPosition: a_planet->position andSunPosition:
-    //a_sun->position];
+    // a_sun->position];
     [self clearSystemPopulator];
 
     if ([PLAYER status] != STATUS_START_GAME) {
@@ -4545,7 +4546,7 @@ static const OOMatrix starboard_matrix = {
                         if (vdist == 1 && [drawthing cameraRangeFront] > farPlane * 1.5) continue;
                         if (vdist == 0 && [drawthing cameraRangeBack] < nearPlane) continue;
                         //						if (vdist == 1 && [drawthing isPlanet])
-                        //continue;
+                        // continue;
 
                         if (!((d_status == STATUS_COCKPIT_DISPLAY) ^
                               demoShipMode))  // either demo ship mode or in flight
@@ -6431,7 +6432,7 @@ OOINLINE BOOL EntityInRange(HPVector p1, Entity *e2, float range) {
                                 demo_ship = nil;
 
                                 /*								NSString
-                                   *shipDesc = nil; NSString		*shipName = nil; NSDictionary	*shipDict = nil;
+                                 *shipDesc = nil; NSString		*shipName = nil; NSDictionary	*shipDict = nil;
                                  */
 
                                 demo_ship_subindex =
@@ -6461,8 +6462,8 @@ OOINLINE BOOL EntityInRange(HPVector p1, Entity *e2, float range) {
                                         [demo_ship setVelocity:kZeroVector];
                                         [demo_ship setScanClass:CLASS_NO_DRAW];
                                         //										[gui
-                                        //setText:shipName != nil ? shipName : [demo_ship displayName] forRow:19
-                                        //align:GUI_ALIGN_CENTER];
+                                        // setText:shipName != nil ? shipName : [demo_ship displayName] forRow:19
+                                        // align:GUI_ALIGN_CENTER];
 
                                         [self setLibraryTextForDemoShip];
 
@@ -9056,7 +9057,8 @@ static OOComparisonResult comparePrice(id dict1, id dict2, void *context) {
     if (!label) return UINT_MAX;
 
     unsigned int index = -1;
-    while (espeak_voices[++index] && strcmp(espeak_voices[index]->name, label)) /**/;
+    while (espeak_voices[++index] && strcmp(espeak_voices[index]->name, label)) /**/
+        ;
     return (index < espeak_voice_count) ? index : UINT_MAX;
 }
 

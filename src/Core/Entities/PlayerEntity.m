@@ -3776,7 +3776,7 @@ NSComparisonResult marketSorterByMassUnit(id a, id b, void *market);
                     [wh setScanInfo:WH_SCANINFO_COLLAPSE_TIME];
                     //[UNIVERSE addCommsMessage:[NSString stringWithFormat:DESC(@"wormhole-collapse-time-computed"),
                     //						   [UNIVERSE getSystemName:[wh destination]]]
-                    //forCount:5.0];
+                    // forCount:5.0];
                 }
                 break;
             case WH_SCANINFO_COLLAPSE_TIME:

@@ -21,7 +21,6 @@ MA 02110-1301, USA.
 
  */
 
-#import "OOVisualEffectEntity.h"  // sort-threshold
 #import "OOJSVisualEffect.h"
 #import "EntityOOJavaScriptExtensions.h"
 #import "OOCollectionExtractors.h"
@@ -29,6 +28,7 @@ MA 02110-1301, USA.
 #import "OOJSVector.h"
 #import "OOJavaScriptEngine.h"
 #import "OOMesh.h"
+#import "OOVisualEffectEntity.h"  // sort-threshold
 #import "ResourceManager.h"
 
 static JSObject *sVisualEffectPrototype;

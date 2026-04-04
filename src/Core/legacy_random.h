@@ -137,9 +137,13 @@ OOINLINE int equal_seeds(Random_Seed seed1, Random_Seed seed2) {
             (seed1.e == seed2.e) && (seed1.f == seed2.f));
 }
 
-OOINLINE int is_nil_seed(Random_Seed a_seed) { return equal_seeds(a_seed, kNilRandomSeed); }
+OOINLINE int is_nil_seed(Random_Seed a_seed) {
+    return equal_seeds(a_seed, kNilRandomSeed);
+}
 
-OOINLINE int rotate_byte_left(int x) { return ((x << 1) | (x >> 7)) & 255; }
+OOINLINE int rotate_byte_left(int x) {
+    return ((x << 1) | (x >> 7)) & 255;
+}
 
 // a method used to determine interplanetary distances,
 // if accurate, it has to scale distance down by a factor of 7.15:7.0
