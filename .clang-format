@@ -8,6 +8,10 @@ AllowShortFunctionsOnASingleLine: None
 DerivePointerAlignment: false
 PointerAlignment: Right
 
+# Alignment settings for long method calls
+AlignAfterOpenBracket: Align
+AlignOperands: Align
+
 # Ensure long method/function calls are broken into one-per-line
 BinPackArguments: false
 BinPackParameters: false
