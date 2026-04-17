@@ -104,13 +104,20 @@ else
         ADDITIONAL_OBJCFLAGS     += -DMOZ_TRACE_JSCALLS=1
     endif
 
-    ifeq ($(COMPILER_TYPE),gcc)
+    ADDITIONAL_CFLAGS            += -gsplit-dwarf
+    ADDITIONAL_OBJCFLAGS         += -gsplit-dwarf
+    ADDITIONAL_CCFLAGS           += -gsplit-dwarf
+    ADDITIONAL_LDFLAGS           += -gsplit-dwarf
+
+    ifeq ($(COMPILER_TYPE),clang)
+        ADDITIONAL_LDFLAGS       += -fuse-ld=lld
+    else
         ADDITIONAL_OBJCFLAGS     += -std=gnu99 -Wall -Wno-import `nspr-config --cflags` -DLOADSAVEGUI
         ADDITIONAL_CFLAGS        += -Wall `nspr-config --cflags` -DNEED_STRLCPY
         ADDITIONAL_LDFLAGS       += -fuse-ld=bfd
-    else
-        ADDITIONAL_LDFLAGS       += -fuse-ld=lld
     endif
+
+
 endif
 
 VER_FULL := $(shell ./ShellScripts/common/get_version.sh)
@@ -118,10 +125,17 @@ ADDITIONAL_CFLAGS        += -DOO_VERSION_FULL=\"$(VER_FULL)\"
 ADDITIONAL_OBJCFLAGS     += -DOO_VERSION_FULL=\"$(VER_FULL)\"
 #   link time optimizations
 ifeq ($(lto),yes)
-    ADDITIONAL_CFLAGS        += -flto
-    ADDITIONAL_OBJCFLAGS     += -flto
-    ADDITIONAL_CCFLAGS       += -flto
-    ADDITIONAL_LDFLAGS       += -flto
+    ifeq ($(COMPILER_TYPE),clang)
+        ADDITIONAL_CFLAGS        += -flto=thin
+        ADDITIONAL_OBJCFLAGS     += -flto=thin
+        ADDITIONAL_CCFLAGS       += -flto=thin
+        ADDITIONAL_LDFLAGS       += -flto=thin -Wl,--thinlto-cache-dir=build/thinlto_cache
+    else
+        ADDITIONAL_CFLAGS        += -flto=auto
+        ADDITIONAL_OBJCFLAGS     += -flto=auto
+        ADDITIONAL_CCFLAGS       += -flto=auto
+        ADDITIONAL_LDFLAGS       += -flto=auto
+    endif
 endif
 
 OBJC_PROGRAM_NAME = oolite

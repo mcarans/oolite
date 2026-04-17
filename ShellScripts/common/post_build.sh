@@ -7,18 +7,18 @@ run_script() {
 
     cd ../..
 
+    local EXT=""
     local OS_EXT=""
-    if [ "$GNUSTEP_HOST_OS" = "mingw32" ]; then
+    if [[ "$GNUSTEP_HOST_OS" == "mingw32" ]]; then
+        # Debug extension if needed
+        if [ "$DEBUG" = "yes" ]; then
+            EXT=".dbg"
+        fi
         # Windows only executable extension
         OS_EXT=".exe"
     fi
     
-    # Debug extension if needed
-    local EXT=""
-    if [ "$DEBUG" = "yes" ]; then
-        EXT=".dbg"
-    fi
-    
+
     # Paths and binary names
     local PROGDIR="${OBJC_PROGRAM_NAME}.app"
     local SRC_BIN="${OBJC_PROGRAM_NAME}${OS_EXT}"
@@ -51,8 +51,8 @@ run_script() {
     cp -fu "$GNUSTEP_OBJ_DIR_NAME/$SRC_BIN" "$PROGDIR/$DEST_BIN"
     
     # Voice Data
-    if [ "$ESPEAK" = "yes" ]; then
-        if [ "$GNUSTEP_HOST_OS" = "mingw32" ]; then
+    if [[ "$ESPEAK" == "yes" ]]; then
+        if [[ "$GNUSTEP_HOST_OS" == "mingw32" ]]; then
             # Windows espeak-ng-data
             cp -rfu "$MINGW_PREFIX/share/espeak-ng-data" "$PROGDIR/Resources"
         else
@@ -65,14 +65,14 @@ run_script() {
             )
             local FOUND_DATA=false
             for path in "${SEARCH_PATHS[@]}"; do
-                if [ -d "$path" ]; then
+                if [[ -d "$path" ]]; then
                     cp -rfu "$path" "$PROGDIR/Resources"
                     FOUND_DATA=true
                     break
                 fi
             done
 
-            if [ "$FOUND_DATA" = false ]; then
+            if [[ "$FOUND_DATA" == false ]]; then
                 echo "❌ espeak-ng-data not found in any known location!" >&2
                 return 1
             fi
@@ -86,14 +86,21 @@ run_script() {
     fi
     
     # Strip binary if requested
-    if [ "$STRIP_BIN" = "yes" ]; then
-        ${STRIP:-strip} "$PROGDIR/$DEST_BIN"
+    if [[ "$STRIP_BIN" == "yes" ]]; then
+        if [[ "$GNUSTEP_HOST_OS" == "mingw32" ]]; then
+            ${STRIP:-strip} "$PROGDIR/$DEST_BIN"
+        else
+            ${STRIP:-strip} --strip-debug "$PROGDIR/$DEST_BIN"
+        fi
     fi
     
-    if [ "$GNUSTEP_HOST_OS" = "mingw32" ]; then
+    if [[ "$GNUSTEP_HOST_OS" == "mingw32" ]]; then
         # Determine and copy DLL dependencies
         ldd "$PROGDIR/$DEST_BIN" | grep "$MINGW_PREFIX" | awk '{print $3}' | xargs -I {} cp -rfu {} "$PROGDIR"
     else
+        source ShellScripts/Linux/run_dwp_fn.sh
+        run_dwp "$GNUSTEP_OBJ_DIR_NAME" "$PROGDIR"
+
         # Copy Linux-specific wrapper script
         cp -fu ShellScripts/Linux/run_oolite.sh "$PROGDIR"
         cp -fu ShellScripts/Linux/splash-launcher "$PROGDIR"

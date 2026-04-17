@@ -1,11 +1,21 @@
 ifeq ($(profile),yes)
-    ADDITIONAL_CFLAGS            += -g -pg
-    ADDITIONAL_OBJCFLAGS         += -g -pg
+    ifeq ($(GNUSTEP_HOST_OS),mingw32)
+        ADDITIONAL_CFLAGS            += -g -pg
+        ADDITIONAL_OBJCFLAGS         += -g -pg
+    else
+        ADDITIONAL_CFLAGS            += -pg
+        ADDITIONAL_OBJCFLAGS         += -pg
+    endif
 endif
 ifeq ($(debug),yes)
-    ADDITIONAL_CFLAGS            += -g -O0
-    ADDITIONAL_OBJCFLAGS         += -g -O0
-    GNUSTEP_OBJ_DIR_NAME         := $(GNUSTEP_OBJ_DIR_NAME).dbg
+    ifeq ($(GNUSTEP_HOST_OS),mingw32)
+        ADDITIONAL_CFLAGS            += -g -O0
+        ADDITIONAL_OBJCFLAGS         += -g -O0
+        GNUSTEP_OBJ_DIR_NAME         := $(GNUSTEP_OBJ_DIR_NAME).dbg
+    else
+        ADDITIONAL_CFLAGS            += -O0
+        ADDITIONAL_OBJCFLAGS         += -O0
+    endif
     ADDITIONAL_CFLAGS            += -DDEBUG -DOO_DEBUG -DOO_CHECK_GL_HEAVY=1
     ADDITIONAL_OBJCFLAGS         += -DDEBUG -DOO_DEBUG -DOO_CHECK_GL_HEAVY=1
 endif
