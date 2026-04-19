@@ -104,10 +104,10 @@ else
         ADDITIONAL_OBJCFLAGS     += -DMOZ_TRACE_JSCALLS=1
     endif
 
-    ADDITIONAL_CFLAGS            += -gsplit-dwarf
-    ADDITIONAL_OBJCFLAGS         += -gsplit-dwarf
-    ADDITIONAL_CCFLAGS           += -gsplit-dwarf
-    ADDITIONAL_LDFLAGS           += -gsplit-dwarf
+    ADDITIONAL_CFLAGS            += -g -gsplit-dwarf
+    ADDITIONAL_OBJCFLAGS         += -g -gsplit-dwarf
+    ADDITIONAL_CCFLAGS           += -g -gsplit-dwarf
+    ADDITIONAL_LDFLAGS           += -g -gsplit-dwarf
 
     ifeq ($(COMPILER_TYPE),clang)
         ADDITIONAL_LDFLAGS       += -fuse-ld=lld
