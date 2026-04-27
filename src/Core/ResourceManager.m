@@ -203,15 +203,37 @@ static NSMutableDictionary *sStringCache;
 + (NSString *)builtInPath
 {
 #if OOLITE_WINDOWS
-	/*	[[NSBundle mainBundle] resourcePath] causes complaints under Windows,
-		because we don't have a properly-built bundle.
+	/* [[NSBundle mainBundle] resourcePath] causes complaints under Windows,
+	   because we don't have a properly-built bundle.
 	*/
 	return @"Resources";
 #else
-	return [[NSBundle mainBundle] resourcePath];
+	NSFileManager *fmgr = [NSFileManager defaultManager];
+	NSString *resourcePath = [[NSBundle mainBundle] resourcePath];
+	BOOL isDir = NO;
+
+	// Check if the standard Bundle Resource Path exists and is a directory
+	if (resourcePath == nil || ![fmgr fileExistsAtPath:resourcePath isDirectory:&isDir] || !isDir)
+	{
+		// Fallback: Get the directory where the actual binary is located
+		NSString *executablePath = [[NSBundle mainBundle] executablePath];
+		if (executablePath != nil)
+		{
+			NSString *binDir = [executablePath stringByDeletingLastPathComponent];
+			NSString *relativeFallback = [binDir stringByAppendingPathComponent:@"../share/Oolite"];
+			// Resolve the ".." into an absolute path
+			resourcePath = [relativeFallback stringByStandardizingPath];
+		}
+		if (resourcePath == nil || ![fmgr fileExistsAtPath:resourcePath isDirectory:&isDir] || !isDir)
+		{
+			OOLog(@"resourceManager.error", @"Critical: Resources not found at standard path or %@", (resourcePath ? resourcePath : @"<nil>"));
+		}
+	}
+
+	OOLog(@"resourceManager.load", @"Oolite resources found: %@", resourcePath);
+	return resourcePath;
 #endif
 }
-
 
 + (NSArray *)pathsWithAddOns
 {
