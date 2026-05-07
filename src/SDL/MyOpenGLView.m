@@ -92,17 +92,17 @@ enum PreferredAppMode
 	int nativeDisplayHeight = 768;
 
 #if OOLITE_LINUX
-	SDL_SysWMinfo  dpyInfo;
-	SDL_VERSION(&dpyInfo.version);
-	if(SDL_GetWMInfo(&dpyInfo))
-   	{
-		nativeDisplayWidth = DisplayWidth(dpyInfo.info.x11.display, 0);
-		nativeDisplayHeight = DisplayHeight(dpyInfo.info.x11.display, 0);
-		OOLog(@"display.mode.list.native", @"X11 native resolution detected: %d x %d", nativeDisplayWidth, nativeDisplayHeight);
+	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
+
+	if (videoInfo != NULL)
+	{
+		nativeDisplayWidth = videoInfo->current_w;
+		nativeDisplayHeight = videoInfo->current_h;
+		OOLog(@"display.mode.list.native", @"Native resolution detected via SDL: %d x %d", nativeDisplayWidth, nativeDisplayHeight);
 	}
 	else
 	{
-		OOLog(@"display.mode.list.native.failed", @"%@", @"SDL_GetWMInfo failed, defaulting to 1024x768 for native size");
+		OOLog(@"display.mode.list.native.failed", @"%@", @"SDL_GetVideoInfo failed, defaulting to 1024x768 for native size");
 	}
 #elif OOLITE_WINDOWS
 	nativeDisplayWidth = GetSystemMetrics(SM_CXSCREEN);
