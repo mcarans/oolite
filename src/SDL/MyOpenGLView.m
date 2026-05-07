@@ -134,7 +134,7 @@ enum PreferredAppMode
 
 #else
 		// Changing the flags can trigger texture bugs.
-		surface = SDL_SetVideoMode(firstScreen.width, firstScreen.height, 32, SDL_HWSURFACE | SDL_OPENGL | SDL_FULLSCREEN | SDL_NOFRAME);
+		surface = SDL_SetVideoMode(firstScreen.width, firstScreen.height, 32, SDL_HWSURFACE | SDL_OPENGL | SDL_NOFRAME);
 #endif
 		if (!surface) {
 			return;
@@ -856,7 +856,7 @@ enum PreferredAppMode
 	NSDictionary *firstMode = [screenSizes objectAtIndex:0];
 	viewW = [[firstMode objectForKey:kOODisplayWidth] intValue];
 	viewH = [[firstMode objectForKey:kOODisplayHeight] intValue];
-	surface = SDL_SetVideoMode(viewW, viewH, 32, SDL_HWSURFACE | SDL_OPENGL | SDL_FULLSCREEN | SDL_NOFRAME);
+	surface = SDL_SetVideoMode(viewW, viewH, 32, SDL_HWSURFACE | SDL_OPENGL | SDL_NOFRAME);
   #endif
 
 	OOSetOpenGLState(OPENGL_STATE_OVERLAY);
