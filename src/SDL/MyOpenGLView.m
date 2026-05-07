@@ -826,6 +826,7 @@ enum PreferredAppMode
 	//too early for OOTexture!
 	SDL_Surface     	*image=NULL;
 	SDL_Rect			dest;
+	int                 viewW, viewH;
 
 	NSString		*imagesDir = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Images"];
 
@@ -845,32 +846,29 @@ enum PreferredAppMode
 	dest.h = image->h;
 
   #if OOLITE_WINDOWS
-
 	dest.x = (GetSystemMetrics(SM_CXSCREEN)- dest.w)/2;
 	dest.y = (GetSystemMetrics(SM_CYSCREEN)-dest.h)/2;
 	SetWindowLong(SDL_Window,GWL_STYLE,GetWindowLong(SDL_Window,GWL_STYLE) & ~WS_CAPTION & ~WS_THICKFRAME);
 	ShowWindow(SDL_Window,SW_RESTORE);
 	MoveWindow(SDL_Window,dest.x,dest.y,dest.w,dest.h,TRUE);
-
+	viewW = dest.w; viewH = dest.h;
   #else
-
 	NSDictionary *firstMode = [screenSizes objectAtIndex:0];
-	int width = [[firstMode objectForKey:kOODisplayWidth] intValue];
-	int height = [[firstMode objectForKey:kOODisplayHeight] intValue];
-	surface = SDL_SetVideoMode(width, height, 32, SDL_HWSURFACE | SDL_OPENGL | SDL_FULLSCREEN | SDL_NOFRAME);
-
+	viewW = [[firstMode objectForKey:kOODisplayWidth] intValue];
+	viewH = [[firstMode objectForKey:kOODisplayHeight] intValue];
+	surface = SDL_SetVideoMode(viewW, viewH, 32, SDL_HWSURFACE | SDL_OPENGL | SDL_FULLSCREEN | SDL_NOFRAME);
   #endif
 
 	OOSetOpenGLState(OPENGL_STATE_OVERLAY);
 
-	glViewport( 0, 0, dest.w, dest.h);
+	glViewport( 0, 0, viewW, viewH);
 
 	glEnable( GL_TEXTURE_2D );
-	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+	glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	glClear( GL_COLOR_BUFFER_BIT );
 
 	[matrixManager resetProjection];
-	[matrixManager orthoLeft: 0.0f right: dest.w bottom: dest.h top: 0.0 near: -1.0 far: 1.0];
+	[matrixManager orthoLeft: 0.0f right: viewW bottom: viewH top: 0.0 near: -1.0 far: 1.0];
 	[matrixManager syncProjection];
 
 	[matrixManager resetModelView];
@@ -913,17 +911,20 @@ enum PreferredAppMode
 	glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, image->w, image->h, 0,
                       texture_format, GL_UNSIGNED_BYTE, image->pixels );
 
+	float xOff = (viewW - image->w) / 2.0f;
+	float yOff = (viewH - image->h) / 2.0f;
+
 	glBindTexture( GL_TEXTURE_2D, texture );
 	glBegin( GL_QUADS );
 
-	glTexCoord2i( 0, 0 );
-	glVertex2i( 0, 0 );
-	glTexCoord2i( 1, 0 );
-	glVertex2i( dest.w, 0 );
-	glTexCoord2i( 1, 1 );
-	glVertex2i( dest.w, dest.h );
-	glTexCoord2i( 0, 1 );
-	glVertex2i( 0, dest.h );
+	glTexCoord2f( 0, 0 );
+	glVertex2f( xOff, yOff );
+	glTexCoord2f( 1, 0 );
+	glVertex2f( xOff + image->w, yOff );
+	glTexCoord2f( 1, 1 );
+	glVertex2f( xOff + image->w, yOff + image->h );
+	glTexCoord2f( 0, 1 );
+	glVertex2f( xOff, yOff + image->h );
 
 	glEnd();
 
