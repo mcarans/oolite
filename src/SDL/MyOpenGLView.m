@@ -856,7 +856,7 @@ enum PreferredAppMode
 	NSDictionary *firstMode = [screenSizes objectAtIndex:0];
 	viewW = [[firstMode objectForKey:kOODisplayWidth] intValue];
 	viewH = [[firstMode objectForKey:kOODisplayHeight] intValue];
-	surface = SDL_SetVideoMode(viewW, viewH, 32, SDL_HWSURFACE | SDL_OPENGL | SDL_NOFRAME);
+	surface = SDL_SetVideoMode(viewW, viewH, 32, SDL_HWSURFACE | SDL_OPENGL | SDL_FULLSCREEN);
   #endif
 
 	OOSetOpenGLState(OPENGL_STATE_OVERLAY);
