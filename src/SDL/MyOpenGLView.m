@@ -517,6 +517,9 @@ enum PreferredAppMode
 		OOLog(@"display.splash", @"Suppressed splash-screen event %d: %d ", numEvents, dummyEvent.type);
 		*/
 	}
+	if (!fullScreen) {
+		SDL_WM_GrabInput(SDL_GRAB_OFF);
+	}
 
 #endif // OOLITE_WINDOWS
 
