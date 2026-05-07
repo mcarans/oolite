@@ -134,7 +134,7 @@ enum PreferredAppMode
 
 #else
 		// Changing the flags can trigger texture bugs.
-		surface = SDL_SetVideoMode(8, 8, 32, videoModeFlags);
+		surface = SDL_SetVideoMode(firstScreen.width, firstScreen.height, 32, SDL_HWSURFACE | SDL_OPENGL | SDL_FULLSCREEN | SDL_NOFRAME);
 #endif
 		if (!surface) {
 			return;
@@ -484,7 +484,13 @@ enum PreferredAppMode
 	int videoModeFlags = SDL_HWSURFACE | SDL_OPENGL;
 
 	videoModeFlags |= (fullScreen) ? SDL_FULLSCREEN : SDL_RESIZABLE;
-	surface = SDL_SetVideoMode(firstScreen.width, firstScreen.height, 32, videoModeFlags);
+
+	// Clear screen
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	SDL_GL_SwapBuffers();
+
+    surface = SDL_SetVideoMode(firstScreen.width, firstScreen.height, 32, videoModeFlags);
 
 	if (!surface && fullScreen == YES)
 	{
@@ -848,15 +854,10 @@ enum PreferredAppMode
 
   #else
 
-	/* MKW 2011.11.11
-	 * According to Marc using the NOFRAME flag causes trouble under Ubuntu 8.04.
-	 *
-	 * The current Ubuntu LTS is 10.04, which doesn't seem to have that problem.
-	 * 12.04 LTS is going to be released soon, also without apparent problems.
-	 * Changed to SDL_NOFRAME, throwing caution to the wind - Kaks 2012.03.23
-	 * Took SDL_NOFRAME out, since it still causes strange problems here - cim 2012.04.09
-	 */
-	 surface = SDL_SetVideoMode(dest.w, dest.h, 32, SDL_HWSURFACE | SDL_OPENGL);
+	NSDictionary *firstMode = [screenSizes objectAtIndex:0];
+	int width = [[firstMode objectForKey:kOODisplayWidth] intValue];
+	int height = [[firstMode objectForKey:kOODisplayHeight] intValue];
+	surface = SDL_SetVideoMode(width, height, 32, SDL_HWSURFACE | SDL_OPENGL | SDL_FULLSCREEN | SDL_NOFRAME);
 
   #endif
 
