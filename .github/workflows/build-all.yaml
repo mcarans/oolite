@@ -163,7 +163,7 @@ jobs:
       # For changes on master branch, create a new release.
       # It should move the 'latest' tag automatically.
       - name: Create Release
-        if: github.ref == 'refs/heads/master' || endsWith(github.ref, 'maintenance')
+#        if: github.ref == 'refs/heads/master' || endsWith(github.ref, 'maintenance')
         id: create_release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
@@ -181,7 +181,7 @@ jobs:
             artifacts/oolite-linux-pkg-appimage/*.AppImage
             artifacts/oolite-flatpak/*.flatpak
       - name: Remove old workflow runs
-        if: github.ref == 'refs/heads/master' || endsWith(github.ref, 'maintenance')
+#        if: github.ref == 'refs/heads/master' || endsWith(github.ref, 'maintenance')
         uses: Mattraks/delete-workflow-runs@v2
         with:
           token: ${{ github.token }}
