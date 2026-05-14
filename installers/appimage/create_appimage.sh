@@ -47,7 +47,7 @@ run_script() {
 
     echo "Building AppDir for AppImage..."
 
-    local OPTIMIZE_LAUNCH=1
+    local OPTIMIZE_LAUNCH=0
     export OPTIMIZE_LAUNCH
     # install_metadatainfo_fn already put the files in the parameters below in the right place,
     # but no harm putting again here
