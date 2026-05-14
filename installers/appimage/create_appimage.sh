@@ -47,7 +47,7 @@ run_script() {
 
     echo "Building AppDir for AppImage..."
 
-    local DEPLOY_LOCALE=0
+    local DEPLOY_OPENGL=0
     export DEPLOY_VULKAN
     local OPTIMIZE_LAUNCH=0
     export OPTIMIZE_LAUNCH
