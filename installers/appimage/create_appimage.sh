@@ -47,8 +47,8 @@ run_script() {
 
     echo "Building AppDir for AppImage..."
 
-    local DEPLOY_OPENGL=0
-    export DEPLOY_VULKAN
+    local DEPLOY_LOCALE=0
+    export DEPLOY_LOCALE
     local OPTIMIZE_LAUNCH=0
     export OPTIMIZE_LAUNCH
     # install_metadatainfo_fn already put the files in the parameters below in the right place,
