@@ -47,10 +47,6 @@ run_script() {
 
     echo "Building AppDir for AppImage..."
 
-    local DEPLOY_PIPEWIRE=1
-    export DEPLOY_PIPEWIRE
-    local DEPLOY_PULSE=0
-    export DEPLOY_PULSE
     local OPTIMIZE_LAUNCH=1
     export OPTIMIZE_LAUNCH
     # install_metadatainfo_fn already put the files in the parameters below in the right place,
