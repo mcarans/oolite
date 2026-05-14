@@ -139,7 +139,7 @@ install_package() {
             case "$CURRENT_DISTRO" in
                 debian) PKG_NAME="file fuse3" ;;
                 redhat) PKG_NAME="file fuse3 desktop-file-utils which zsync" ;;
-                arch) PKG_NAME="file fuse3 desktop-file-utils zsync" ;;
+                arch) PKG_NAME="file fuse3 desktop-file-utils zsync xorg-server-xvfb" ;;
             esac ;;
 
         "flatpak") PKG_NAME="flatpak flatpak-builder" ;;
