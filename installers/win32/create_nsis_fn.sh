@@ -5,10 +5,9 @@
 create_nsis() {
     local build_folder="$1"  # Build folder
     local ver_full="$2"  # Oolite version
-    local ver_gitrev="$3"  # Total number of commits in the history of current branch
-    local ver_githash="$4"  # Git hash
-    local buildtime="$5"  # Oolite build time
-    local build_type="$6"  # Typically one of "test", "dev" or omitted for release builds
+    local ver_githash="$3"  # Git hash
+    local buildtime="$4"  # Oolite build time
+    local build_type="$5"  # Typically one of "test", "dev" or omitted for release builds
 
     local script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
     pushd "$script_dir"
@@ -57,7 +56,6 @@ create_nsis() {
     echo "!define VER_MAJ ${ver_maj}" >> OoliteVersions.nsh
     echo "!define VER_MIN ${ver_min}" >> OoliteVersions.nsh
     echo "!define VER_REV ${ver_rev}" >> OoliteVersions.nsh
-    echo "!define VER_GITREV ${ver_gitrev}" >> OoliteVersions.nsh
     echo "!define VER_GITHASH ${ver_githash}" >> OoliteVersions.nsh
     echo "!define VERSION ${ver_nsis}" >> OoliteVersions.nsh
     echo "!define SEMVER ${ver_full}" >> OoliteVersions.nsh

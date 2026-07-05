@@ -2,7 +2,8 @@ generate_manifest() {
     local output_file="$1"
     local deployment_release="$2"
     local ver_full="$3"
-    local $ver_githash="$4"
+    local ver_githash="$4"
+    local build_time="$5"
     source ShellScripts/common/get_gitremote_fn.sh
     get_gitremote git_remote
 
@@ -13,8 +14,9 @@ generate_manifest() {
         echo "    identifier = \"org.oolite.oolite\";"
         echo "    "
         echo "    version = \"$ver_full\";"
-        echo "    git_remote_url = \"$git_remote\";"
         echo "    git_commit_hash = \"$ver_githash\";"
+        echo "    build_time = \"$build_time\";"
+        echo "    git_remote_url = \"$git_remote\";"
 
         if [[ "$deployment_release" == "yes" ]]; then
             echo "    debug_functionality_support = no;"

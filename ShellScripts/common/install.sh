@@ -16,7 +16,8 @@ run_script() {
     set -x
     local appname=$(basename "$stageprogpath")
     local progdir=$(dirname "$stageprogpath")
-    local installdir="${INSTALLDIR:-$MESON_INSTALL_DESTDIR_PREFIX}"
+    local installdir="$MESON_INSTALL_DESTDIR_PREFIX"
+    rm -rf "$MESON_INSTALL_DESTDIR_PREFIX"
     local fullbindir="$installdir/$bindir"
     local fulldatadir="$installdir/$datadir/oolite"  # don't use appname here as Obj-C has oolite specifically
     local progpath="$fullbindir/$appname"

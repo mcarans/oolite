@@ -14,10 +14,6 @@
 ; and it's too much work to try to dynamically edit this file
 !include /NONFATAL "OoliteVersions.nsh"
 
-!ifndef VER_GITREV
-!warning "No GIT Revision supplied"
-!define VER_GITREV 0
-!endif
 !ifndef VERSION
 !warning "No Version information supplied"
 !define VERSION 0.0.0.0
@@ -88,7 +84,7 @@ VIAddVersionKey "LegalCopyright" "� 2003-2026 Giles Williams, Jens Ayton and c
 VIAddVersionKey "FileVersion" "${VER}"
 VIAddVersionKey "ProductVersion" "${SEMVER}"
 !ifdef DEV_RELEASE
-VIAddVersionKey "GIT Revision" "${VER_GITHASH}"
+VIAddVersionKey "GIT Hash" "${VER_GITHASH}"
 !endif
 !ifdef BUILDTIME
 VIAddVersionKey "Build Time" "${BUILDTIME}"

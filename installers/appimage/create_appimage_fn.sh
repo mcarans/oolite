@@ -4,9 +4,7 @@
 
 create_appimage() {
     local build_folder="$1"  # Build folder
-    local ver_full="$2"  # Oolite version
-    local app_date="$3"  # Oolite build date
-    local build_type="$4"  # Typically one of "test", "dev" or omitted for release builds
+    local build_type="$2"  # Typically one of "test", "dev" or omitted for deployment builds
 
     local script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
     pushd "$script_dir"
@@ -20,11 +18,10 @@ create_appimage() {
     export APPDIR
     local appbin="$APPDIR/bin"
     local appshr="$APPDIR/share"
-    rm -rf "$APPDIR"
 
     local abs_oolitedir=$(realpath -m "$build_folder")
     local abs_appdir=$(realpath -m "$APPDIR")
-    if ! install_freedesktop "$abs_oolitedir" "$ver_full" "$app_date" "$abs_appdir" "bin" "appdata"; then
+    if ! install_freedesktop "$abs_oolitedir" "$abs_appdir" "bin" "appdata"; then
         return 1
     fi
 
