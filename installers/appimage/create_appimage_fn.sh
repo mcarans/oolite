@@ -4,7 +4,7 @@
 
 create_appimage() {
     local build_folder="$1"  # Build folder
-    local build_type="$2"  # Typically one of "test", "dev" or omitted for deployment builds
+    local build_type="$2"  # Typically one of "deployment", "test", "dev"
 
     local script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
     pushd "$script_dir"
@@ -39,7 +39,7 @@ create_appimage() {
     local DESKTOP="$appshr/applications/space.oolite.Oolite.desktop"
     export DESKTOP
     local suffix
-    if [[ -n "$build_type" ]]; then
+    if [[ "$build_type" != "deployment" ]]; then
         suffix="_$build_type-$ver_full"
     else
         suffix="-$ver_full"

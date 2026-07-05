@@ -32,14 +32,11 @@ INSTALL_FLAGS=() # Array to cleanly store additional meson install arguments
 meson_clean() {
     local build_dir="build/meson_$1"
     echo "--> Cleaning target build directory: ${build_dir}"
-    rm -rf "$build_dir"  # If --clean was specified, delete the specific build directory first
+    rm -rf "$build_dir"
 }
 
 meson_setup() {
     local build_dir="build/meson_$1"
-    if [[ "$CLEAN_BUILD" == true ]]; then
-        meson_clean $1
-    fi
     echo "--> Running Meson setup for: $1"
     # Setup with --reconfigure, fallback to fresh setup. SETUP_FLAGS safely expands the array only if it's not empty
     meson setup "$build_dir" $2 ${SETUP_FLAGS[@]+"${SETUP_FLAGS[@]}"} --native-file "${NATIVE_FILE}" --reconfigure 2>/dev/null || \
@@ -57,11 +54,10 @@ meson_install() {
 }
 
 show_help() {  # Script Help Menu
-    echo "Usage: $0 [options] <action> <profile>"
+    echo "Usage: $0 [options] <action> <build_type>"
     echo "       $0 [options] <global_action>"
     echo ""
     echo "Options:"
-    echo -e "  \033[36m--clean\033[0m                        Delete target build directory before compiling"
     echo -e "  \033[36m--setup-flags=\"...\"\033[0m          Pass additional arguments directly to 'meson setup'"
     echo -e "  \033[36m--compile-flags=\"...\"\033[0m        Pass additional arguments directly to 'meson compile'"
     echo -e "  \033[36m--install-flags=\"...\"\033[0m        Pass additional arguments directly to 'meson install'"
@@ -69,98 +65,98 @@ show_help() {  # Script Help Menu
     echo -e "  \033[36m--ver-full=\"...\"\033[0m             Specify full version string"
     echo -e "  \033[36m--github-repository=\"...\"\033[0m    Specify target GitHub repository"
     echo ""
-    echo "Profile Actions (Requires profile as second parameter):"
-    echo -e "  \033[36msetup <profile>\033[0m              Setup a release build directory"
-    echo -e "  \033[36mcompile <profile>\033[0m            Compile a build directory"
-    echo -e "  \033[36mbuild <profile>\033[0m              Setup and compile a build profile"
-    echo -e "  \033[36minstall <profile>\033[0m            Install a built profile configuration"
-    echo -e "  \033[36mtest <profile>\033[0m               Run test suites (deployment profile excluded)"
-    echo -e "  \033[36mclean <profile>\033[0m              Clean a specific profile's directory"
-    echo -e "  \033[36mflatpak-internal <profile>\033[0m   Build flatpak dependencies internally"
-    echo -e "  \033[36mpkg-flatpak <profile>\033[0m        Package a Flatpak application"
-    echo -e "  \033[36mpkg-appimage <profile>\033[0m       Package a Linux AppImage installer"
-    echo -e "  \033[36mpkg-win <profile>\033[0m            Package a Windows NSIS installer"
+    echo "Build Type Actions (Requires build_type as second parameter):"
+    echo -e "  \033[36msetup <build_type>\033[0m              Setup a release build directory"
+    echo -e "  \033[36mcompile <build_type>\033[0m            Compile a build directory"
+    echo -e "  \033[36mbuild <build_type>\033[0m              Setup and compile a build build_type"
+    echo -e "  \033[36minstall <build_type>\033[0m            Install a built build_type configuration"
+    echo -e "  \033[36mtest <build_type>\033[0m               Run test suites (deployment build_type excluded)"
+    echo -e "  \033[36mclean <build_type>\033[0m              Clean a specific build_type's directory"
+    echo -e "  \033[36mflatpak-internal <build_type>\033[0m   Build flatpak dependencies internally"
+    echo -e "  \033[36mpkg-flatpak <build_type>\033[0m        Package a Flatpak application"
+    echo -e "  \033[36mpkg-appimage <build_type>\033[0m       Package a Linux AppImage installer"
+    echo -e "  \033[36mpkg-win <build_type>\033[0m            Package a Windows NSIS installer"
     echo ""
     echo "Global Actions:"
     echo -e "  \033[36mclean-all\033[0m                    Remove generated artifacts for all builds"
     echo -e "  \033[36mhelp\033[0m                         Show this breakdown menu"
     echo ""
-    echo "Profiles:"
+    echo "Build Types:"
     echo -e "  \033[32mdeployment, test, dev, debug\033[0m"
 }
 
-validate_profile() {
-    local profile="$1"
-    if [[ "$profile" != "deployment" && "$profile" != "test" && "$profile" != "dev" && "$profile" != "debug" ]]; then
-        echo "❌ Invalid profile '$profile'. Expected: deployment, test, dev, or debug." >&2
+validate_build_type() {
+    local build_type="$1"
+    if [[ "$build_type" != "deployment" && "$build_type" != "test" && "$build_type" != "dev" && "$build_type" != "debug" ]]; then
+        echo "❌ Invalid build_type '$build_type'. Expected: deployment, test, dev, or debug." >&2
         exit 1
     fi
 }
 
 execute_target() {  # Target Execution Logic
     local action="$1"
-    local profile="${2:-}"
+    local build_type="${2:-}"
 
     case "$action" in
         setup)
-            validate_profile "$profile"
-            if [[ "$profile" == "deployment" ]]; then
+            validate_build_type "$build_type"
+            if [[ "$build_type" == "deployment" ]]; then
                 meson_setup "deployment" "-Ddeployment_release=true -Ddebug=false -Dstrip_bin=true -Db_lto=true"
-            elif [[ "$profile" == "test" ]]; then
+            elif [[ "$build_type" == "test" ]]; then
                 meson_setup "test" "-Ddebug=false -Dstrip_bin=true -Db_lto=true"
-            elif [[ "$profile" == "dev" ]]; then
+            elif [[ "$build_type" == "dev" ]]; then
                 meson_setup "dev" "-Ddev_release=true -Ddebug=false -Dstrip_bin=false"
-            elif [[ "$profile" == "debug" ]]; then
+            elif [[ "$build_type" == "debug" ]]; then
                 meson_setup "debug" "-Ddebug=true -Dstrip_bin=false"
             fi
             ;;
         compile)
-            validate_profile "$profile"
-            meson_compile "$profile"
+            validate_build_type "$build_type"
+            meson_compile "$build_type"
             ;;
         build)
-            validate_profile "$profile"
-            execute_target "setup" "$profile"
-            execute_target "compile" "$profile"
+            validate_build_type "$build_type"
+            execute_target "setup" "$build_type"
+            execute_target "compile" "$build_type"
             ;;
         install)
-            validate_profile "$profile"
-            meson_install "$profile"
+            validate_build_type "$build_type"
+            meson_install "$build_type"
             ;;
         test)
-            validate_profile "$profile"
-            if [[ "$profile" == "deployment" ]]; then
+            validate_build_type "$build_type"
+            if [[ "$build_type" == "deployment" ]]; then
                 echo "❌ Cannot test deployment as not set up for debug console!" >&2
                 exit 1
             fi
-            source tests/run_test_fn.sh && run_test "$profile"
+            source tests/run_test_fn.sh && run_test "$build_type"
             ;;
         clean)
-            validate_profile "$profile"
-            meson_clean "$profile"
+            validate_build_type "$build_type"
+            meson_clean "$build_type"
             ;;
         flatpak-internal)
-            validate_profile "$profile"
-            execute_target "build" "$profile"
-            source installers/flatpak/flatpak_postbuild_fn.sh && flatpak_postbuild "meson_${profile}/oolite.app" "${VER_FULL:-}" "${APP_DATE:-}"
+            validate_build_type "$build_type"
+            execute_target "build" "$build_type"
+            source installers/flatpak/flatpak_postbuild_fn.sh && flatpak_postbuild "meson_${build_type}/oolite.app" "${VER_FULL:-}" "${APP_DATE:-}"
             ;;
         pkg-flatpak)
-            validate_profile "$profile"
+            validate_build_type "$build_type"
             source installers/flatpak/create_flatpak_fn.sh && create_flatpak "${VER_FULL:-}" "$GITHUB_REPOSITORY"
             ;;
         pkg-appimage)
-            validate_profile "$profile"
+            validate_build_type "$build_type"
             local suffix=""
-            if [[ "$profile" != "deployment" ]]; then suffix="$profile"; fi
-            meson configure "build/meson_$profile" --prefix=$(realpath -m "build/oolite.AppDir")
-            meson_install "$profile"
-            source installers/appimage/create_appimage_fn.sh && create_appimage "meson_${profile}/oolite.app" "${VER_FULL:-}" "${APP_DATE:-}" "$suffix"
+            if [[ "$build_type" != "deployment" ]]; then suffix="$build_type"; fi
+            meson configure "build/meson_$build_type" --prefix=$(realpath -m "build/oolite.AppDir")
+            meson_install "$build_type"
+            source installers/appimage/create_appimage_fn.sh && create_appimage "meson_${build_type}/oolite.app" "$suffix"
             ;;
         pkg-win)
-            validate_profile "$profile"
+            validate_build_type "$build_type"
             local suffix=""
-            if [[ "$profile" != "deployment" ]]; then suffix="$profile"; fi
-            source installers/win32/create_nsis_fn.sh && create_nsis "meson_${profile}/oolite.app" "${VER_FULL:-}" "${VER_GITHASH:-}" "${BUILDTIME:-}" "$suffix"
+            if [[ "$build_type" != "deployment" ]]; then suffix="$build_type"; fi
+            source installers/win32/create_nsis_fn.sh && create_nsis "meson_${build_type}/oolite.app" "${VER_FULL:-}" "${VER_GITHASH:-}" "${BUILDTIME:-}" "$suffix"
             ;;
         *)
             echo "❌ Fatal structural error handling action '$action'" >&2
@@ -170,15 +166,11 @@ execute_target() {  # Target Execution Logic
 }
 
 ACTION=""
-PROFILE=""
+BUILD_TYPE=""
 
 # --- Flexible Argument Parser (Allows flags and positionals anywhere) ---
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --clean)
-            CLEAN_BUILD=true
-            shift
-            ;;
         --setup-flags=*)
             read -r -a flags_array <<< "${1#*=}"
             SETUP_FLAGS+=("${flags_array[@]}")
@@ -219,8 +211,8 @@ while [[ $# -gt 0 ]]; do
             # Process sequential text items dynamically
             if [[ -z "$ACTION" ]]; then
                 ACTION="$1"
-            elif [[ -z "$PROFILE" ]]; then
-                PROFILE="$1"
+            elif [[ -z "$BUILD_TYPE" ]]; then
+                BUILD_TYPE="$1"
             else
                 echo "❌ Unexpected extra argument '$1'." >&2
                 show_help
@@ -236,7 +228,7 @@ if [[ -z "$ACTION" ]]; then
     exit 1
 fi
 
-# Intercept global action 'clean-all' before validating profile requirements
+# Intercept global action 'clean-all' before validating build_type requirements
 if [[ "$ACTION" == "clean-all" ]]; then
     echo "--> Cleaning all build artifacts..."
     rm -rf build/meson_*
@@ -246,9 +238,9 @@ if [[ "$ACTION" == "clean-all" ]]; then
     exit 0
 fi
 
-# Everything past this point strictly requires a profile parameter
-if [[ -z "$PROFILE" ]]; then
-    echo "❌ Error: Action '$ACTION' requires a target profile parameter." >&2
+# Everything past this point strictly requires a build_type parameter
+if [[ -z "$BUILD_TYPE" ]]; then
+    echo "❌ Error: Action '$ACTION' requires a target build_type parameter." >&2
     show_help
     exit 1
 fi
@@ -257,12 +249,12 @@ if [[ -z "$NATIVE_FILE" ]]; then
     NATIVE_FILE="clang.ini"  # Apply default if it wasn't passed as an option
 fi
 
-execute_target "$ACTION" "$PROFILE"
+execute_target "$ACTION" "$BUILD_TYPE"
 
 trap - ERR  # Successful Exit
 popd > /dev/null
 
-echo "✅ Oolite task '$ACTION $PROFILE' completed successfully"
+echo "✅ Oolite task '$ACTION $BUILD_TYPE' completed successfully"
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     exit 0
