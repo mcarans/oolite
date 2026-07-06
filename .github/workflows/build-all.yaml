@@ -19,7 +19,7 @@ jobs:
         --security-opt apparmor:unconfined
     strategy:
       matrix:
-        flavour: [pkg-appimage-deployment, pkg-appimage-test, pkg-appimage-dev]
+        flavour: [deployment, test, dev]
     steps:
       ## This is for debugging only and helps developing the workflow.
       # - name: Environment Variables
@@ -52,7 +52,10 @@ jobs:
           ldconfig
       - name: Build Oolite
         run: |
-          ./mk.sh ${{matrix.flavour}} --github-repository="$GITHUB_REPOSITORY"
+          ./mk.sh build ${{matrix.flavour}} --github-repository="$GITHUB_REPOSITORY"
+      - name: Package Oolite
+        run: |
+          ./mk.sh pkg-appimage ${{matrix.flavour}}
       - name: Archive installer
         uses: actions/upload-artifact@v6
         with:
@@ -82,7 +85,7 @@ jobs:
           source ShellScripts/Linux/install_gitversion_fn.sh
           mkdir -p /usr/local/bin
           install_gitversion "."
-          ./mk.sh pkg-flatpak --github-repository="$GITHUB_REPOSITORY"
+          ./mk.sh pkg-flatpak deployment --github-repository="$GITHUB_REPOSITORY"
       - name: Archive installer
         uses: actions/upload-artifact@v6
         with:
@@ -95,7 +98,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        flavour: [pkg-win-deployment, pkg-win-test, pkg-win-dev]
+        flavour: [deployment, test, dev]
     steps:
       ## This is for debugging only and helps developing the workflow.
       # - name: Environment Variables
@@ -127,7 +130,13 @@ jobs:
         env:
           msystem: UCRT64
         run: |
-          ./mk.sh ${{matrix.flavour}} --github-repository="$GITHUB_REPOSITORY"
+          ./mk.sh build ${{matrix.flavour}} --github-repository="$GITHUB_REPOSITORY"
+      - name: Package Oolite
+        shell: msys2 {0}
+        env:
+          msystem: UCRT64
+        run: |
+          ./mk.sh pkg-win ${{matrix.flavour}}
       - name: Archive installer
         uses: actions/upload-artifact@v6
         with:
