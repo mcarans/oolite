@@ -129,12 +129,14 @@ jobs:
         shell: msys2 {0}
         env:
           msystem: UCRT64
+          PYTHONUTF8: "1"
         run: |
           ./mk.sh build ${{matrix.flavour}} --github-repository="$GITHUB_REPOSITORY"
       - name: Package Oolite
         shell: msys2 {0}
         env:
           msystem: UCRT64
+          PYTHONUTF8: "1"
         run: |
           ./mk.sh pkg-win ${{matrix.flavour}}
       - name: Archive installer

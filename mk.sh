@@ -5,8 +5,7 @@ pushd "$SCRIPT_DIR" > /dev/null
 
 set -u -o pipefail  # Strict expansions
 
-# --- Error Handling Trap ---
-cleanup_and_exit() {
+cleanup_and_exit() {  # Error handling trap
     local exit_code=$?
 
     if [[ $exit_code -eq 0 ]]; then
@@ -19,6 +18,15 @@ cleanup_and_exit() {
     fi
 }
 trap 'cleanup_and_exit ${LINENO}' ERR  # Trap any command errors (ERR) passing ${LINENO} to know where it failed
+
+output_meson_log() {
+    meson_log="$1/meson-logs/meson-log.txt"
+    if [[ -f "$meson_log" ]]; then
+        echo -e "\n=== MESON LOG START ===" >&2
+        cat "$meson_log" >&2
+        echo -e "=== MESON LOG END ===\n" >&2
+    fi
+}
 
 # --- Feature Flags & Options ---
 NATIVE_FILE=""
@@ -47,10 +55,18 @@ meson_setup() {
     if [[ -n "${GITHUB_REPOSITORY:-}" ]]; then
         export GITHUB_REPOSITORY
     fi
-    if ! meson setup "$build_dir" $2 ${SETUP_FLAGS[@]+"${SETUP_FLAGS[@]}"} --native-file "${NATIVE_FILE}"; then
-        echo "🔄 Directory already exists, attempting to reconfigure..."
+    if [[ -d "$build_dir" ]] && [[ -f "$build_dir/build.ninja" ]]; then
+        echo "🔄 Directory exists, attempting to reconfigure..."
         if ! meson setup "$build_dir" $2 ${SETUP_FLAGS[@]+"${SETUP_FLAGS[@]}"} --native-file "${NATIVE_FILE}" --reconfigure; then
-            echo "❌ Meson setup failed entirely!" >&2
+            echo "❌ Meson reconfiguration failed!" >&2
+            output_meson_log $build_dir
+            exit 1
+        fi
+    else
+        echo "🏗️ Creating new build configuration..."
+        if ! meson setup "$build_dir" $2 ${SETUP_FLAGS[@]+"${SETUP_FLAGS[@]}"} --native-file "${NATIVE_FILE}"; then
+            echo "❌ Meson initial setup failed!" >&2
+            output_meson_log $build_dir
             exit 1
         fi
     fi
@@ -60,6 +76,7 @@ meson_compile() {
     echo "--> Running Meson build for: $1"
     if ! meson compile -C "build/meson_$1" ${COMPILE_FLAGS[@]+"${COMPILE_FLAGS[@]}"}; then
         echo "❌ Meson compile failed!" >&2
+        output_meson_log $build_dir
         exit 1
     fi
 }
@@ -67,7 +84,8 @@ meson_compile() {
 meson_install() {
     echo "--> Running Meson install for: $1"
     if ! meson install -C "build/meson_$1" ${INSTALL_FLAGS[@]+"${INSTALL_FLAGS[@]}"}; then
-        echo "❌ Meson compile failed!" >&2
+        echo "❌ Meson install failed!" >&2
+        output_meson_log $build_dir
         exit 1
     fi
 }

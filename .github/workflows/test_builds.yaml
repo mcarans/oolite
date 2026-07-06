@@ -169,6 +169,7 @@ jobs:
         shell: msys2 {0}
         env:
           msystem: UCRT64
+          PYTHONUTF8: "1"
         run: |
           ./mk.sh build dev
 
@@ -177,5 +178,6 @@ jobs:
         shell: msys2 {0}
         env:
           msystem: UCRT64
+          PYTHONUTF8: "1"
         run: |
           ./mk.sh test dev
