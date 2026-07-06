@@ -8,13 +8,10 @@ create_appimage() {
 
     local script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
     pushd "$script_dir"
+    source ../FreeDesktop/install_freedesktop_fn.sh
+    source ../../ShellScripts/Linux/os_detection.sh
 
-    cd ../..
-    source ShellScripts/Linux/os_detection.sh
-    source ShellScripts/Linux/install_freedesktop_fn.sh
-
-    mkdir -p build/appimage
-    cd build/appimage
+    cd ../../build/appimage
     local arch=$(uname -m)
     local APPDIR="./oolite.AppDir"
     export APPDIR

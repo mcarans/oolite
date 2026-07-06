@@ -19,13 +19,14 @@ install_freedesktop() {
     local githash buildtime app_date
     parse_manifest output_ver_full githash buildtime app_date "$build_folder/Resources/manifest.plist"
 
+    local freedesktopdir="../../installers/FreeDesktop"
     local appshr="$app_folder/share"
     local resourcesdir="$appshr/oolite/Resources"
     rm -f "$resourcesdir/GNUstep.conf.orig"
-    install -D "../../ShellScripts/Linux/GNUstep.conf.template" "$resourcesdir/GNUstep.conf.template" || { echo "$err_msg GNUstep template" >&2; return 1; }
+    install -D "$freedesktopdir/GNUstep.conf.template" "$resourcesdir/GNUstep.conf.template" || { echo "$err_msg GNUstep template" >&2; return 1; }
 
     local app_metainfo="$appshr/metainfo/space.oolite.Oolite.$metainfo_suffix.xml"
-    install -D ../../installers/FreeDesktop/space.oolite.Oolite.metainfo.xml.template "$app_metainfo" || { echo "$err_msg metainfo template" >&2; return 1; }
+    install -D "$freedesktopdir/space.oolite.Oolite.metainfo.xml.template" "$app_metainfo" || { echo "$err_msg metainfo template" >&2; return 1; }
 
     sed -i "s/@VER@/${output_ver_full}/g" "$app_metainfo"
     sed -i "s/@DATE@/${app_date}/g" "$app_metainfo"
@@ -36,6 +37,6 @@ install_freedesktop() {
     echo ===========================================
 
     # Desktop and Icon
-    install -D ../../installers/FreeDesktop/space.oolite.Oolite.desktop "$appshr/applications/space.oolite.Oolite.desktop" || { echo "$err_msg desktop file" >&2; return 1; }
+    install -D "$freedesktopdir/space.oolite.Oolite.desktop" "$appshr/applications/space.oolite.Oolite.desktop" || { echo "$err_msg desktop file" >&2; return 1; }
     install -D "$build_folder/Resources/Textures/oolite-logo1.png" "$appshr/icons/hicolor/256x256/apps/space.oolite.Oolite.png" || { echo "$err_msg icon file" >&2; return 1; }
 }

@@ -8,9 +8,9 @@ flatpak_postbuild() {
 
     local script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
     pushd "$script_dir"
-    cd ../../build/flatpak
-    source ../../ShellScripts/Linux/install_freedesktop_fn.sh
+    source ../FreeDesktop/install_freedesktop_fn.sh
 
+    cd ../../build/flatpak
     local abs_oolitedir=$(realpath -m "../$build_folder")
     install_freedesktop ver_full "$abs_oolitedir" "/app" "lib/debug/bin" "metainfo"
     mkdir -p /app/lib/debug/source/oolite  # Ensure the destination directory exists
@@ -18,4 +18,5 @@ flatpak_postbuild() {
         echo "❌ $err_msg install oolite source code" >&2
         return 1
     }
+    popd
 }

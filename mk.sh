@@ -213,9 +213,14 @@ execute_target() {  # Target Execution Logic
             ;;
         pkg-win)
             validate_build_type "$build_type"
-            local suffix=""
-            if [[ "$build_type" != "deployment" ]]; then suffix="$build_type"; fi
-            source installers/win32/create_nsis_fn.sh && create_nsis "meson_${build_type}/oolite.app" "${VER_FULL:-}" "${VER_GITHASH:-}" "${BUILDTIME:-}" "$suffix"
+            if ! source installers/win32/create_nsis_fn.sh; then
+                echo "❌ Failed to source create_nsis_fn.sh!" >&2
+                exit 1
+            fi
+            if ! create_nsis "$build_type" "meson_${build_type}/oolite.app"; then
+                echo "❌ NSIS generation failed!" >&2
+                exit 1
+            fi
             ;;
         *)
             echo "❌ Fatal structural error handling action '$action'" >&2
