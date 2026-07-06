@@ -3,13 +3,23 @@
 # Calculates the Oolite version number and build dates
 #
 
+
+PARENT_PROCESS=$(ps -p $PPID -o comm= 2>/dev/null || true)
+if [[ "$PARENT_PROCESS" != "meson" ]] || [[ -z "$MESON_BUILD_ROOT" ]]; then
+    SUITE_PARENT=$(basename "${BASH_SOURCE[1]}")  # Get the name of the script that is sourcing this file
+    ALLOWED_SCRIPT="create_flatpak_fn.sh"  # Define the ONLY script allowed to source this
+    if [[ "$SUITE_PARENT" != "$ALLOWED_SCRIPT" ]]; then
+        echo "❌ This file can only be called by meson or sourced by $ALLOWED_SCRIPT!" >&2
+        unset SUITE_PARENT ALLOWED_SCRIPT
+        return 1 2>/dev/null || exit 1
+    fi
+    unset SUITE_PARENT ALLOWED_SCRIPT
+fi
+
+
 run_script() {
     local build_dir="$1"  # Input string arguments
 
-    if [[ -z "$MESON_BUILD_ROOT" ]]; then
-        echo "❌ This script must only be called by the Meson project function!" >&2
-        exit 1
-    fi
     if [[ -z "$build_dir" ]]; then
         echo "❌ build_dir argument is required!" >&2
         return 1
@@ -22,19 +32,18 @@ run_script() {
     local lookup_hash="${output_ver_githash}${dirty_suffix}"
     local output_ver_full=""
     local output_buildtime=""
-    if [[ -n "$VER_FULL" ]]; then
-        output_ver_full="$VER_FULL"
-    else
-        local version_file="$build_dir/.meson_version"
+    local version_file="$build_dir/.meson_version"
+    if [[ -z "${VER_FULL-}" ]]; then
         if [[ -f "$version_file" ]]; then  # Check if cache exists and has a matching hash context
-            local githash ver_full ver_nsis ver_gitrev
-            local cpp_date app_date buildtime builder
+            local githash ver_full ver_nsis ver_gitrev cpp_date app_date buildtime builder
             source "$version_file" 2>/dev/null
             if [[ "$ver_githash" == "$lookup_hash" ]]; then
                 echo "$ver_full"
                 return 0
             fi
         fi
+    else
+        output_ver_full="$VER_FULL"
     fi
 
     if [[ -z "$output_ver_full" ]]; then
@@ -82,7 +91,8 @@ run_script() {
         output_ver_nsis="$ver_maj.$ver_min.$ver_rev.$ver_uncommitted"
     fi
 
-    get_build_date output_cpp_date output_app_date output_buildtime output_builder "$BUILDTIME"
+    local output_cpp_date output_app_date output_builder
+    get_build_date output_cpp_date output_app_date output_buildtime output_builder "${BUILDTIME-}"
 
     cat << EOF > "$version_file"  # Write new values to the hidden cache file
 ver_githash="$lookup_hash"
@@ -97,10 +107,8 @@ EOF
     echo "$output_ver_full"
 }
 
-run_script "$@"
-status=$?
-
 # Exit only if not sourced
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    exit $status
+    run_script "$@"
+    exit $?
 fi

@@ -17,9 +17,13 @@ run_script() {
     local appname=$(basename "$stageprogpath")
     local progdir=$(dirname "$stageprogpath")
     local installdir="$MESON_INSTALL_DESTDIR_PREFIX"
-    rm -rf "$MESON_INSTALL_DESTDIR_PREFIX"
     local fullbindir="$installdir/$bindir"
+    rm -f "$fullbindir/oolite"
+    if [[ "$host_os" == "linux" ]]; then
+        rm -f "$fullbindir/run_oolite.sh"
+    fi
     local fulldatadir="$installdir/$datadir/oolite"  # don't use appname here as Obj-C has oolite specifically
+    rm -rf "$fulldatadir"
     local progpath="$fullbindir/$appname"
     if ! mkdir -p "$fullbindir"; then
         echo "❌ Failed to create folder '$fullbindir'!" >&2

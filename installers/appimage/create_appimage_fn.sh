@@ -3,25 +3,27 @@
 # Creates the appimage.
 
 create_appimage() {
-    local build_folder="$1"  # Build folder
-    local build_type="$2"  # Typically one of "deployment", "test", "dev"
+    local build_type="$1"  # Typically one of "deployment", "test", "dev"
+    local build_folder="$2"  # Build folder
 
     local script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
     pushd "$script_dir"
 
-    cd ../../build
-    source ../ShellScripts/Linux/os_detection.sh
-    source ../ShellScripts/Linux/install_freedesktop_fn.sh
+    cd ../..
+    source ShellScripts/Linux/os_detection.sh
+    source ShellScripts/Linux/install_freedesktop_fn.sh
 
+    mkdir -p build/appimage
+    cd build/appimage
     local arch=$(uname -m)
     local APPDIR="./oolite.AppDir"
     export APPDIR
     local appbin="$APPDIR/bin"
     local appshr="$APPDIR/share"
 
-    local abs_oolitedir=$(realpath -m "$build_folder")
+    local abs_oolitedir=$(realpath -m "../$build_folder")
     local abs_appdir=$(realpath -m "$APPDIR")
-    if ! install_freedesktop "$abs_oolitedir" "$abs_appdir" "bin" "appdata"; then
+    if ! install_freedesktop ver_full "$abs_oolitedir" "$abs_appdir" "bin" "appdata"; then
         return 1
     fi
 
@@ -89,7 +91,7 @@ create_appimage() {
     fi
 
     echo "Creating AppImage $OUTNAME..."
-    if ! $appimagetool_bin "$abs_appdir" "$OUTNAME"; then
+    if ! $appimagetool_bin "$abs_appdir" "../$OUTNAME"; then
         echo "❌ AppImage creation failed!" >&2
         return 1
     fi

@@ -5,6 +5,7 @@ generate_manifest() {
     local ver_githash="$4"
     local build_time="$5"
     source ShellScripts/common/get_gitremote_fn.sh
+    local git_remote
     get_gitremote git_remote
 
     # Redirect the entire block output into the manifest_output file

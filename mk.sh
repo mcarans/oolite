@@ -23,34 +23,53 @@ trap 'cleanup_and_exit ${LINENO}' ERR  # Trap any command errors (ERR) passing $
 # --- Feature Flags & Options ---
 NATIVE_FILE=""
 VER_FULL=""
+BUILDTIME=""
 GITHUB_REPOSITORY=""
 CLEAN_BUILD=false
 SETUP_FLAGS=() # Array to cleanly store additional meson setup arguments
 COMPILE_FLAGS=() # Array to cleanly store additional meson compile arguments
 INSTALL_FLAGS=() # Array to cleanly store additional meson install arguments
 
-meson_clean() {
-    local build_dir="build/meson_$1"
-    echo "--> Cleaning target build directory: ${build_dir}"
-    rm -rf "$build_dir"
+clean() {
+    echo "--> Cleaning target build directory: $1"
+    rm -rf "$1"
 }
 
 meson_setup() {
     local build_dir="build/meson_$1"
     echo "--> Running Meson setup for: $1"
-    # Setup with --reconfigure, fallback to fresh setup. SETUP_FLAGS safely expands the array only if it's not empty
-    meson setup "$build_dir" $2 ${SETUP_FLAGS[@]+"${SETUP_FLAGS[@]}"} --native-file "${NATIVE_FILE}" --reconfigure 2>/dev/null || \
-    meson setup "$build_dir" $2 ${SETUP_FLAGS[@]+"${SETUP_FLAGS[@]}"} --native-file "${NATIVE_FILE}"
+    if [[ -n "${VER_FULL:-}" ]]; then
+        export VER_FULL
+    fi
+    if [[ -n "${BUILDTIME:-}" ]]; then
+        export BUILDTIME
+    fi
+    if [[ -n "${GITHUB_REPOSITORY:-}" ]]; then
+        export GITHUB_REPOSITORY
+    fi
+    if ! meson setup "$build_dir" $2 ${SETUP_FLAGS[@]+"${SETUP_FLAGS[@]}"} --native-file "${NATIVE_FILE}"; then
+        echo "🔄 Directory already exists, attempting to reconfigure..."
+        if ! meson setup "$build_dir" $2 ${SETUP_FLAGS[@]+"${SETUP_FLAGS[@]}"} --native-file "${NATIVE_FILE}" --reconfigure; then
+            echo "❌ Meson setup failed entirely!" >&2
+            exit 1
+        fi
+    fi
 }
 
 meson_compile() {
     echo "--> Running Meson build for: $1"
-    meson compile -C "build/meson_$1" ${COMPILE_FLAGS[@]+"${COMPILE_FLAGS[@]}"}
+    if ! meson compile -C "build/meson_$1" ${COMPILE_FLAGS[@]+"${COMPILE_FLAGS[@]}"}; then
+        echo "❌ Meson compile failed!" >&2
+        exit 1
+    fi
 }
 
 meson_install() {
     echo "--> Running Meson install for: $1"
-    meson install -C "build/meson_$1" ${INSTALL_FLAGS[@]+"${INSTALL_FLAGS[@]}"}
+    if ! meson install -C "build/meson_$1" ${INSTALL_FLAGS[@]+"${INSTALL_FLAGS[@]}"}; then
+        echo "❌ Meson compile failed!" >&2
+        exit 1
+    fi
 }
 
 show_help() {  # Script Help Menu
@@ -63,6 +82,7 @@ show_help() {  # Script Help Menu
     echo -e "  \033[36m--install-flags=\"...\"\033[0m        Pass additional arguments directly to 'meson install'"
     echo -e "  \033[36m--native-file=\"...\"\033[0m          Specify native file (defaults to clang.ini)"
     echo -e "  \033[36m--ver-full=\"...\"\033[0m             Specify full version string"
+    echo -e "  \033[36m--buildtime=\"...\"\033[0m            Specify build time"
     echo -e "  \033[36m--github-repository=\"...\"\033[0m    Specify target GitHub repository"
     echo ""
     echo "Build Type Actions (Requires build_type as second parameter):"
@@ -132,25 +152,64 @@ execute_target() {  # Target Execution Logic
             source tests/run_test_fn.sh && run_test "$build_type"
             ;;
         clean)
-            validate_build_type "$build_type"
-            meson_clean "$build_type"
+            if [[ "$build_type" == "appimage" ]]; then
+                clean "build/appimage"
+            elif [[ "$build_type" == "flatpak" ]]; then
+                clean "build/flatpak"
+            else
+                validate_build_type "$build_type"
+                clean "build/meson_$build_type"
+            fi
             ;;
         flatpak-internal)
             validate_build_type "$build_type"
             execute_target "build" "$build_type"
-            source installers/flatpak/flatpak_postbuild_fn.sh && flatpak_postbuild "meson_${build_type}/oolite.app" "${VER_FULL:-}" "${APP_DATE:-}"
+            if ! meson configure "build/meson_$build_type" --prefix="/app"; then
+                echo "❌ Flatpak meson configure with prefix /app failed!" >&2
+                exit 1
+            fi
+            if ! meson_install "$build_type"; then
+                echo "❌ Flatpak meson install failed!" >&2
+                exit 1
+            fi
+            if ! source installers/flatpak/flatpak_postbuild_fn.sh; then
+                echo "❌ Failed to source flatpak_postbuild_fn.sh!" >&2
+                exit 1
+            fi
+            if ! flatpak_postbuild "meson_${build_type}/oolite.app"; then
+                echo "❌ Flatpak post build failed!" >&2
+                exit 1
+            fi
             ;;
         pkg-flatpak)
             validate_build_type "$build_type"
-            source installers/flatpak/create_flatpak_fn.sh && create_flatpak "${VER_FULL:-}" "$GITHUB_REPOSITORY"
+            if ! source installers/flatpak/create_flatpak_fn.sh; then
+                echo "❌ Failed to source create_flatpak_fn.sh!" >&2
+                exit 1
+            fi
+            if ! create_flatpak "$build_type" "$GITHUB_REPOSITORY"; then
+                echo "❌ Flatpak generation failed!" >&2
+                exit 1
+            fi
             ;;
         pkg-appimage)
             validate_build_type "$build_type"
-            local suffix=""
-            if [[ "$build_type" != "deployment" ]]; then suffix="$build_type"; fi
-            meson configure "build/meson_$build_type" --prefix=$(realpath -m "build/oolite.AppDir")
-            meson_install "$build_type"
-            source installers/appimage/create_appimage_fn.sh && create_appimage "meson_${build_type}/oolite.app" "$suffix"
+            if ! meson configure "build/meson_$build_type" --prefix=$(realpath -m "build/appimage/oolite.AppDir"); then
+                echo "❌ AppImage meson configure with prefix /app failed!" >&2
+                exit 1
+            fi
+            if ! meson_install "$build_type"; then
+                echo "❌ AppImage meson install failed!" >&2
+                exit 1
+            fi
+            if ! source installers/appimage/create_appimage_fn.sh; then
+                echo "❌ Failed to source create_appimage_fn.sh!" >&2
+                exit 1
+            fi
+            if ! create_appimage "$build_type" "meson_${build_type}/oolite.app"; then
+                echo "❌ AppImage generation failed!" >&2
+                exit 1
+            fi
             ;;
         pkg-win)
             validate_build_type "$build_type"
@@ -194,6 +253,10 @@ while [[ $# -gt 0 ]]; do
             VER_FULL="${1#*=}"
             shift
             ;;
+        --buildtime=*)
+            BUILDTIME="${1#*=}"
+            shift
+            ;;
         --github-repository=*)
             GITHUB_REPOSITORY="${1#*=}"
             shift
@@ -232,6 +295,8 @@ fi
 if [[ "$ACTION" == "clean-all" ]]; then
     echo "--> Cleaning all build artifacts..."
     rm -rf build/meson_*
+    rm -rf build/flatpak
+    rm -rf build/appimage
     trap - ERR
     popd > /dev/null
     echo "✅ Oolite task 'clean-all' completed successfully"

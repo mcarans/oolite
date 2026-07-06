@@ -13,27 +13,27 @@ fi
 unset SUITE_PARENT ALLOWED_SCRIPT
 
 get_build_date() {
-    local -n return_cpp_date="$1"
-    local -n return_app_date="$2"
-    local -n return_buildtime="$3"
-    local -n return_builder="$4"
+    local -n _cpp_date="$1"
+    local -n _app_date="$2"
+    local -n _buildtime="$3"
+    local -n _builder="$4"
     local buildtime="$5"
 
 
-    if [[ -n "$buildtime" ]]; then
-        return_buildtime="$buildtime"
-    else
+    if [[ -z "$buildtime" ]]; then
         local getversion_timestamp=$(git log -1 --format=%ct)
-        return_buildtime=$(date -u -d "@$getversion_timestamp" "+%Y.%m.%d %H:%M")
+        _buildtime=$(date -u -d "@$getversion_timestamp" "+%Y.%m.%d %H:%M")
+    else
+        _buildtime="$buildtime"
     fi
 
-    local clean_date="${return_buildtime//./-}"
-    return_cpp_date=$(date -u -d "$clean_date" +"%b%e %Y")
-    return_app_date=$(date -u -d "$clean_date" +"%Y-%m-%d")
+    local clean_date="${_buildtime//./-}"
+    _cpp_date=$(date -u -d "$clean_date" +"%b%e %Y")
+    _app_date=$(date -u -d "$clean_date" +"%Y-%m-%d")
 
     if [[ "$GITHUB_REPOSITORY" == "OoliteProject/oolite" ]]; then
-        return_builder="OoliteProject"
+        _builder="OoliteProject"
     else
-        return_builder="unknown"
+        _builder="unknown"
     fi
 }
