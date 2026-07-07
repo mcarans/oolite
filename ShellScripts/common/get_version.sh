@@ -17,11 +17,19 @@ if [[ -v MINGW_PREFIX ]]; then
         echo "❌ ERROR: Could not extract Windows PID from ps."
         PARENT_PROCESS="unknown"
     else
-        # 2. Query Windows Kernel for the Parent Windows PID
-        PARENT_WINPID=$(powershell.exe -Command "(Get-Process -Id $WIN_PID).Parent.Id" 2>/dev/null | tr -d '\r')
-        echo "2. Parent Native Windows PID: ${PARENT_WINPID:-FAILED}"
+        # 2. Query Windows Kernel for the Parent Windows PID (Using single quotes to protect PS variables)
+        PARENT_WINPID=$(powershell.exe -Command '
+            try {
+                $proc = Get-Process -Id '"$WIN_PID"' -ErrorAction Stop
+                Write-Output $proc.Parent.Id
+            } catch {
+                Write-Output "FAILED"
+            }
+        ' 2>/dev/null | tr -d '\r')
 
-        if [ -z "$PARENT_WINPID" ]; then
+        echo "2. Parent Native Windows PID: $PARENT_WINPID"
+
+        if [ -z "$PARENT_WINPID" ] || [ "$PARENT_WINPID" = "FAILED" ]; then
             echo "❌ ERROR: PowerShell could not resolve Parent Windows PID."
             PARENT_PROCESS="unknown"
         else
