@@ -8,28 +8,39 @@ if [[ -v MINGW_PREFIX ]]; then
     echo "=== SYSTEM DIAGNOSTICS (POWERSHELL ROUTE) ==="
     echo "Current Bash POSIX PID (\$\$): $$"
 
-    # 1. Capture and verify the native Windows PID for the current shell
     PS_OUTPUT=$(ps -p $$)
     WIN_PID=$(echo "$PS_OUTPUT" | awk 'NR>1 {print $4}')
 
     if [ -z "$WIN_PID" ]; then
         echo "❌ ERROR: Could not extract Windows PID from ps output."
-        echo "=== FULL PS OUTPUT ==="
-        echo "$PS_OUTPUT"
-        echo "======================"
         PARENT_PROCESS="unknown"
     else
         echo "Resolved Current Windows PID: $WIN_PID"
         echo "Querying Windows Kernel via PowerShell..."
 
-        # 2. Run the PowerShell query to fetch and trim the parent process name
-        PARENT_PROCESS=$(powershell.exe -Command "(Get-CimInstance Win32_Process -Filter 'ProcessId = ' + (Get-Process -Id $WIN_PID).Parent.Id).Name -replace '\.exe$',''" 2>/dev/null | tr -d '\r')
+        # Run PowerShell, catch internal exceptions, and print them directly to stdout
+        POWERSHELL_OUT=$(powershell.exe -Command "
+            try {
+                \$proc = Get-Process -Id $WIN_PID -ErrorAction Stop
+                # Use fallback parsing if .Parent doesn't exist natively on older PowerShell versions
+                \$parent = (Get-CimInstance Win32_Process -Filter \"ProcessId = \$(\$proc.Parent.Id)\").Name
+                if (-not \$parent) {
+                    \$parent = (Get-Process -Id (gwmi Win32_Process -Filter \"ProcessId = $WIN_PID\").ParentProcessId).Name
+                }
+                Write-Output (\$parent -replace '\.exe$','')
+            } catch {
+                Write-Output \"PS_EXCEPTION: \$(_\$.Exception.Message)\"
+            }
+        " 2>/dev/null | tr -d '\r')
 
-        # 3. Validate the final result
-        if [ -z "$PARENT_PROCESS" ]; then
-            echo "❌ ERROR: PowerShell failed to return a parent process name."
+        if [[ "$POWERSHELL_OUT" == PS_EXCEPTION:* ]]; then
+            echo "❌ POWERSHELL INTERNAL ERROR: ${POWERSHELL_OUT#PS_EXCEPTION: }"
+            PARENT_PROCESS="unknown"
+        elif [ -z "$POWERSHELL_OUT" ]; then
+            echo "❌ ERROR: PowerShell execution returned completely empty."
             PARENT_PROCESS="unknown"
         else
+            PARENT_PROCESS="$POWERSHELL_OUT"
             echo "Success! True Windows Parent: $PARENT_PROCESS"
         fi
     fi
