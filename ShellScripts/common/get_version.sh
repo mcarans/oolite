@@ -5,57 +5,16 @@
 
 
 if [[ -v MINGW_PREFIX ]]; then
-    echo "=== HYBRID PROCESS DETECTION (WMI ROUTE) ==="
-    echo "Current Bash POSIX PID (\$\$): $$"
-
-    # 1. Get the current shell's Windows PID
-    PS_OUTPUT=$(ps -p $$)
-    WIN_PID=$(echo "$PS_OUTPUT" | awk 'NR>1 {print $4}')
-    echo "1. Current Shell Windows PID: ${WIN_PID:-FAILED}"
-
-    if [ -z "$WIN_PID" ]; then
-        echo "❌ ERROR: Could not extract Windows PID from ps."
-        PARENT_PROCESS="unknown"
-    else
-        # 2. Get the Parent Windows PID using the reliable WMI fallback method
-        PARENT_WINPID=$(powershell.exe -Command "(gwmi Win32_Process -Filter 'ProcessId = $WIN_PID').ParentProcessId" 2>/dev/null | tr -d '\r')
-        echo "2. Extracted Parent Windows PID: '${PARENT_WINPID:-EMPTY}'"
-
-        if [ -z "$PARENT_WINPID" ] || [ "$PARENT_WINPID" = "FAILED" ]; then
-            echo "❌ ERROR: WMI could not resolve Parent Windows PID."
-            PARENT_PROCESS="unknown"
-        else
-            # Capture the raw MSYS2 process table for tracing
-            LOCAL_PS=$(ps)
-            echo "--- RAW MSYS2 PROCESS TABLE ---"
-            echo "$LOCAL_PS"
-            echo "-------------------------------"
-
-            # 3. Reference Parent Windows PID back against MSYS2 POSIX map
-            RAW_COLUMN=$(echo "$LOCAL_PS" | awk -v winpid="$PARENT_WINPID" '$4 == winpid {print $NF}' 2>/dev/null)
-            echo "3a. Raw final column extracted by awk: '$RAW_COLUMN'"
-
-            PARENT_PROCESS=$(basename "$RAW_COLUMN" .exe 2>/dev/null)
-            echo "3b. Result after running through basename: '$PARENT_PROCESS'"
-
-            # 4. Fallback/Normalization Block
-            if [ "$PARENT_PROCESS" = "python" ] || [ "$PARENT_PROCESS" = ".exe" ] || [ -z "$PARENT_PROCESS" ]; then
-                echo "4. Triggered Fallback Condition (Value is 'python', '.exe', or empty)."
-
-                if echo "$LOCAL_PS" | grep -q "meson"; then
-                    PARENT_PROCESS="meson"
-                    echo "   -> Contextual Match: Found active 'meson' context in local ps table. Normalizing to meson."
-                else
-                    PARENT_PROCESS="sh"
-                    echo "   -> Warning: 'meson' not found in table context. Defaulting to sh."
-                fi
-            fi
-        fi
+    WIN_PID=$(ps -p $$ | awk 'NR>1 {print $4}')
+    PARENT_PROCESS=$(powershell.exe -Command "
+        \$parentId = (gwmi Win32_Process -Filter 'ProcessId = $WIN_PID').ParentProcessId
+        if (\$parentId) {
+            Write-Output (gwmi Win32_Process -Filter \"ProcessId = \$parentId\").Name
+        }
+    " 2>/dev/null | tr -d '\r')
+    if [ "$PARENT_PROCESS" = "python.exe" ] && ps | grep -q "meson"; then
+        PARENT_PROCESS="meson"
     fi
-
-    echo "=== FINAL RESOLUTION ==="
-    echo "Parent Process identified as: $PARENT_PROCESS"
-    echo "============================================="
 else
     PARENT_PROCESS=$(ps -p $PPID -o comm= 2>/dev/null || true)
 fi
