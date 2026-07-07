@@ -5,7 +5,38 @@
 
 
 if [[ -v MINGW_PREFIX ]]; then
-    PARENT_PROCESS=$(ps -W -p $(ps -p $PPID -o winpid= | tr -d ' ') -o comm= 2>/dev/null || true)
+    echo "=== SYSTEM DIAGNOSTICS ==="
+    echo "Current Environment PPID: $PPID"
+
+    # 1. Capture and check the local MSYS2 ps table
+    PS_LOCAL=$(ps)
+    TARGET_WINPID=$(echo "$PS_LOCAL" | awk -v ppid="$PPID" '$1 == ppid {print $4}')
+
+    if [ -z "$TARGET_WINPID" ]; then
+        echo "❌ ERROR: Could not find PPID ($PPID) in local ps table."
+        echo "=== FULL LOCAL PS OUTPUT ==="
+        echo "$PS_LOCAL"
+        echo "============================"
+        PARENT_PROCESS="unknown"
+    else
+        echo "Found Windows PID: $TARGET_WINPID"
+
+        # 2. Capture and check the full Windows ps -W table
+        PS_WINDOWS=$(ps -W)
+        RAW_PATH=$(echo "$PS_WINDOWS" | awk -v winpid="$TARGET_WINPID" '$4 == winpid {print $NF}')
+
+        if [ -z "$RAW_PATH" ]; then
+            echo "❌ ERROR: Windows PID ($TARGET_WINPID) not found in ps -W table."
+            echo "=== FULL PS -W OUTPUT ==="
+            echo "$PS_WINDOWS"
+            echo "========================="
+            PARENT_PROCESS="unknown"
+        else
+            # 3. Final extraction
+            PARENT_PROCESS=$(basename "$RAW_PATH" .exe)
+            echo "Success! Resolved Parent: $PARENT_PROCESS"
+        fi
+    fi
 else
     PARENT_PROCESS=$(ps -p $PPID -o comm= 2>/dev/null || true)
 fi
@@ -14,7 +45,6 @@ if [[ "$PARENT_PROCESS" != "meson" ]] || [[ -z "$MESON_BUILD_ROOT" ]]; then
     ALLOWED_SCRIPT="create_flatpak_fn.sh"  # Define the ONLY script allowed to source this
     if [[ "$SUITE_PARENT" != "$ALLOWED_SCRIPT" ]]; then
         echo "❌ Parent process is $PARENT_PROCESS, Bash parent is $SUITE_PARENT. This file can only be called by meson or sourced by $ALLOWED_SCRIPT!" >&2
-        echo "ps -W -p $PPID: $(ps -W -p $(ps -p $PPID -o winpid= | tr -d ' '))"
         unset SUITE_PARENT ALLOWED_SCRIPT
         return 1 2>/dev/null || exit 1
     fi
