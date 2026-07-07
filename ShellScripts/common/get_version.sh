@@ -4,13 +4,17 @@
 #
 
 
-PARENT_PROCESS=$(ps -p $PPID | awk 'NR==2 {print $NF}')
+if [[ -v MINGW_PREFIX ]]; then
+    PARENT_PROCESS=$(ps -W | awk -v win_pid=$(ps -p $$ | awk 'NR>1 {print $4}') '$4 == win_pid {print $NF}' | xargs basename .exe)
+else
+    PARENT_PROCESS=$(ps -p $PPID -o comm= 2>/dev/null || true)
+fi
 if [[ "$PARENT_PROCESS" != "meson" ]] || [[ -z "$MESON_BUILD_ROOT" ]]; then
     SUITE_PARENT=$(basename "${BASH_SOURCE[1]}")  # Get the name of the script that is sourcing this file
     ALLOWED_SCRIPT="create_flatpak_fn.sh"  # Define the ONLY script allowed to source this
     if [[ "$SUITE_PARENT" != "$ALLOWED_SCRIPT" ]]; then
         echo "❌ Parent process is $PARENT_PROCESS, Bash parent is $SUITE_PARENT. This file can only be called by meson or sourced by $ALLOWED_SCRIPT!" >&2
-        echo "ps -p $PPID: $(ps -p $PPID)"
+        echo "ps -W -p $PPID: $(ps -W -p $PPID)"
         unset SUITE_PARENT ALLOWED_SCRIPT
         return 1 2>/dev/null || exit 1
     fi
