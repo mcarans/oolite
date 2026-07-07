@@ -10,6 +10,7 @@ if [[ "$PARENT_PROCESS" != "meson" ]] || [[ -z "$MESON_BUILD_ROOT" ]]; then
     ALLOWED_SCRIPT="create_flatpak_fn.sh"  # Define the ONLY script allowed to source this
     if [[ "$SUITE_PARENT" != "$ALLOWED_SCRIPT" ]]; then
         echo "❌ Parent process is $PARENT_PROCESS, Bash parent is $SUITE_PARENT. This file can only be called by meson or sourced by $ALLOWED_SCRIPT!" >&2
+        echo "ps -p $PPID: $(ps -p $PPID)"
         unset SUITE_PARENT ALLOWED_SCRIPT
         return 1 2>/dev/null || exit 1
     fi
