@@ -5,45 +5,46 @@
 
 
 if [[ -v MINGW_PREFIX ]]; then
-    echo "=== SYSTEM DIAGNOSTICS (POWERSHELL ROUTE) ==="
+    echo "=== HYBRID PROCESS DETECTION DIAGNOSTICS ==="
     echo "Current Bash POSIX PID (\$\$): $$"
 
+    # 1. Capture the native Windows PID for the current shell
     PS_OUTPUT=$(ps -p $$)
     WIN_PID=$(echo "$PS_OUTPUT" | awk 'NR>1 {print $4}')
+    echo "1. Current Shell Windows PID: ${WIN_PID:-FAILED}"
 
     if [ -z "$WIN_PID" ]; then
-        echo "❌ ERROR: Could not extract Windows PID from ps output."
+        echo "❌ ERROR: Could not extract Windows PID from ps."
         PARENT_PROCESS="unknown"
     else
-        echo "Resolved Current Windows PID: $WIN_PID"
-        echo "Querying Windows Kernel via PowerShell..."
+        # 2. Query Windows Kernel for the Parent Windows PID
+        PARENT_WINPID=$(powershell.exe -Command "(Get-Process -Id $WIN_PID).Parent.Id" 2>/dev/null | tr -d '\r')
+        echo "2. Parent Native Windows PID: ${PARENT_WINPID:-FAILED}"
 
-        # Run PowerShell, catch internal exceptions, and print them directly to stdout
-        POWERSHELL_OUT=$(powershell.exe -Command "
-            try {
-                \$proc = Get-Process -Id $WIN_PID -ErrorAction Stop
-                # Use fallback parsing if .Parent doesn't exist natively on older PowerShell versions
-                \$parent = (Get-CimInstance Win32_Process -Filter \"ProcessId = \$(\$proc.Parent.Id)\").Name
-                if (-not \$parent) {
-                    \$parent = (Get-Process -Id (gwmi Win32_Process -Filter \"ProcessId = $WIN_PID\").ParentProcessId).Name
-                }
-                Write-Output (\$parent -replace '\.exe$','')
-            } catch {
-                Write-Output \"PS_EXCEPTION: \$(_\$.Exception.Message)\"
-            }
-        " 2>/dev/null | tr -d '\r')
-
-        if [[ "$POWERSHELL_OUT" == PS_EXCEPTION:* ]]; then
-            echo "❌ POWERSHELL INTERNAL ERROR: ${POWERSHELL_OUT#PS_EXCEPTION: }"
-            PARENT_PROCESS="unknown"
-        elif [ -z "$POWERSHELL_OUT" ]; then
-            echo "❌ ERROR: PowerShell execution returned completely empty."
+        if [ -z "$PARENT_WINPID" ]; then
+            echo "❌ ERROR: PowerShell could not resolve Parent Windows PID."
             PARENT_PROCESS="unknown"
         else
-            PARENT_PROCESS="$POWERSHELL_OUT"
-            echo "Success! True Windows Parent: $PARENT_PROCESS"
+            # 3. Reference Parent Windows PID back against MSYS2 POSIX map
+            LOCAL_PS=$(ps)
+            PARENT_PROCESS=$(echo "$LOCAL_PS" | awk -v winpid="$PARENT_WINPID" '$4 == winpid {print $NF}' | xargs basename .exe 2>/dev/null)
+            echo "3. MSYS2 Table Mapping for PID $PARENT_WINPID: ${PARENT_PROCESS:-NONE}"
+
+            # 4. Fallback/Normalization Block
+            if [ "$PARENT_PROCESS" = "python" ] || [ -z "$PARENT_PROCESS" ]; then
+                echo "4. Detected 'python' or empty map. Cross-checking environment for Meson..."
+                if echo "$LOCAL_PS" | grep -q "meson"; then
+                    PARENT_PROCESS="meson"
+                    echo "   -> Contextual Match: Found active 'meson' context in local ps table."
+                else
+                    PARENT_PROCESS="python"
+                fi
+            fi
         fi
     fi
+
+    echo "=== FINAL RESOLUTION ==="
+    echo "Parent Process identified as: $PARENT_PROCESS"
     echo "============================================="
 else
     PARENT_PROCESS=$(ps -p $PPID -o comm= 2>/dev/null || true)
