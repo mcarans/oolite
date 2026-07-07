@@ -18,33 +18,36 @@ if [[ -v MINGW_PREFIX ]]; then
         PARENT_PROCESS="unknown"
     else
         # 2. Get the Parent Windows PID using the reliable WMI fallback method
-        PARENT_WINPID=$(powershell.exe -Command "
-            try {
-                Write-Output (gwmi Win32_Process -Filter 'ProcessId = $WIN_PID').ParentProcessId
-            } catch {
-                Write-Output 'FAILED'
-            }
-        " 2>/dev/null | tr -d '\r')
-
+        PARENT_WINPID=$(powershell.exe -Command "(gwmi Win32_Process -Filter 'ProcessId = $WIN_PID').ParentProcessId" 2>/dev/null | tr -d '\r')
         echo "2. Extracted Parent Windows PID: '${PARENT_WINPID:-EMPTY}'"
 
         if [ -z "$PARENT_WINPID" ] || [ "$PARENT_WINPID" = "FAILED" ]; then
             echo "❌ ERROR: WMI could not resolve Parent Windows PID."
             PARENT_PROCESS="unknown"
         else
-            # 3. Reference Parent Windows PID back against MSYS2 POSIX map
+            # Capture the raw MSYS2 process table for tracing
             LOCAL_PS=$(ps)
-            PARENT_PROCESS=$(echo "$LOCAL_PS" | awk -v winpid="$PARENT_WINPID" '$4 == winpid {print $NF}' | xargs basename .exe 2>/dev/null)
-            echo "3. MSYS2 Table Mapping for PID $PARENT_WINPID: '${PARENT_PROCESS:-EMPTY}'"
+            echo "--- RAW MSYS2 PROCESS TABLE ---"
+            echo "$LOCAL_PS"
+            echo "-------------------------------"
+
+            # 3. Reference Parent Windows PID back against MSYS2 POSIX map
+            RAW_COLUMN=$(echo "$LOCAL_PS" | awk -v winpid="$PARENT_WINPID" '$4 == winpid {print $NF}' 2>/dev/null)
+            echo "3a. Raw final column extracted by awk: '$RAW_COLUMN'"
+
+            PARENT_PROCESS=$(basename "$RAW_COLUMN" .exe 2>/dev/null)
+            echo "3b. Result after running through basename: '$PARENT_PROCESS'"
 
             # 4. Fallback/Normalization Block
-            if [ "$PARENT_PROCESS" = "python" ] || [ -z "$PARENT_PROCESS" ]; then
-                echo "4. Triggered Fallback Condition (Value is 'python' or empty)."
+            if [ "$PARENT_PROCESS" = "python" ] || [ "$PARENT_PROCESS" = ".exe" ] || [ -z "$PARENT_PROCESS" ]; then
+                echo "4. Triggered Fallback Condition (Value is 'python', '.exe', or empty)."
+
                 if echo "$LOCAL_PS" | grep -q "meson"; then
                     PARENT_PROCESS="meson"
-                    echo "   -> Contextual Match: Found active 'meson' context in local ps table."
+                    echo "   -> Contextual Match: Found active 'meson' context in local ps table. Normalizing to meson."
                 else
-                    PARENT_PROCESS="python"
+                    PARENT_PROCESS="sh"
+                    echo "   -> Warning: 'meson' not found in table context. Defaulting to sh."
                 fi
             fi
         fi
