@@ -4,7 +4,7 @@
 #
 
 
-PARENT_PROCESS=$(basename "$(cat /proc/$PPID/comm 2>/dev/null || tr '\0' ' ' < /proc/$PPID/cmdline | awk '{print $1}')")
+PARENT_PROCESS=$(ps -p $PPID | awk 'NR==2 {print $NF}')
 if [[ "$PARENT_PROCESS" != "meson" ]] || [[ -z "$MESON_BUILD_ROOT" ]]; then
     SUITE_PARENT=$(basename "${BASH_SOURCE[1]}")  # Get the name of the script that is sourcing this file
     ALLOWED_SCRIPT="create_flatpak_fn.sh"  # Define the ONLY script allowed to source this
