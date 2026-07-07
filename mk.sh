@@ -59,33 +59,35 @@ meson_setup() {
         echo "🔄 Directory exists, attempting to reconfigure..."
         if ! meson setup "$build_dir" $2 ${SETUP_FLAGS[@]+"${SETUP_FLAGS[@]}"} --native-file "${NATIVE_FILE}" --reconfigure; then
             echo "❌ Meson reconfiguration failed!" >&2
-            output_meson_log $build_dir
+            output_meson_log "$build_dir"
             exit 1
         fi
     else
         echo "🏗️ Creating new build configuration..."
         if ! meson setup "$build_dir" $2 ${SETUP_FLAGS[@]+"${SETUP_FLAGS[@]}"} --native-file "${NATIVE_FILE}"; then
             echo "❌ Meson initial setup failed!" >&2
-            output_meson_log $build_dir
+            output_meson_log "$build_dir"
             exit 1
         fi
     fi
 }
 
 meson_compile() {
+    local build_dir="build/meson_$1"
     echo "--> Running Meson build for: $1"
-    if ! meson compile -C "build/meson_$1" ${COMPILE_FLAGS[@]+"${COMPILE_FLAGS[@]}"}; then
+    if ! meson compile -C "$build_dir" ${COMPILE_FLAGS[@]+"${COMPILE_FLAGS[@]}"}; then
         echo "❌ Meson compile failed!" >&2
-        output_meson_log $build_dir
+        output_meson_log "$build_dir"
         exit 1
     fi
 }
 
 meson_install() {
+    local build_dir="build/meson_$1"
     echo "--> Running Meson install for: $1"
-    if ! meson install -C "build/meson_$1" ${INSTALL_FLAGS[@]+"${INSTALL_FLAGS[@]}"}; then
+    if ! meson install -C "$build_dir" ${INSTALL_FLAGS[@]+"${INSTALL_FLAGS[@]}"}; then
         echo "❌ Meson install failed!" >&2
-        output_meson_log $build_dir
+        output_meson_log "$build_dir"
         exit 1
     fi
 }
