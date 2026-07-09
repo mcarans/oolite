@@ -13,7 +13,7 @@ create_nsis() {
     cd ../../build/nsis
     local oolite_dir="../$build_folder"
     local githash ver_full ver_nsis ver_gitrev cpp_date app_date buildtime builder
-    source "$build_folder/.meson_version"
+    source "$oolite_dir/.meson_version"
 
     cp ../../installers/win32/* ./
 
