@@ -86,7 +86,7 @@ create_appimage() {
     fi
 
     echo "Creating AppImage $OUTNAME..."
-    if ! $appimagetool_bin "$abs_appdir" "../$OUTNAME"; then
+    if ! $appimagetool_bin "$APPDIR" "../$OUTNAME"; then
         echo "❌ AppImage creation failed!" >&2
         return 1
     fi
