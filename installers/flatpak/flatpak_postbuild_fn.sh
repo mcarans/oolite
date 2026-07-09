@@ -11,8 +11,7 @@ flatpak_postbuild() {
     source ../FreeDesktop/install_freedesktop_fn.sh
 
     cd ../../build/flatpak
-    local abs_oolitedir=$(realpath -m "../$build_folder")
-    install_freedesktop ver_full "$abs_oolitedir" "/app" "lib/debug/bin" "metainfo"
+    install_freedesktop ver_full "../$build_folder" "/app" "lib/debug/bin" "metainfo"
     mkdir -p /app/lib/debug/source/oolite  # Ensure the destination directory exists
     cp -r ../../src /app/lib/debug/source/oolite/ || {  # Copy the src directory recursively
         echo "❌ $err_msg install oolite source code" >&2

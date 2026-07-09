@@ -18,9 +18,7 @@ create_appimage() {
     local appbin="$APPDIR/bin"
     local appshr="$APPDIR/share"
 
-    local abs_oolitedir=$(realpath -m "../$build_folder")
-    local abs_appdir=$(realpath -m "$APPDIR")
-    if ! install_freedesktop ver_full "$abs_oolitedir" "$abs_appdir" "bin" "appdata"; then
+    if ! install_freedesktop ver_full "../$build_folder" "$APPDIR" "bin" "appdata"; then
         return 1
     fi
 
