@@ -13,8 +13,8 @@ create_nsis() {
     mkdir -p ../../build/nsis
     cd ../../build/nsis
     local oolite_dir="../$build_folder"
-    local ver_full ver_quad githash buildtime app_date
-    parse_manifest ver_full ver_quad githash buildtime app_date "$oolite_dir/Resources/manifest.plist"
+    local ver_full ver_quad ver_githash buildtime app_date
+    parse_manifest ver_full ver_quad ver_githash buildtime app_date "$oolite_dir/Resources/manifest.plist"
 
     cp ../../installers/win32/* ./
 
