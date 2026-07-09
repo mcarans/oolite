@@ -46,6 +46,7 @@ clean() {
 meson_setup() {
     local build_dir="build/meson_$1"
     echo "--> Running Meson setup for: $1"
+    local meson_opts=("${@:2}")
     if [[ -n "${VER_FULL:-}" ]]; then
         export VER_FULL
     fi
@@ -57,14 +58,14 @@ meson_setup() {
     fi
     if [[ -d "$build_dir" ]] && [[ -f "$build_dir/build.ninja" ]]; then
         echo "🔄 Directory exists, attempting to reconfigure..."
-        if ! meson setup "$build_dir" $2 ${SETUP_FLAGS[@]+"${SETUP_FLAGS[@]}"} --native-file "${NATIVE_FILE}" --reconfigure; then
+        if ! meson setup "$build_dir" "${meson_opts[@]}" ${SETUP_FLAGS[@]+"${SETUP_FLAGS[@]}"} --native-file "${NATIVE_FILE}" --reconfigure; then
             echo "❌ Meson reconfiguration failed!" >&2
             output_meson_log "$build_dir"
             exit 1
         fi
     else
         echo "🏗️ Creating new build configuration..."
-        if ! meson setup "$build_dir" $2 ${SETUP_FLAGS[@]+"${SETUP_FLAGS[@]}"} --native-file "${NATIVE_FILE}"; then
+        if ! meson setup "$build_dir" "${meson_opts[@]}" ${SETUP_FLAGS[@]+"${SETUP_FLAGS[@]}"} --native-file "${NATIVE_FILE}"; then
             echo "❌ Meson initial setup failed!" >&2
             output_meson_log "$build_dir"
             exit 1
@@ -137,17 +138,18 @@ execute_target() {  # Target Execution Logic
     local action="$1"
     local build_type="${2:-}"
 
-    case "$action" in
+case "$action" in
         setup)
             validate_build_type "$build_type"
             if [[ "$build_type" == "deployment" ]]; then
-                meson_setup "deployment" "-Ddeployment_release=true -Ddebug=false -Dstrip_bin=true -Db_lto=true"
+                # Arguments passed individually (acts like an array)
+                meson_setup "deployment" "-Ddeployment_release=true" "-Ddebug=false" "-Dstrip_bin=true" "-Db_lto=true"
             elif [[ "$build_type" == "test" ]]; then
-                meson_setup "test" "-Ddebug=false -Dstrip_bin=true -Db_lto=true"
+                meson_setup "test" "-Ddebug=false" "-Dstrip_bin=true" "-Db_lto=true"
             elif [[ "$build_type" == "dev" ]]; then
-                meson_setup "dev" "-Ddev_release=true -Ddebug=false -Dstrip_bin=false"
+                meson_setup "dev" "-Ddev_release=true" "-Ddebug=false" "-Dstrip_bin=false"
             elif [[ "$build_type" == "debug" ]]; then
-                meson_setup "debug" "-Ddebug=true -Dstrip_bin=false"
+                meson_setup "debug" "-Ddebug=true" "-Dstrip_bin=false"
             fi
             ;;
         compile)
