@@ -15,6 +15,7 @@ generate_manifest() {
         echo "    identifier = \"org.oolite.oolite\";"
         echo "    "
         echo "    version = \"$ver_full\";"
+        echo "    version_quad = \"$ver_quad\";"
         echo "    git_commit_hash = \"$ver_githash\";"
         echo "    build_time = \"$build_time\";"
         echo "    git_remote_url = \"$git_remote\";"

@@ -48,7 +48,7 @@ run_script() {
     local version_file="$build_dir/.meson_version"
     if [[ -z "${VER_FULL-}" ]]; then
         if [[ -f "$version_file" ]]; then  # Check if cache exists and has a matching hash context
-            local githash ver_full ver_nsis ver_gitrev cpp_date app_date buildtime builder
+            local githash ver_full ver_quad ver_gitrev cpp_date app_date buildtime builder
             source "$version_file" 2>/dev/null
             if [[ "$ver_githash" == "$lookup_hash" ]]; then
                 echo "$ver_full"
@@ -98,10 +98,10 @@ run_script() {
         else
             ver_dist=$(git rev-list --count HEAD)
         fi
-        output_ver_nsis="$ver_maj.$ver_min.$ver_rev.$ver_dist"
+        output_ver_quad="$ver_maj.$ver_min.$ver_rev.$ver_dist"
     else
         local ver_uncommitted=$(git status --porcelain 2>/dev/null | wc -l)  # Dirty repo: get uncommitted file count
-        output_ver_nsis="$ver_maj.$ver_min.$ver_rev.$ver_uncommitted"
+        output_ver_quad="$ver_maj.$ver_min.$ver_rev.$ver_uncommitted"
     fi
 
     local output_cpp_date output_app_date output_builder
@@ -110,7 +110,7 @@ run_script() {
     cat << EOF > "$version_file"  # Write new values to the hidden cache file
 ver_githash="$lookup_hash"
 ver_full="$output_ver_full"
-ver_nsis="$output_ver_nsis"
+ver_quad="$output_ver_quad"
 cpp_date="$output_cpp_date"
 app_date="$output_app_date"
 buildtime="$output_buildtime"

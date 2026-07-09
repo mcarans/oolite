@@ -16,8 +16,8 @@ install_freedesktop() {
 
     echo "Installing metainfo to $app_folder"
 
-    local githash buildtime app_date
-    parse_manifest output_ver_full githash buildtime app_date "$build_folder/Resources/manifest.plist"
+    local ver_quad githash buildtime app_date
+    parse_manifest output_ver_full ver_quad githash buildtime app_date "$build_folder/Resources/manifest.plist"
 
     local freedesktopdir="../../installers/FreeDesktop"
     local appshr="$app_folder/share"

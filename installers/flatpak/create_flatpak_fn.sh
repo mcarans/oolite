@@ -12,7 +12,7 @@ create_flatpak() {
     mkdir -p "$flatpak_dir"
     source ShellScripts/common/get_version.sh
     run_script "$flatpak_dir"
-    local githash ver_full ver_nsis ver_gitrev cpp_date app_date buildtime builder
+    local githash ver_full ver_quad ver_gitrev cpp_date app_date buildtime builder
     source "$flatpak_dir/.meson_version"
     cd "$flatpak_dir"
 
