@@ -8,6 +8,8 @@ generate_manifest() {
     local git_remote
     get_gitremote git_remote
 
+    echo "version_quad=$ver_quad" 
+
     # Redirect the entire block output into the manifest_output file
     {
         echo "{"
