@@ -47,6 +47,7 @@ post_build_args = [
     get_option('espeak') ? 'yes' : 'no',
     get_option('strip_bin') ? 'yes' : 'no',
     version_string,
+    version_vars.get('ver_quad'),
     version_vars.get('ver_githash'),
     version_vars.get('buildtime'),
     gnustep_folder,
