@@ -15,7 +15,6 @@ create_nsis() {
     local oolite_dir="../$build_folder"
     local ver_full ver_quad ver_githash buildtime app_date
     parse_manifest ver_full ver_quad ver_githash buildtime app_date "$oolite_dir/Resources/manifest.plist"
-    echo "ver_quad=$ver_quad"
     cp ../../installers/win32/* ./
 
     if ! curl -o OoliteReadMe.pdf -L https://oolite.readthedocs.io/en/latest/index.pdf; then
