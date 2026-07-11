@@ -2,8 +2,9 @@ generate_manifest() {
     local output_file="$1"
     local deployment_release="$2"
     local ver_full="$3"
-    local ver_githash="$4"
-    local build_time="$5"
+    local ver_quad="$4"
+    local ver_githash="$5"
+    local build_time="$6"
     source ShellScripts/common/get_gitremote_fn.sh
     local git_remote
     get_gitremote git_remote
