@@ -795,10 +795,10 @@ enum PreferredAppMode
 - (void) drawRect:(NSRect)rect
 {
 	SDL_SetWindowSize(window, (int)NSWidth(rect), (int)NSHeight(rect));
-	[self updateScreenWithVideoMode:YES];
+	[self updateScreenWithVideoMode];
 }
 
-- (void) updateScreenWithVideoMode:(BOOL) v_mode
+- (void) updateScreenWithVideoMode
 {
 	SDL_Surface* surface = SDL_GetWindowSurface(window);
 	int windowWidth, windowHeight;
@@ -814,7 +814,7 @@ enum PreferredAppMode
 
     if (m_glContextInitialized == NO)
 	{
-		[self initialiseGLWithSize:viewSize useVideoMode:v_mode];
+		[self initialiseGLWithSize:viewSize useVideoMode:YES];
 	}
 
 	if (surface == 0)

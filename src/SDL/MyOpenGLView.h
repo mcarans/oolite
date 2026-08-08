@@ -317,7 +317,7 @@ extern int debug;
 
 - (void) drawRect:(NSRect)rect;
 - (void) updateScreen;
-- (void) updateScreenWithVideoMode:(BOOL) v_mode;
+- (void) updateScreenWithVideoMode;
 - (void) display;
 
 - (BOOL) snapShot:(NSString *)filename;
