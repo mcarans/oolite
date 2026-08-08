@@ -1474,7 +1474,6 @@ finished:
 
     NSSize pixelSize = NSMakeSize(pixelWidth, pixelHeight);  // Initialize OpenGL State & Viewport
     [[self gameController] setUpBasicOpenGLStateWithSize:pixelSize];
-    SDL_GL_SwapWindow(window);
     squareX = 0.0f;
 
     m_glContextInitialized = YES;
