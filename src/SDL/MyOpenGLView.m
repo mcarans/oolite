@@ -789,13 +789,9 @@ enum PreferredAppMode
 
 - (void) updateScreen
 {
-	[self drawRect: NSMakeRect(0, 0, viewSize.width, viewSize.height)];
-}
-
-- (void) drawRect:(NSRect)rect
-{
+    NSRect rect = NSMakeRect(0, 0, viewSize.width, viewSize.height);
 	SDL_SetWindowSize(window, (int)NSWidth(rect), (int)NSHeight(rect));
-	[self updateScreenWithVideoMode];
+    [self updateScreenWithVideoMode];
 }
 
 - (void) updateScreenWithVideoMode

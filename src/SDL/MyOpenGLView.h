@@ -314,7 +314,6 @@ extern int debug;
 
 - (void) stringToClipboard:(NSString *)stringToCopy;
 
-- (void) drawRect:(NSRect)rect;
 - (void) updateScreen;
 - (void) updateScreenWithVideoMode;
 - (void) display;
