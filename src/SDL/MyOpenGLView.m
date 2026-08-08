@@ -1434,8 +1434,7 @@ finished:
     OOLog(@"display.initGL", @"Requested a new surface of %d x %d, %@.",
           (int)viewSize.width, (int)viewSize.height, (fullScreen ? @"fullscreen" : @"windowed"));
 
-    // 1. Handle Fullscreen vs. Windowed Mode in pure SDL3
-    if (fullScreen)
+    if (fullScreen)  // Handle fullscreen mode
     {
         if (v_mode)
         {
@@ -1450,25 +1449,19 @@ finished:
             }
             else
             {
-                // Fallback to desktop mode if no exact mode was matched
-                SDL_SetWindowFullscreenMode(window, NULL);
+                SDL_SetWindowFullscreenMode(window, NULL);  // Fallback to desktop mode if no exact mode was matched
             }
         }
         else
         {
-            // Desktop (Borderless) Fullscreen
-            SDL_SetWindowFullscreenMode(window, NULL);
+            SDL_SetWindowFullscreenMode(window, NULL);  // Desktop (Borderless) Fullscreen
         }
-
-        // Toggle Fullscreen ON (SDL3 uses a boolean true/false)
-        SDL_SetWindowFullscreen(window, true);
+        SDL_SetWindowFullscreen(window, true);  // Toggle Fullscreen ON (SDL3 uses a boolean true/false)
     }
-    else
+    else  // Handle windowed mode
     {
-        // Toggle Fullscreen OFF
-        SDL_SetWindowFullscreen(window, false);
+        SDL_SetWindowFullscreen(window, false);  // Toggle Fullscreen OFF
         SDL_SetWindowSize(window, (int)viewSize.width, (int)viewSize.height);
-
         // Center window on display when returning from fullscreen
         SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 #if OOLITE_WINDOWS
@@ -1476,24 +1469,22 @@ finished:
 #endif
     }
 
-    // 2. Query Backing Framebuffer Dimensions (HiDPI Aware in SDL3)
     int pixelWidth = 0, pixelHeight = 0;
-    SDL_GetWindowSizeInPixels(window, &pixelWidth, &pixelHeight);
+    SDL_GetWindowSizeInPixels(window, &pixelWidth, &pixelHeight);  // Query Backing Framebuffer Dimensions (HiDPI aware)
 
     bounds.size.width = (CGFloat)pixelWidth;
     bounds.size.height = (CGFloat)pixelHeight;
     viewSize = bounds.size;
 
-    // Query window origin position
     int winX = 0, winY = 0;
-    SDL_GetWindowPosition(window, &winX, &winY);
+    SDL_GetWindowPosition(window, &winX, &winY);  // Query window origin position
     bounds.origin.x = (CGFloat)winX;
     bounds.origin.y = (CGFloat)winY;
 
     OOLog(@"display.initGL", @"Created a new surface of %d x %d, %@.",
           pixelWidth, pixelHeight, (fullScreen ? @"fullscreen" : @"windowed"));
 
-    // 3. Aspect Ratio & Projection Calculations
+    // Aspect Ratio & Projection Calculations
     if (bounds.size.width / bounds.size.height > 4.0 / 3.0)
     {
        display_z = 480.0 * bounds.size.width / bounds.size.height;
@@ -1509,8 +1500,7 @@ finished:
 
     [self autoShowMouse];
 
-    // 4. Initialize OpenGL State & Viewport
-    NSSize pixelSize = NSMakeSize(pixelWidth, pixelHeight);
+    NSSize pixelSize = NSMakeSize(pixelWidth, pixelHeight);  // Initialize OpenGL State & Viewport
     [[self gameController] setUpBasicOpenGLStateWithSize:pixelSize];
     SDL_GL_SwapWindow(window);
     squareX = 0.0f;
