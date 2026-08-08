@@ -315,7 +315,6 @@ extern int debug;
 - (void) stringToClipboard:(NSString *)stringToCopy;
 
 - (void) updateScreen;
-- (void) updateScreenWithVideoMode;
 - (void) display;
 
 - (BOOL) snapShot:(NSString *)filename;
