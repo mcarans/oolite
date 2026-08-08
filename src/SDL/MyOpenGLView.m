@@ -814,7 +814,7 @@ enum PreferredAppMode
 
     if (m_glContextInitialized == NO)
 	{
-		[self initialiseGLWithSize:viewSize useVideoMode:YES];
+		[self initialiseGLWithSize:viewSize];
 	}
 
 	if (surface == 0)
@@ -1419,12 +1419,6 @@ finished:
 
 - (void) initialiseGLWithSize:(NSSize) v_size
 {
-	[self initialiseGLWithSize:v_size useVideoMode:YES];
-}
-
-
-- (void) initialiseGLWithSize:(NSSize) v_size useVideoMode:(BOOL) v_mode
-{
     if (!window)
     {
        [self createWindowWithSize: v_size];
@@ -1436,25 +1430,18 @@ finished:
 
     if (fullScreen)  // Handle fullscreen mode
     {
-        if (v_mode)
-        {
-            // Exclusive Fullscreen: Get closest matching mode for current display
-            SDL_DisplayID displayID = SDL_GetDisplayForWindow(window);
-            SDL_DisplayMode closestMode;
+        // Exclusive Fullscreen: Get closest matching mode for current display
+        SDL_DisplayID displayID = SDL_GetDisplayForWindow(window);
+        SDL_DisplayMode closestMode;
 
-            // In SDL3: pass width, height, refresh rate (0.0f = desktop rate), high-density flag, and target struct
-            if (displayID != 0 && SDL_GetClosestFullscreenDisplayMode(displayID, (int)viewSize.width, (int)viewSize.height, 0.0f, true, &closestMode))
-            {
-                SDL_SetWindowFullscreenMode(window, &closestMode);
-            }
-            else
-            {
-                SDL_SetWindowFullscreenMode(window, NULL);  // Fallback to desktop mode if no exact mode was matched
-            }
+        // In SDL3: pass width, height, refresh rate (0.0f = desktop rate), high-density flag, and target struct
+        if (displayID != 0 && SDL_GetClosestFullscreenDisplayMode(displayID, (int)viewSize.width, (int)viewSize.height, 0.0f, true, &closestMode))
+        {
+            SDL_SetWindowFullscreenMode(window, &closestMode);
         }
         else
         {
-            SDL_SetWindowFullscreenMode(window, NULL);  // Desktop (Borderless) Fullscreen
+            SDL_SetWindowFullscreenMode(window, NULL);  // Fallback to desktop mode if no exact mode was matched
         }
         SDL_SetWindowFullscreen(window, true);  // Toggle Fullscreen ON (SDL3 uses a boolean true/false)
     }
