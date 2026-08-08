@@ -782,11 +782,6 @@ enum PreferredAppMode
 
 #endif
 
-- (void) display
-{
-	[self updateScreen];
-}
-
 - (void) updateScreen
 {
     NSRect rect = NSMakeRect(0, 0, viewSize.width, viewSize.height);
