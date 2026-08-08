@@ -784,8 +784,7 @@ enum PreferredAppMode
 
 - (void) updateScreen
 {
-    NSRect rect = NSMakeRect(0, 0, viewSize.width, viewSize.height);
-	SDL_SetWindowSize(window, (int)NSWidth(rect), (int)NSHeight(rect));
+	SDL_SetWindowSize(window, (int)viewSize.width, (int)viewSize.height);
 	SDL_Surface* surface = SDL_GetWindowSurface(window);
 	int windowWidth, windowHeight;
 	SDL_GetWindowSize(window, &windowWidth, &windowHeight);
