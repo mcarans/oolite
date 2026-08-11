@@ -139,15 +139,9 @@ install_package() {
 
         "python")
             case "$CURRENT_DISTRO" in
-                debian)
-                    PKG_NAME="python3-pip"
-                    ;;
-                redhat)
-                    PKG_NAME="python3-pip"
-                    ;;
-                arch)
-                    PKG_NAME="python-pip"
-                    ;;
+                debian) PKG_NAME="python3-pip" ;;
+                redhat) PKG_NAME="python3-pip" ;;
+                arch) PKG_NAME="python-pip" ;;
             esac ;;
 
         "doxygen") PKG_NAME="doxygen graphviz" ;;
