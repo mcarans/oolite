@@ -743,9 +743,11 @@ enum PreferredAppMode
 	else
 	{
 		[self initialiseGLWithSize: currentWindowSize];
+#if OOLITE_LINUX
 		SDL_HideWindow(window);
     	SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 		SDL_ShowWindow(window);
+#endif
 	}
 	// do screen resizing updates
 	if ([PlayerEntity sharedPlayer])
