@@ -499,10 +499,9 @@ enum PreferredAppMode
 
 	wasFullScreen = !fullScreen;
 	updateContext = YES;
-#else
-	SDL_SetWindowResizable(window, true);
 #endif
-
+	SDL_SetWindowResizable(window, true);
+	SDL_SetWindowBordered(window, true);
     if (!showSplashScreen)  return;
 
 #if OOLITE_LINUX
