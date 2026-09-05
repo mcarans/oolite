@@ -14,6 +14,7 @@ Oolite
 #import "OOSDLJoystickManager.h"
 #import "PlayerEntity.h"
 #import "ResourceManager.h"
+#import "OOCollectionExtractors.h"
 #import "NSFileManagerOOExtensions.h" // to find savedir
 
 #define kOOLogUnconvertedNSLog @"unclassified.MyOpenGLView"
