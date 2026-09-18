@@ -1,0 +1,50 @@
+---
+# Main configuration for C++, C, and Header files
+Language: Cpp
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnLimit: 120
+AllowShortFunctionsOnASingleLine: None
+DerivePointerAlignment: false
+PointerAlignment: Right
+SortIncludes: Never
+
+# Alignment settings for long method calls
+AlignAfterOpenBracket: true
+AlignOperands: Align
+
+# Ensure long method/function calls are broken into one-per-line
+BinPackArguments: false
+BinPackParameters: OnePerLine
+
+# Objective-C Specific Styling
+ObjCBlockIndentWidth: 4
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeRangeBasedForLoopColon: true
+ObjCBinPackProtocolList: Auto
+
+---
+# Specific overrides for Objective-C (.m files)
+Language: ObjC
+BasedOnStyle: Google
+IndentWidth: 4
+ColumnLimit: 120
+SortIncludes: Never
+
+# Alignment settings for long method calls
+AlignAfterOpenBracket: true
+AlignOperands: Align
+
+# Match the Cpp behavior for consistency
+BinPackArguments: false
+BinPackParameters: OnePerLine
+
+# Objective-C Specific Styling
+ObjCBlockIndentWidth: 4
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeRangeBasedForLoopColon: true
+ObjCBinPackProtocolList: Auto
