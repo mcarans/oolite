@@ -115,11 +115,13 @@ extern int SaveEXRSnapshot(const char* outfilename, int width, int height, const
     OOLog(@"display.initGL", @"Trying %d-bpcc, 24-bit depth buffer", bitsPerColorComponent);
     if (bitsPerColorComponent > 8) {
         SDL_GL_SetAttribute(SDL_GL_FLOATBUFFERS, 1);
+        _hdrOutput = YES;
     } else {
         SDL_GL_SetAttribute(SDL_GL_RED_SIZE, bitsPerColorComponent);
         SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, bitsPerColorComponent);
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, bitsPerColorComponent);
         SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, bitsPerColorComponent);
+        _hdrOutput = NO;
     }
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -161,6 +163,7 @@ extern int SaveEXRSnapshot(const char* outfilename, int width, int height, const
         SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         window = SDL_CreateWindowWithProperties(props);
+        _hdrOutput = NO;
     }
 
     if (!window) {
@@ -188,11 +191,9 @@ extern int SaveEXRSnapshot(const char* outfilename, int width, int height, const
         OOLog(@"sdl.create_context", @"%@", @"Could not create OpenGL context");
         exit(1);
     }
-
     int floatBuffers = 0;
     SDL_GL_GetAttribute(SDL_GL_FLOATBUFFERS, &floatBuffers);
     OOLog(@"display.initGL", @"Actual float framebuffer: %d", floatBuffers);
-    _hdrOutput = (floatBuffers != 0);
     GLint redBits = 0;
     GLint greenBits = 0;
     GLint blueBits = 0;
