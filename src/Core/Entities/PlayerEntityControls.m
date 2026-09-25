@@ -121,10 +121,8 @@ static BOOL leftRightKeyPressed;
 static BOOL musicModeKeyPressed;
 static BOOL volumeControlPressed;
 static BOOL fovControlPressed;
-#if OOLITE_WINDOWS
 static BOOL hdrMaxBrightnessControlPressed;
 static BOOL hdrPaperWhiteControlPressed;
-#endif
 static BOOL colorblindModeControlPressed;
 static BOOL shaderSelectKeyPressed;
 static BOOL selectPressed;
@@ -2919,7 +2917,6 @@ static NSTimeInterval time_last_frame;
         [self setGuiToKeyMapperScreen:0 resetCurrentRow:YES];
     }
 
-#if OOLITE_WINDOWS
     if ([gameView hdrOutput]) {
         if ((guiSelectedRow == GUI_ROW(GAME, HDRMAXBRIGHTNESS)) && (([self checkKeyPress:n_key_gui_arrow_right]) || ([self checkKeyPress:n_key_gui_arrow_left]))) {
             if (!hdrMaxBrightnessControlPressed) {
@@ -2958,7 +2955,6 @@ static NSTimeInterval time_last_frame;
         } else
             hdrMaxBrightnessControlPressed = NO;
     }
-#endif
 
 #if OO_RESOLUTION_OPTION
     if (!switching_resolution && guiSelectedRow == GUI_ROW(GAME, DISPLAY) && ([self checkKeyPress:n_key_gui_arrow_right] || [self checkKeyPress:n_key_gui_arrow_left])) {
@@ -3217,7 +3213,6 @@ static NSTimeInterval time_last_frame;
                 [gui setText:DESC(@"gameoptions-wireframe-graphics-no") forRow:GUI_ROW(GAME, WIREFRAMEGRAPHICS) align:GUI_ALIGN_CENTER];
         }
     }
-#if OOLITE_WINDOWS
     else {
         if ((guiSelectedRow == GUI_ROW(GAME, HDRPAPERWHITE))
             && (([self checkKeyPress:n_key_gui_arrow_right]) || ([self checkKeyPress:n_key_gui_arrow_left]))) {
@@ -3243,7 +3238,6 @@ static NSTimeInterval time_last_frame;
         } else
             hdrPaperWhiteControlPressed = NO;
     }
-#endif
 
 #if !NEW_PLANETS
     if ((guiSelectedRow == GUI_ROW(GAME, PROCEDURALLYTEXTUREDPLANETS)) && (([self checkKeyPress:n_key_gui_arrow_right]) || ([self checkKeyPress:n_key_gui_arrow_left]))) {

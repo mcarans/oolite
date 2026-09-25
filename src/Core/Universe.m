@@ -481,11 +481,7 @@ static GLfloat docked_light_specular[4] = { DOCKED_ILLUM_LEVEL, DOCKED_ILLUM_LEV
                                                         attributeBindings:[NSDictionary dictionary]] retain];
         // shader for applying bloom and any necessary post-proc fx, tonemapping and gamma correction
         finalProgram = [[OOShaderProgram shaderProgramWithVertexShaderName:@"oolite-final.vertex"
-#if OOLITE_WINDOWS
                                                         fragmentShaderName:[[UNIVERSE gameView] hdrOutput] ? @"oolite-final-hdr.fragment" : @"oolite-final.fragment"
-#else
-                                                        fragmentShaderName:@"oolite-final.fragment"
-#endif
                                                                     prefix:@"#version 330\n"
                                                          attributeBindings:[NSDictionary dictionary]] retain];
     }
@@ -640,13 +636,11 @@ static GLfloat docked_light_specular[4] = { DOCKED_ILLUM_LEVEL, DOCKED_ILLUM_LEV
     OOGL(glUniform1f(glGetUniformLocation(final, "uTime"), [self getTime]));
     OOGL(glUniform2fv(glGetUniformLocation(final, "uResolution"), 1, fboResolution));
     OOGL(glUniform1i(glGetUniformLocation(final, "uPostFX"), [self currentPostFX]));
-#if OOLITE_WINDOWS
     if ([gameView hdrOutput]) {
         OOGL(glUniform1f(glGetUniformLocation(final, "uMaxBrightness"), [gameView hdrMaxBrightness]));
         OOGL(glUniform1f(glGetUniformLocation(final, "uPaperWhiteBrightness"), [gameView hdrPaperWhiteBrightness]));
         OOGL(glUniform1i(glGetUniformLocation(final, "uHDRToneMapper"), [gameView hdrToneMapper]));
     }
-#endif
     OOGL(glUniform1i(glGetUniformLocation(final, "uSDRToneMapper"), [gameView sdrToneMapper]));
 
     OOGL(glActiveTexture(GL_TEXTURE1));
@@ -4061,13 +4055,11 @@ static BOOL IsFriendlyStationPredicate(Entity* entity, void* parameter)
 
     [result oo_setFloat:[gameView fov:NO] forKey:@"fovValue"];
 
-#if OOLITE_WINDOWS
     if ([gameView hdrOutput]) {
         [result oo_setFloat:[gameView hdrMaxBrightness] forKey:@"hdr-max-brightness"];
         [result oo_setFloat:[gameView hdrPaperWhiteBrightness] forKey:@"hdr-paperwhite-brightness"];
         [result setObject:OOStringFromHDRToneMapper([gameView hdrToneMapper]) forKey:@"hdr-tone-mapper"];
     }
-#endif
 
     [result setObject:OOStringFromSDRToneMapper([gameView sdrToneMapper])
                forKey:@"sdr-tone-mapper"];

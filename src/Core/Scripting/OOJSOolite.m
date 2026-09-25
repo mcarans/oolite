@@ -148,11 +148,9 @@ static JSBool OoliteGetProperty(JSContext* context, JSObject* this, jsid propID,
 
     case kOolite_hdrToneMapper: {
         NSString* toneMapperStr = @"OOHDR_TONEMAPPER_UNDEFINED";
-#if OOLITE_WINDOWS
         if ([gameView hdrOutput]) {
             toneMapperStr = OOStringFromHDRToneMapper([gameView hdrToneMapper]);
         }
-#endif
         result = toneMapperStr;
         break;
     }
@@ -216,12 +214,10 @@ static JSBool OoliteSetProperty(JSContext* context, JSObject* this, jsid propID,
             break; // non-string is not allowed
         sValue = OOStringFromJSValue(context, *value);
         if (sValue != nil) {
-#if OOLITE_WINDOWS
             if ([gameView hdrOutput])
                 [gameView setHDRToneMapper:OOHDRToneMapperFromString(sValue)];
             else
                 OOJSReportWarning(context, @"hdrToneMapper cannot be set if not running in HDR mode");
-#endif
             return YES;
         }
         break;

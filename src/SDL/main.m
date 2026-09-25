@@ -175,9 +175,7 @@ int main(int argc, char* argv[])
                                        "Options can be any of the following: \n\n"
                                        "--compile-sysdesc" TABS2 "Compile system descriptions *\n"
                                        "--export-sysdesc" TABS2 "Export system descriptions *\n"
-#if OOLITE_WINDOWS
                                        "-hdr" TABS3 "Start up in HDR mode\n"
-#endif
                                        "-load [filepath]" TABS2 "Load commander from [filepath]\n" TABS3 TABS4 "(\"-load\" is optional)\n"
                                        "-message [messageString]" TABS1 "Display [messageString] at startup\n"
                                        "-nodust    " TABS2 TABS4 "Do not draw space dust\n"

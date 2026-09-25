@@ -40,6 +40,7 @@ MA 02110-1301, USA.
 #import "png.h"
 #include <SDL3/SDL_clipboard.h>
 #include <SDL3/SDL_init.h>
+#include <SDL3/SDL_messagebox.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #import "stb_image_write.h"
@@ -114,13 +115,11 @@ extern int SaveEXRSnapshot(const char* outfilename, int width, int height, const
     OOLog(@"display.initGL", @"Trying %d-bpcc, 24-bit depth buffer", bitsPerColorComponent);
     if (bitsPerColorComponent > 8) {
         SDL_GL_SetAttribute(SDL_GL_FLOATBUFFERS, 1);
-        _hdrOutput = YES;
     } else {
         SDL_GL_SetAttribute(SDL_GL_RED_SIZE, bitsPerColorComponent);
         SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, bitsPerColorComponent);
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, bitsPerColorComponent);
         SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, bitsPerColorComponent);
-        _hdrOutput = NO;
     }
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -162,7 +161,6 @@ extern int SaveEXRSnapshot(const char* outfilename, int width, int height, const
         SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         window = SDL_CreateWindowWithProperties(props);
-        _hdrOutput = NO;
     }
 
     if (!window) {
@@ -190,11 +188,24 @@ extern int SaveEXRSnapshot(const char* outfilename, int width, int height, const
         OOLog(@"sdl.create_context", @"%@", @"Could not create OpenGL context");
         exit(1);
     }
-    SDL_Surface* surface = SDL_GetWindowSurface(window);
-    if (!SDL_SetSurfaceColorspace(surface, SDL_COLORSPACE_SRGB_LINEAR)) {
-        OOLogWARN(@"sdl.use_edr_surface", @"%@ %s", @"Failed to set SDR linear surface - falling back to SDR. Error was:", SDL_GetError());
-        SDL_SetSurfaceColorspace(surface, SDL_COLORSPACE_SRGB);
-    }
+
+    int floatBuffers = 0;
+    SDL_GL_GetAttribute(SDL_GL_FLOATBUFFERS, &floatBuffers);
+    OOLog(@"display.initGL", @"Actual float framebuffer: %d", floatBuffers);
+    _hdrOutput = (floatBuffers != 0);
+    GLint redBits = 0;
+    GLint greenBits = 0;
+    GLint blueBits = 0;
+    GLint alphaBits = 0;
+
+    glGetIntegerv(GL_RED_BITS, &redBits);
+    glGetIntegerv(GL_GREEN_BITS, &greenBits);
+    glGetIntegerv(GL_BLUE_BITS, &blueBits);
+    glGetIntegerv(GL_ALPHA_BITS, &alphaBits);
+
+    OOLog(@"display.initGL",
+	      @"Actual GL framebuffer: R%d G%d B%d A%d",
+	      redBits, greenBits, blueBits, alphaBits);
 
 #if OOLITE_WINDOWS
     // capture the window handle for later (only needed for ugly hack later when transitioning between
@@ -206,9 +217,9 @@ extern int SaveEXRSnapshot(const char* outfilename, int width, int height, const
         exit(1);
     }
 
-    atDesktopResolution = YES;
-
 #endif // OOLITE_WINDOWS
+
+    atDesktopResolution = YES;
 
     imagesDir = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Images"];
     icon = SDL_LoadBMP([[imagesDir stringByAppendingPathComponent:@"WMicon.bmp"] UTF8String]);
@@ -224,11 +235,9 @@ extern int SaveEXRSnapshot(const char* outfilename, int width, int height, const
 
     _colorSaturation = 1.0f;
 
-#if OOLITE_WINDOWS
     _hdrMaxBrightness = [prefs oo_floatForKey:@"hdr-max-brightness" defaultValue:1000.0f];
     _hdrPaperWhiteBrightness = [prefs oo_floatForKey:@"hdr-paperwhite-brightness" defaultValue:200.0f];
     _hdrToneMapper = OOHDRToneMapperFromString([prefs oo_stringForKey:@"hdr-tone-mapper" defaultValue:@"OOHDR_TONEMAPPER_ACES_APPROX"]);
-#endif
 
     _sdrToneMapper = OOSDRToneMapperFromString([prefs oo_stringForKey:@"sdr-tone-mapper" defaultValue:@"OOSDR_TONEMAPPER_ACES"]);
 
@@ -340,7 +349,7 @@ extern int SaveEXRSnapshot(const char* outfilename, int width, int height, const
         [self dealloc];
         return nil;
     }
-
+    OOLog(@"sdl.video.driver", @"SDL video driver: %s", SDL_GetCurrentVideoDriver());
     [self populateFullScreenModelist];
 
     // Find what the full screen and windowed settings are.
@@ -392,21 +401,31 @@ extern int SaveEXRSnapshot(const char* outfilename, int width, int height, const
 
 - (void)endSplashScreen
 {
-#if OOLITE_WINDOWS
     // we need to get through here even if splash screen has not
     // been shown - this method also prepares the main game window
     if ([self hdrOutput] && ![self isOutputDisplayHDREnabled]) {
-        if (MessageBox(NULL, "No primary display in HDR mode was detected.\n\n"
-                             "If you continue, graphics will not be rendered as intended.\n"
-                             "Click OK to launch anyway, or Cancel to exit.",
-                "oolite.exe - HDR requested",
-                MB_OKCANCEL | MB_ICONWARNING)
-            == IDCANCEL) {
+        const SDL_MessageBoxButtonData buttons[] = {
+            { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "OK" },
+            { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 0, "Cancel" }
+        };
+
+        const SDL_MessageBoxData messageboxData = {
+            .flags = SDL_MESSAGEBOX_WARNING,
+            .window = NULL, // Pass your SDL_Window* here if available
+            .title = "oolite.exe - HDR requested",
+            .message = "No primary display in HDR mode was detected.\n\n"
+                       "If you continue, graphics will not be rendered as intended.\n"
+                       "Click OK to launch anyway, or Cancel to exit.",
+            .numbuttons = 2,
+            .buttons = buttons,
+            .colorScheme = NULL
+        };
+
+        int buttonid;
+        if (SDL_ShowMessageBox(&messageboxData, &buttonid) && buttonid == 0) {
             [gameController exitAppWithContext:@"Cancel selected on no-HDR confirmation dialog"];
         }
     }
-
-#endif
     SDL_SetWindowResizable(window, true);
     SDL_SetWindowBordered(window, true);
     if (!showSplashScreen)
@@ -848,8 +867,6 @@ extern int SaveEXRSnapshot(const char* outfilename, int width, int height, const
     }
 }
 
-#if OOLITE_WINDOWS
-
 - (BOOL)atDesktopResolution
 {
     return atDesktopResolution;
@@ -862,20 +879,35 @@ extern int SaveEXRSnapshot(const char* outfilename, int width, int height, const
 
 - (BOOL)isOutputDisplayHDREnabled
 {
-    BOOL result = NO;
-    SDL_DisplayID displayID = SDL_GetPrimaryDisplay(); // Get the primary display ID
-    if (displayID == 0) {
-        OOLog(@"gameView.isOutputDisplayHDREnabled", @"Error! Failed to retrieve primary display ID: %s", SDL_GetError());
+    SDL_PropertiesID windowProps = SDL_GetWindowProperties(window);
+    if (windowProps == 0) {
+        OOLog(@"gameView.isOutputDisplayHDREnabled", @"Error! Failed to get window properties: %s", SDL_GetError());
         return NO;
     }
-    SDL_PropertiesID props = SDL_GetDisplayProperties(displayID); // Retrieve properties for the target display
-    if (props == 0) {
-        OOLog(@"gameView.isOutputDisplayHDREnabled", @"Error! Failed to get display properties: %s", SDL_GetError());
-        return NO;
-    }
-    result = SDL_GetBooleanProperty(props, SDL_PROP_DISPLAY_HDR_ENABLED_BOOLEAN, false); // Query for HDR enabling
-    OOLog(@"gameView.isOutputDisplayHDREnabled", @"HDR display output requested - checking availability: %@", result ? @"YES" : @"NO");
-    return result;
+
+    bool hdrEnabled = SDL_GetBooleanProperty(
+	    windowProps,
+	    SDL_PROP_WINDOW_HDR_ENABLED_BOOLEAN,
+	    false);
+
+    float sdrWhite = SDL_GetFloatProperty(
+	    windowProps,
+	    SDL_PROP_WINDOW_SDR_WHITE_LEVEL_FLOAT,
+	    1.0f);
+
+    float hdrHeadroom = SDL_GetFloatProperty(
+	    windowProps,
+	    SDL_PROP_WINDOW_HDR_HEADROOM_FLOAT,
+	    1.0f);
+
+    OOLog(@"display.hdr",
+	      @"Window HDR: %@, SDR white: %.2f, HDR headroom: %.2f",
+	      hdrEnabled ? @"YES" : @"NO",
+	      sdrWhite,
+	      hdrHeadroom);
+
+    OOLog(@"gameView.isOutputDisplayHDREnabled", @"HDR display output requested - checking availability: %@", hdrEnabled ? @"YES" : @"NO");
+    return hdrEnabled;
 }
 
 - (float)hdrMaxBrightness
@@ -923,20 +955,6 @@ extern int SaveEXRSnapshot(const char* outfilename, int width, int height, const
         newToneMapper = OOHDR_TONEMAPPER_NONE;
     _hdrToneMapper = newToneMapper;
 }
-
-#else // Linus stub methods
-
-- (BOOL)hdrOutput
-{
-    return NO;
-}
-
-- (BOOL)isOutputDisplayHDREnabled
-{
-    return NO;
-}
-
-#endif // OOLITE_WINDOWS
 
 - (OOSDRToneMapper)sdrToneMapper
 {

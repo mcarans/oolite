@@ -216,17 +216,13 @@ extern int debug;
     BOOL vSyncPreference;
 
 #if OOLITE_WINDOWS
-
-    BOOL saveSize;
-    BOOL atDesktopResolution;
-    unsigned keyboardMap; // *** FLAGGED for deletion
     HWND windowHandle;
-    RECT lastGoodRect;
+#endif
+
+    BOOL atDesktopResolution;
     float _hdrMaxBrightness;
     float _hdrPaperWhiteBrightness;
     int _hdrToneMapper;
-
-#endif
 
     int _sdrToneMapper;
 
@@ -270,7 +266,6 @@ extern int debug;
 - (void)updateGLSize:(NSSize)size;
 - (BOOL)isRunningOnPrimaryDisplayDevice;
 - (void)getDisplayDimensions:(unsigned*)width height:(unsigned*)height;
-#if OOLITE_WINDOWS
 - (BOOL)atDesktopResolution;
 - (float)hdrMaxBrightness;
 - (void)setHDRMaxBrightness:(float)newMaxBrightness;
@@ -278,7 +273,6 @@ extern int debug;
 - (void)setHDRPaperWhiteBrightness:(float)newPaperWhiteBrightness;
 - (OOHDRToneMapper)hdrToneMapper;
 - (void)setHDRToneMapper:(OOHDRToneMapper)newToneMapper;
-#endif
 - (OOSDRToneMapper)sdrToneMapper;
 - (void)setSDRToneMapper:(OOSDRToneMapper)newToneMapper;
 - (float)colorSaturation;
